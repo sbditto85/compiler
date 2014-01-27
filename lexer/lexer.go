@@ -1,0 +1,151 @@
+package lexer
+
+import (
+	"os"
+	"bufio"
+	"fmt"
+	"regexp"
+	"bytes"
+	"github.com/sbditto85/compiler/token"
+)
+
+var WhiteSpace = regexp.MustCompile(`^(\s)+(.*)`)
+var Number = regexp.MustCompile(`^(\d+)(\s)*(.*)`) // only supports integers
+var Character = regexp.MustCompile(`^('\\?.')(\s*)(.*)`)
+var Identifier = regexp.MustCompile(`^([A-Za-z][A-Za-z0-9_]{0,79})(\s*)(.*)`) // make sure the next 79 chars isn't something else
+var Punctuation = regexp.MustCompile(`^([;:,'"])(\s)*(.*)`)
+var Keyword = regexp.MustCompile(`^(atoi|bool|class|char|cin|cout|else|false|if|int|itoa|main|new|null|object|public|private|return|string|this|true|void|while)(\s)*(.*)`)
+var Symbol = regexp.MustCompile(`^([-+*/]|[<>=]{1,2}|[&|]{2}|[\[\]]|[{}()])(\s)*(.*)`)
+
+//for comparing if the line is done or not
+var emptyString = []byte("")
+
+type Lexer struct {
+	file []string
+	cur *token.Token
+	curline []byte
+	curlinenum int
+}
+
+func NewLexer() *Lexer {
+	l := Lexer{}
+	return &l
+}
+
+//Puts the contents of file in to the file string slice
+//stolen and modified from http://stackoverflow.com/a/18479916/706882
+func (l *Lexer) ReadFile(f string) error {
+	file, err := os.Open(f)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		l.file = append(l.file, scanner.Text())
+	}
+	return scanner.Err()
+}
+
+func (l *Lexer) LoadStrings(s []string) {
+	l.file = s
+	if len(s) > 0 {
+		l.curline = []byte(s[0])
+	}
+}
+
+func (l *Lexer) GetCurrentToken() (*token.Token, error) {
+	if l.cur != nil {
+		return l.cur,nil
+	}
+	t,err := l.GetNextToken() //if we haven't then get one
+	return t,err
+}
+
+func testType(l *Lexer, r *regexp.Regexp, tokType token.TokenType) (*token.Token, bool) {
+	if res := r.FindSubmatch(l.curline); len(res) == 4 {
+		tok := &token.Token{}
+		tok.Type = tokType
+		tok.Lexeme = string(res[1])
+		tok.Linenum = l.curlinenum
+		l.cur = tok
+		l.curline = res[3]
+		return tok, true
+	}
+	return nil, false
+}
+
+func testEOT(l *Lexer) (*token.Token, error) {
+	fmt.Printf("%s\n",l.curline)
+	if len(l.curline) == 0 {
+		l.curlinenum++
+		if len(l.file) > l.curlinenum {
+			l.curline = []byte(l.file[l.curlinenum])
+		}
+	}
+	return nil, fmt.Errorf("")
+}
+
+func (l *Lexer) GetNextToken() (*token.Token, error) {
+	if res := WhiteSpace.FindSubmatch(l.curline); len(res) == 3 {
+		l.curline = res[2]
+		t,e := l.GetNextToken()
+		return t,e
+	}
+
+	//if the line is blank get the next one if nothing then return EOT
+	if bytes.Equal(l.curline,emptyString) {
+		//can we get a new line?
+		if l.loadNextLine() {
+			tok, e := l.GetNextToken()
+			return tok,e
+		}
+		tok := &token.Token{Type:token.EOT,Lexeme:"",Linenum:l.curlinenum}
+		l.cur = tok
+		return tok,nil
+	}
+
+	if tok,found := testType(l,Keyword,token.Keyword); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Identifier,token.Identifier); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Character,token.Character); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Symbol,token.Symbol); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Number,token.Number); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Punctuation,token.Punctuation); found {
+		return tok,nil
+	}
+
+	//Unkown is one character at a time
+	if len(l.curline) > 0 {
+		tok := &token.Token{Type:token.Unknown,Lexeme:string(l.curline[0]),Linenum:l.curlinenum}
+		l.cur = tok
+		l.curline = l.curline[1:]
+		return tok,nil
+	}
+
+	//REALLY should never get here, but hey just in case right?
+	fmt.Printf("%s\n",l.curline)
+	fmt.Printf("%v\n",Identifier.Match(l.curline))
+	fmt.Printf("%v\n",Identifier.FindSubmatch(l.curline))
+
+	return nil, fmt.Errorf("Could not process Token")
+}
+
+func (l *Lexer) loadNextLine() bool {
+	l.curlinenum++
+	if len(l.file) > l.curlinenum {
+		l.curline = []byte(l.file[l.curlinenum])
+		return true
+	}
+	return false
+}

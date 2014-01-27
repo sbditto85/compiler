@@ -1,0 +1,13 @@
+
+class funone{
+
+      private string s;
+      public int i;
+
+      public func(param,param) {
+             int y;
+             while(param>y) {
+                            y=param*y+param;
+             }
+      }
+}
