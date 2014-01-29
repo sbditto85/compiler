@@ -511,7 +511,7 @@ func ExampleFailXEqualSemi() {
 
 	a := NewAnalyzer(l,false)
 	a.GetNext()
-	err := a.IsStatement()
+	err,_ := a.IsStatement()
 	
 	if err != nil {
 		println(err.Error())
@@ -529,7 +529,7 @@ func ExampleFailEqualYSemi() {
 
 	a := NewAnalyzer(l,false)
 	a.GetNext()
-	err := a.IsStatement()
+	err,_ := a.IsStatement()
 	
 	if err != nil {
 		println(err.Error())
