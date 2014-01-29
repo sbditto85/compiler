@@ -6,6 +6,23 @@ import (
 	tok "github.com/sbditto85/compiler/token"
 )
 
+type ErrorType int
+
+const (
+	NONE ErrorType = iota
+	COMPILER
+	STATEMENT
+	EXPRESSION
+	TYPE
+	CLASS_NAME
+	EXPRESSIONZ
+	FN_ARR_MEMBER
+	MEMBER_REFZ
+	ASSIGNMENT_EXPRESSION
+	NEW_DECLARATION
+	ARGUMENT_LIST
+)
+
 type Analyzer struct {
 	lex *lex.Lexer
 	pass int
@@ -37,46 +54,46 @@ func (a *Analyzer) PerformNextPass(debug bool) error {
 	return nil
 }
 
-func (a *Analyzer) IsClassName() error {
+func (a *Analyzer) IsClassName() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is classname with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch curTok.Type {
 	case tok.Identifier:
 		a.GetNext()
 	default:
-		return fmt.Errorf("Not a classname")
+		return fmt.Errorf("Not a classname"), CLASS_NAME
 	}
 	a.debugMessage("is classname!")
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsType() error {
+func (a *Analyzer) IsType() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is type with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch curTok.Lexeme {
 	case "int","char","bool","void":
 		a.GetNext()
 	default:
 		if err := a.IsClassName(); err != nil {
-			return fmt.Errorf("Not a type")
+			return fmt.Errorf("Not a type"), TYPE
 		}
 	}
 	a.debugMessage("is type!")
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsStatement() error {
+func (a *Analyzer) IsStatement() (error,ErrorType) {
 	//TODO: put recover here
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is statement with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch {
 	case curTok.Lexeme == "{":
@@ -92,24 +109,24 @@ func (a *Analyzer) IsStatement() error {
 	case curTok.Lexeme == "cin":
 		a.GetNext()
 	default:
-		if a.IsExpression() == nil {
+		if err,t :=  a.IsExpression(); err == nil {
 			curTok,err = a.GetCurr()
 			if curTok.Lexeme != ";" {
-				return fmt.Errorf("Expected ';' at new line received %s on line number: %d.",curTok.Lexeme,curTok.Linenum)
+				return fmt.Errorf("Expected ';' at new line received %s on line number: %d.",curTok.Lexeme,curTok.Linenum), STATEMENT
 			}
 		} else {
-			return fmt.Errorf("Expected statement line number: %d.",curTok.Linenum)
+			return fmt.Errorf("Expected statement line number: %d.",curTok.Linenum), STATEMENT
 		}
 	}
 	a.debugMessage("is a statement!")
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsExpression() error {
+func (a *Analyzer) IsExpression() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is expression with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch {
 	case curTok.Lexeme == "(":
@@ -166,14 +183,14 @@ func (a *Analyzer) IsExpression() error {
 		return fmt.Errorf("Not an expression")
 	}
 	a.debugMessage("is expression!");
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsFnArrMember() error {
+func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is fn arr member with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch curTok.Lexeme {
 	case "(":
@@ -201,21 +218,24 @@ func (a *Analyzer) IsFnArrMember() error {
 		return fmt.Errorf("Not a fn arr member")
 	}
 	a.debugMessage("is fn arr member!")
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsMemberRefz() error {
+func (a *Analyzer) IsMemberRefz() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is member refz with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	if curTok.Lexeme != "." {
 		return fmt.Errorf("Not a member refz")
 	}
 	a.GetNext()
 	curTok,err = a.GetCurr()
-	if curTok.Type != tok.Identifier && err != nil {
+	if err != nil {
+		return err, COMPILER
+	}
+	if curTok.Type != tok.Identifier {
 		return fmt.Errorf("Not a member refz")
 	}
 	if err := a.IsFnArrMember(); err != nil && err.Error() != "Not a fn arr member" {
@@ -225,14 +245,14 @@ func (a *Analyzer) IsMemberRefz() error {
 		return err
 	}
 	a.debugMessage("is member refz!")
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsExpressionZ() error {
+func (a *Analyzer) IsExpressionZ() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is expressionz with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch curTok.Lexeme {
 	case "&&","||","==","!=","<=",">=",">","<","+","-","*","/":
@@ -249,14 +269,14 @@ func (a *Analyzer) IsExpressionZ() error {
 		return fmt.Errorf("Not an expressionz")
 	}
 	a.debugMessage("is expressionz!");
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsAssignmentExpression() error {
+func (a *Analyzer) IsAssignmentExpression() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is assignment_expression with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch {
 	case curTok.Lexeme == "this":
@@ -304,14 +324,14 @@ func (a *Analyzer) IsAssignmentExpression() error {
 		}
 	}
 	a.debugMessage("is assignment_expression!");
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsNewDeclaration() error {
+func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is new declaration with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	switch curTok.Lexeme {
 	case "(":
@@ -337,20 +357,23 @@ func (a *Analyzer) IsNewDeclaration() error {
 		return fmt.Errorf("Not a new declaration")
 	}
 	a.debugMessage("is new declaration!")
-	return nil
+	return nil, NONE
 }
 
-func (a *Analyzer) IsArgumentList() error {
+func (a *Analyzer) IsArgumentList() (error,ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is argument list with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err
+		return err, COMPILER
 	}
 	if err := a.IsExpression(); err != nil {
 		return fmt.Errorf("Not a argument list")
 	}
 	for err == nil {
 		curTok,err = a.GetCurr()
+		if err != nil {
+			return err, COMPILER
+		}
 		if curTok.Lexeme != "," {
 			break
 		}
@@ -358,7 +381,7 @@ func (a *Analyzer) IsArgumentList() error {
 		err = a.IsExpression()
 	}
 	a.debugMessage("is argument list!")
-	return nil
+	return nil, NONE
 }
 
 
