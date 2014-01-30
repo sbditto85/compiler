@@ -132,7 +132,7 @@ func (a *Analyzer) IsExpression() (error,ErrorType) {
 	case curTok.Lexeme == "(":
 		a.GetNext()
 		if e,t := a.IsExpression(); e != nil && t != EXPRESSIONZ {
-			return fmt.Errorf("Not an expression"), EXPRESSION
+			return e,t
 		}
 		curTok,err = a.GetCurr() //now at next token after expression
 		if curTok.Lexeme == ")" {
@@ -206,8 +206,8 @@ func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 		a.GetNext()
 	case "[":
 		a.GetNext()
-		if err,_ := a.IsExpression(); err != nil {
-			return fmt.Errorf("Not a fn arr member"), FN_ARR_MEMBER
+		if e,t := a.IsExpression(); err != nil {
+			return e,t
 		}
 		curTok, err = a.GetCurr()
 		if curTok.Lexeme != "]" {
@@ -238,11 +238,11 @@ func (a *Analyzer) IsMemberRefz() (error,ErrorType) {
 	if curTok.Type != tok.Identifier {
 		return fmt.Errorf("Not a member refz"), MEMBER_REFZ
 	}
-	if err,_ := a.IsFnArrMember(); err != nil && err.Error() != "Not a fn arr member" {
-		return err, MEMBER_REFZ
+	if e,t := a.IsFnArrMember(); e != nil && t != FN_ARR_MEMBER {
+		return e,t
 	}
-	if err,_ := a.IsMemberRefz(); err != nil && err.Error() != "Not a member refz" {
-		return err, MEMBER_REFZ
+	if e,t := a.IsMemberRefz(); e != nil && t != MEMBER_REFZ {
+		return e,t
 	}
 	a.debugMessage("is member refz!")
 	return nil, NONE
@@ -366,8 +366,8 @@ func (a *Analyzer) IsArgumentList() (error,ErrorType) {
 	if err != nil {
 		return err, COMPILER
 	}
-	if err,_ := a.IsExpression(); err != nil {
-		return fmt.Errorf("Not a argument list"), ARGUMENT_LIST
+	if e,t := a.IsExpression(); e != nil {
+		return e,t
 	}
 	for err == nil {
 		curTok,err = a.GetCurr()
@@ -378,7 +378,9 @@ func (a *Analyzer) IsArgumentList() (error,ErrorType) {
 			break
 		}
 		a.GetNext()
-		err,_ = a.IsExpression()
+		if e,t := a.IsExpression(); e != nil {
+			return e,t
+		}
 	}
 	a.debugMessage("is argument list!")
 	return nil, NONE
