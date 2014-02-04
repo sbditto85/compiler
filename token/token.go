@@ -19,3 +19,18 @@ const (
 	WhiteSpace
 	EOT
 )
+
+func GetTokToStringMap() map[TokenType]string {
+	TokTypeTrans := make(map[TokenType]string)
+	TokTypeTrans[Number] = "Number"
+	TokTypeTrans[Character] = "Character"
+	TokTypeTrans[Identifier] = "Identifier"
+	TokTypeTrans[Punctuation] = "Punctuation"
+	TokTypeTrans[Keyword] = "Keyword"
+	TokTypeTrans[Symbol] = "Symbol"
+	TokTypeTrans[Unknown] = "Unknown"
+	TokTypeTrans[WhiteSpace] = "WhiteSpace"
+	TokTypeTrans[EOT] = "EOT"
+	return TokTypeTrans
+}
+
