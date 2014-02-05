@@ -23,6 +23,7 @@ var emptyString = []byte("")
 type Lexer struct {
 	file []string
 	cur *token.Token
+	peek *token.Token
 	curline []byte
 	curlinenum int
 }
@@ -63,14 +64,18 @@ func (l *Lexer) GetCurrentToken() (*token.Token, error) {
 	return t,err
 }
 
-func testType(l *Lexer, r *regexp.Regexp, tokType token.TokenType) (*token.Token, bool) {
+func testType(l *Lexer, r *regexp.Regexp, tokType token.TokenType, isPeek bool) (*token.Token, bool) {
 	if res := r.FindSubmatch(l.curline); len(res) == 4 {
 		tok := &token.Token{}
 		tok.Type = tokType
 		tok.Lexeme = string(res[1])
 		tok.Linenum = l.curlinenum
-		l.cur = tok
-		l.curline = res[3]
+		if isPeek {
+			l.peek = tok
+		} else {
+			l.cur = tok
+			l.curline = res[3]
+		}
 		return tok, true
 	}
 	return nil, false
@@ -106,22 +111,22 @@ func (l *Lexer) GetNextToken() (*token.Token, error) {
 		return tok,nil
 	}
 
-	if tok,found := testType(l,Keyword,token.Keyword); found {
+	if tok,found := testType(l,Keyword,token.Keyword,false); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Identifier,token.Identifier); found {
+	if tok,found := testType(l,Identifier,token.Identifier,false); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Character,token.Character); found {
+	if tok,found := testType(l,Character,token.Character,false); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Symbol,token.Symbol); found {
+	if tok,found := testType(l,Symbol,token.Symbol,false); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Number,token.Number); found {
+	if tok,found := testType(l,Number,token.Number,false); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Punctuation,token.Punctuation); found {
+	if tok,found := testType(l,Punctuation,token.Punctuation,false); found {
 		return tok,nil
 	}
 
@@ -130,6 +135,59 @@ func (l *Lexer) GetNextToken() (*token.Token, error) {
 		tok := &token.Token{Type:token.Unknown,Lexeme:string(l.curline[0]),Linenum:l.curlinenum}
 		l.cur = tok
 		l.curline = l.curline[1:]
+		return tok,nil
+	}
+
+	//REALLY should never get here, but hey just in case right?
+	fmt.Printf("%s\n",l.curline)
+	fmt.Printf("%v\n",Identifier.Match(l.curline))
+	fmt.Printf("%v\n",Identifier.FindSubmatch(l.curline))
+
+	return nil, fmt.Errorf("Could not process Token")
+}
+
+func (l *Lexer) PeekNextToken() (*token.Token, error) {
+	if res := WhiteSpace.FindSubmatch(l.curline); len(res) == 3 {
+		l.curline = res[2]
+		t,e := l.PeekNextToken()
+		return t,e
+	}
+
+	//if the line is blank get the next one if nothing then return EOT
+	if bytes.Equal(l.curline,emptyString) {
+		//can we get a new line?
+		if l.loadNextLine() {
+			tok, e := l.PeekNextToken()
+			return tok,e
+		}
+		tok := &token.Token{Type:token.EOT,Lexeme:"",Linenum:l.curlinenum}
+		l.peek = tok
+		return tok,nil
+	}
+
+	if tok,found := testType(l,Keyword,token.Keyword,true); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Identifier,token.Identifier,true); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Character,token.Character,true); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Symbol,token.Symbol,true); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Number,token.Number,true); found {
+		return tok,nil
+	}
+	if tok,found := testType(l,Punctuation,token.Punctuation,true); found {
+		return tok,nil
+	}
+
+	//Unkown is one character at a time
+	if len(l.curline) > 0 {
+		tok := &token.Token{Type:token.Unknown,Lexeme:string(l.curline[0]),Linenum:l.curlinenum}
+		l.peek = tok
 		return tok,nil
 	}
 

@@ -30,6 +30,7 @@ func verifyToken(t *testing.T,tok *token.Token,tokTypeString string, tokType tok
 func testNextToken(l *Lexer,t *testing.T,tokTypeString string, tokType token.TokenType,tokLexeme string,tokLine int) {
 	//t.Logf("%s ::: %s\n",tokTypeString,tokLexeme)
 	tok,e := l.GetNextToken()
+	//t.Logf("Lexeme: %s",tok.Lexeme)
 	shouldNotError(t,e)
 	verifyToken(t,tok,tokTypeString,tokType,tokLexeme,tokLine)
 	tok,e = l.GetCurrentToken()
@@ -50,7 +51,13 @@ func TestParseValidMultipleLines(t *testing.T) {
 	l := NewLexer()
 	
 	l.LoadStrings(s)
-
+	tok,err := l.PeekNextToken()
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if tok.Lexeme != "class" {
+		t.Errorf("Peek didn't get correct token expected class got %s",tok.Lexeme)
+	}
 	testNextToken(l,t,"Keyword",     token.Keyword,     "class",      0)
 	testNextToken(l,t,"Identifier",  token.Identifier,  "fun",        0)
 	testNextToken(l,t,"Symbol",      token.Symbol,      "{",          0)
@@ -77,6 +84,13 @@ func TestParseValidMultipleLines(t *testing.T) {
 	testNextToken(l,t,"Symbol",      token.Symbol,      ")",          2)
 	testNextToken(l,t,"Symbol",      token.Symbol,      "{",          2)
 	//go to next line
+	tok,err = l.PeekNextToken()
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if tok.Lexeme != "print" {
+		t.Errorf("Peek didn't get correct token expected print got %s",tok.Lexeme)
+	}
 	testNextToken(l,t,"Identifier",  token.Identifier,  "print",      3)
 	testNextToken(l,t,"Punctuation", token.Punctuation, "'",          3)
 	testNextToken(l,t,"Keyword",     token.Keyword,     "this",       3)
