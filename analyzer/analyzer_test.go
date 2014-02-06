@@ -1072,6 +1072,629 @@ func ExampleEmptyBlockPass() {
 	//is a statement!
 }
 
+func ExampleParameterPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`int apple`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsParameter()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: int
+	//Testing is parameter with token int...
+	//Testing is type with token int...
+	//Token: apple
+	//is type!
+	//Token: ''
+	//is a parameter!
+}
+
+func ExampleParameterArrPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`int apple[]`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsParameter()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: int
+	//Testing is parameter with token int...
+	//Testing is type with token int...
+	//Token: apple
+	//is type!
+	//Token: [
+	//Token: ]
+	//Token: ''
+	//is a parameter!
+}
+
+func ExampleParameterAsParameterListPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`int apple[]`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsParameterList()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: int
+	//Testing is parameter list with token int...
+	//Testing is parameter with token int...
+	//Testing is type with token int...
+	//Token: apple
+	//is type!
+	//Token: [
+	//Token: ]
+	//Token: ''
+	//is a parameter!
+	//is a parameter list!
+}
+
+func ExampleParameterListPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`int a, cat c[]`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsParameterList()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: int
+	//Testing is parameter list with token int...
+	//Testing is parameter with token int...
+	//Testing is type with token int...
+	//Token: a
+	//is type!
+	//Token: ,
+	//is a parameter!
+	//Token: cat
+	//Testing is parameter with token cat...
+	//Testing is type with token cat...
+	//Testing is classname with token cat...
+	//Token: c
+	//is classname!
+	//is type!
+	//Token: [
+	//Token: ]
+	//Token: ''
+	//is a parameter!
+	//is a parameter list!
+}
+
+func ExampleVariableDeclarationPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`bool a;`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsVariableDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: bool
+	//Testing is variable declaration with token bool...
+	//Testing is type with token bool...
+	//Token: a
+	//is type!
+	//Token: ;
+	//Token: ''
+	//is a variable declaration!
+}
+
+func ExampleVariableDeclarationAssignPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`bool a = true;`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsVariableDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: bool
+	//Testing is variable declaration with token bool...
+	//Testing is type with token bool...
+	//Token: a
+	//is type!
+	//Token: =
+	//Token: true
+	//Testing is assignment_expression with token true...
+	//Testing is expression with token true...
+	//Token: ;
+	//Testing is expressionz with token ;...
+	//is expression!
+	//is assignment_expression!
+	//Token: ''
+	//is a variable declaration!
+}
+
+func ExampleMethodBodyPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`{}`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsMethodBody()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: {
+	//Testing is method body with token {...
+	//Token: }
+	//Testing is variable declaration with token }...
+	//Testing is statement with token }...
+	//Testing is expression with token }...
+	//Token: ''
+	//is a method body!
+}
+
+func ExampleMethodBodyFullPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`{ bool a; a = true; }`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsMethodBody()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: {
+	//Testing is method body with token {...
+	//Token: bool
+	//Testing is variable declaration with token bool...
+	//Testing is type with token bool...
+	//Token: a
+	//is type!
+	//Token: ;
+	//Token: a
+	//is a variable declaration!
+	//Testing is variable declaration with token a...
+	//Testing is statement with token a...
+	//Testing is expression with token a...
+	//Token: =
+	//Testing is fn arr member with token =...
+	//Testing is member refz with token =...
+	//Testing is expressionz with token =...
+	//Token: true
+	//Testing is assignment_expression with token true...
+	//Testing is expression with token true...
+	//Token: ;
+	//Testing is expressionz with token ;...
+	//is expression!
+	//is assignment_expression!
+	//is expressionz!
+	//is expression!
+	//Token: }
+	//is a statement!
+	//Testing is statement with token }...
+	//Testing is expression with token }...
+	//Token: ''
+	//is a method body!
+}
+
+func ExampleConstructorPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`Cat() {}`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsConstructorDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: Cat
+	//Testing is constructor declaration with token Cat...
+	//Testing is classname with token Cat...
+	//Token: (
+	//is classname!
+	//Token: )
+	//Testing is parameter list with token )...
+	//Testing is parameter with token )...
+	//Testing is type with token )...
+	//Testing is classname with token )...
+	//Token: {
+	//Testing is method body with token {...
+	//Token: }
+	//Testing is variable declaration with token }...
+	//Testing is statement with token }...
+	//Testing is expression with token }...
+	//Token: ''
+	//is a method body!
+	//is a constructor declaration!
+}
+
+func ExampleConstructorParamsPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`Cat(bool a, void c) {}`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsConstructorDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: Cat
+	//Testing is constructor declaration with token Cat...
+	//Testing is classname with token Cat...
+	//Token: (
+	//is classname!
+	//Token: bool
+	//Testing is parameter list with token bool...
+	//Testing is parameter with token bool...
+	//Testing is type with token bool...
+	//Token: a
+	//is type!
+	//Token: ,
+	//is a parameter!
+	//Token: void
+	//Testing is parameter with token void...
+	//Testing is type with token void...
+	//Token: c
+	//is type!
+	//Token: )
+	//is a parameter!
+	//is a parameter list!
+	//Token: {
+	//Testing is method body with token {...
+	//Token: }
+	//Testing is variable declaration with token }...
+	//Testing is statement with token }...
+	//Testing is expression with token }...
+	//Token: ''
+	//is a method body!
+	//is a constructor declaration!
+}
+
+func ExampleFieldDeclarationPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`;`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsFieldDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: ;
+	//Testing is field declaration with token ;...
+	//Token: ''
+	//is a field declaration!
+}
+
+func ExampleFieldDeclarationArrPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`[];`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsFieldDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: [
+	//Testing is field declaration with token [...
+	//Token: ]
+	//Token: ;
+	//Token: ''
+	//is a field declaration!
+}
+
+func ExampleFieldDeclarationAssignPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`= x + y;`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsFieldDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: =
+	//Testing is field declaration with token =...
+	//Token: x
+	//Testing is assignment_expression with token x...
+	//Testing is expression with token x...
+	//Token: +
+	//Testing is fn arr member with token +...
+	//Testing is member refz with token +...
+	//Testing is expressionz with token +...
+	//Token: y
+	//Testing is expression with token y...
+	//Token: ;
+	//Testing is fn arr member with token ;...
+	//Testing is member refz with token ;...
+	//Testing is expressionz with token ;...
+	//is expression!
+	//is expressionz!
+	//is expression!
+	//is assignment_expression!
+	//Token: ''
+	//is a field declaration!
+}
+
+func ExampleFieldDeclarationArrAssignPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`[] = true;`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsFieldDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: [
+	//Testing is field declaration with token [...
+	//Token: ]
+	//Token: =
+	//Token: true
+	//Testing is assignment_expression with token true...
+	//Testing is expression with token true...
+	//Token: ;
+	//Testing is expressionz with token ;...
+	//is expression!
+	//is assignment_expression!
+	//Token: ''
+	//is a field declaration!
+}
+
 func ExampleBasicClassDeclarationPass() {
 	defer func(){
 		if r:= recover(); r != nil {
@@ -1108,11 +1731,169 @@ func ExampleBasicClassDeclarationPass() {
 	//is classname!
 	//Token: }
 	//Testing is class member declaration with token }...
-	//is a class member declaration!
+	//Testing is constructor declaration with token }...
+	//Testing is classname with token }...
 	//Token: ''
 	//is a class declaration!
 }
 
+func ExampleBasicClassDeclarationComplexPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`class myclass {`)
+	str = append(str,`private int x;`)
+	str = append(str,`myclass(){}`)
+	str = append(str,`public int f(){}`)
+	str = append(str,`}`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsClassDeclaration()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: class
+	//Testing is class declaration with token class...
+	//Token: myclass
+	//Testing is classname with token myclass...
+	//Token: {
+	//is classname!
+	//Token: private
+	//Testing is class member declaration with token private...
+	//Testing is modifier with token private...
+	//Token: int
+	//is modifier!
+	//Testing is type with token int...
+	//Token: x
+	//is type!
+	//Token: ;
+	//Testing is field declaration with token ;...
+	//Token: myclass
+	//is a field declaration!
+	//is a class member declaration!
+	//Testing is class member declaration with token myclass...
+	//Testing is constructor declaration with token myclass...
+	//Testing is classname with token myclass...
+	//Token: (
+	//is classname!
+	//Token: )
+	//Testing is parameter list with token )...
+	//Testing is parameter with token )...
+	//Testing is type with token )...
+	//Testing is classname with token )...
+	//Token: {
+	//Testing is method body with token {...
+	//Token: }
+	//Testing is variable declaration with token }...
+	//Testing is statement with token }...
+	//Testing is expression with token }...
+	//Token: public
+	//is a method body!
+	//is a constructor declaration!
+	//is a class member declaration!
+	//Testing is class member declaration with token public...
+	//Testing is modifier with token public...
+	//Token: int
+	//is modifier!
+	//Testing is type with token int...
+	//Token: f
+	//is type!
+	//Token: (
+	//Testing is field declaration with token (...
+	//Token: )
+	//Testing is parameter list with token )...
+	//Testing is parameter with token )...
+	//Testing is type with token )...
+	//Testing is classname with token )...
+	//Token: {
+	//Testing is method body with token {...
+	//Token: }
+	//Testing is variable declaration with token }...
+	//Testing is statement with token }...
+	//Testing is expression with token }...
+	//Token: }
+	//is a method body!
+	//is a field declaration!
+	//is a class member declaration!
+	//Testing is class member declaration with token }...
+	//Testing is constructor declaration with token }...
+	//Testing is classname with token }...
+	//Token: ''
+	//is a class declaration!
+}
+
+func ExampleCompilationUnitPass() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	var str []string
+	str = append(str,`void main () {}`)
+	l := lex.NewLexer()
+	l.LoadStrings(str)
+
+	a := NewAnalyzer(l,true)
+	a.GetNext()
+	err,_ := a.IsCompilationUnit()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	//Output:
+	//Token: void
+	//Testing is compilation unit with token void...
+	//Token: main
+	//Token: (
+	//Token: )
+	//Token: {
+	//Testing is method body with token {...
+	//Token: }
+	//Testing is variable declaration with token }...
+	//Testing is statement with token }...
+	//Testing is expression with token }...
+	//Token: ''
+	//is a method body!
+	//is a compliation unit!
+}
+
+//f(r*e, g < k) ;
+//c [ r + 3 ] = c [ r - 5 ] ;
+// a = b;
+// a = b[i];
+// a[i] = b[i];
+// a[i] = b;
+// a[] = b[];
+
+
+
+/*
 func ExamplePass() {
 	defer func(){
 		if r:= recover(); r != nil {
@@ -1126,7 +1907,7 @@ func ExamplePass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsStatement()
+	err,_ := a.IsParameter()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1143,6 +1924,4 @@ func ExamplePass() {
 	//Output:
 
 }
-
-//f(r*e, g < k) ;
-//c [ r + 3 ] = c [ r - 5 ] ;
+*/
