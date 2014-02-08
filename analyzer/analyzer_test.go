@@ -1085,7 +1085,7 @@ func ExampleParameterPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsParameter()
+	err,_,_ := a.IsParameter()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1122,7 +1122,7 @@ func ExampleParameterArrPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsParameter()
+	err,_,_ := a.IsParameter()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1161,7 +1161,7 @@ func ExampleParameterAsParameterListPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsParameterList()
+	err,_,_ := a.IsParameterList()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1202,7 +1202,7 @@ func ExampleParameterListPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsParameterList()
+	err,_,_ := a.IsParameterList()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1544,7 +1544,7 @@ func ExampleFieldDeclarationPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration()
+	err,_,_,_,_ := a.IsFieldDeclaration()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1578,7 +1578,7 @@ func ExampleFieldDeclarationArrPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration()
+	err,_,_,_,_ := a.IsFieldDeclaration()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1614,7 +1614,7 @@ func ExampleFieldDeclarationAssignPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration()
+	err,_,_,_,_ := a.IsFieldDeclaration()
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1665,7 +1665,7 @@ func ExampleFieldDeclarationArrAssignPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration()
+	err,_,_,_,_ := a.IsFieldDeclaration()
 	
 	if err != nil {
 		fmt.Println(err.Error())

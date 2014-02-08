@@ -296,14 +296,18 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 
 	switch curTok.Lexeme {
 	case "public", "private":
+		modifier := curTok.Lexeme
 		if e,t := a.IsModifier(); e != nil {
 			return e,t //definition of modifier changed
 		}
+		curTok,_ = a.GetCurr()
+		typ := curTok.Lexeme
 		if e,_ := a.IsType(); e != nil {
 			curTok,_ = a.GetCurr()
 			panic(BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION))
 		}
 		curTok,err = a.GetCurr()
+		identifier := curTok.Lexeme
 		if curTok.Type != tok.Identifier {
 			panic(BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION))
 		}
@@ -311,9 +315,23 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
-		if e,_ := a.IsFieldDeclaration(); e != nil {
+		
+		e,_,isVar,isArr,params := a.IsFieldDeclaration()
+		if e != nil {
 			curTok,_ = a.GetCurr()
 			panic(BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION))
+		}
+		
+		
+		symdata := make(map[string]interface{})
+		symdata["accessMod"] = modifier
+		symdata["type"] = typ
+		if !isVar {
+			symdata["parameters"] = params
+			a.AddSymbol(identifier, "Method", symdata)
+		} else {
+			symdata["isArray"] = isArr
+			a.AddSymbol(identifier, "Ivar", symdata)
 		}
 	default:
 		if e,_ := a.IsConstructorDeclaration(); e != nil {
@@ -327,15 +345,16 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 	return nil, NONE
 }
 
-func (a *Analyzer) IsFieldDeclaration() (error,ErrorType) {
+func (a *Analyzer) IsFieldDeclaration() (e error,et ErrorType,isVar bool,isArr bool,params []sym.Parameter) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is field declaration with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err, COMPILER
+		return err, COMPILER,false,false,[]sym.Parameter{}
 	}
 
 	switch curTok.Lexeme {
 	case "[","=",";":
+		isArr := false
 		if curTok.Lexeme == "[" {
 			curTok, err = a.GetNext()
 			if err != nil {
@@ -344,6 +363,7 @@ func (a *Analyzer) IsFieldDeclaration() (error,ErrorType) {
 			if curTok.Lexeme != "]" {
 				panic(BuildErrMessFromTok(curTok, "]"))
 			}
+			isArr = true
 			curTok, err = a.GetNext()
 			if err != nil {
 				panic(BuildErrFromTokErrType(curTok, COMPILER))
@@ -368,30 +388,34 @@ func (a *Analyzer) IsFieldDeclaration() (error,ErrorType) {
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
-	default:
-		if curTok.Lexeme == "(" {
-			curTok, err = a.GetNext()
-			if err != nil {
-				panic(BuildErrFromTokErrType(curTok, COMPILER))
-			}
-			if e,_ := a.IsParameterList(); e != nil {
-				//TODO: do i really care?
-			}
-			curTok,_ = a.GetCurr()
-			if curTok.Lexeme != ")" {
-				panic(BuildErrMessFromTok(curTok, ")"))
-			}
-			curTok, err = a.GetNext()
-			if err != nil {
-				panic(BuildErrFromTokErrType(curTok, COMPILER))
-			}
-			if e,_ := a.IsMethodBody(); e != nil {
-				panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
-			}
-		}
-	}
+
 		a.debugMessage("is a field declaration!")
-	return nil, NONE
+		return nil, NONE, true, isArr, []sym.Parameter{}
+	}
+	if curTok.Lexeme == "(" {
+		curTok, err = a.GetNext()
+		if err != nil {
+			panic(BuildErrFromTokErrType(curTok, COMPILER))
+		}
+		_,_,paramList := a.IsParameterList();
+		curTok,_ = a.GetCurr()
+		if curTok.Lexeme != ")" {
+			panic(BuildErrMessFromTok(curTok, ")"))
+		}
+		curTok, err = a.GetNext()
+		if err != nil {
+			panic(BuildErrFromTokErrType(curTok, COMPILER))
+		}
+		if e,_ := a.IsMethodBody(); e != nil {
+			panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
+		}
+
+		a.debugMessage("is a field declaration!")
+		return nil, NONE, false, false, paramList
+	}
+
+	a.debugMessage("is a field declaration!")
+	return BuildErrFromTokErrType(curTok, FIELD_DECLARATION), FIELD_DECLARATION, false, false, []sym.Parameter{}
 }
 
 func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
@@ -401,7 +425,8 @@ func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 		return err, COMPILER
 	}
 
-	if e,_,_ := a.IsClassName(); e != nil {
+	e,_,className := a.IsClassName()
+	if e != nil {
 		curTok,_ = a.GetCurr()
 		return BuildErrFromTokErrType(curTok, CONSTRUCTOR_DECLARATION), CONSTRUCTOR_DECLARATION
 	}
@@ -413,9 +438,8 @@ func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
-	if e,_ := a.IsParameterList(); e != nil {
-		//TODO: do i really care?
-	}
+
+	_,_,paramsList := a.IsParameterList()
 	curTok,_ = a.GetCurr()
 	if curTok.Lexeme != ")" {
 		panic(BuildErrMessFromTok(curTok, ")"))
@@ -424,6 +448,13 @@ func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 	if err != nil {
 		panic(BuildErrMessFromTokErrType(curTok, COMPILER))
 	}
+
+	//symbol table opperation
+	symdata := make(map[string]interface{})
+	symdata["class"] = className
+	symdata["parameters"] = paramsList
+	a.AddSymbol(className, "Constructor", symdata)
+	
 	if e,t := a.IsMethodBody(); e != nil {
 		panic(BuildErrMessFromTokErrType(curTok, t))
 	}
@@ -536,17 +567,19 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 	return nil, NONE
 }
 
-func (a *Analyzer) IsParameterList() (error,ErrorType) {
+func (a *Analyzer) IsParameterList() (error,ErrorType,[]sym.Parameter) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is parameter list with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err, COMPILER
+		return err, COMPILER,[]sym.Parameter{}
 	}
+	params := make([]sym.Parameter,1)
 
-	if e,_ := a.IsParameter(); e != nil {
-		return BuildErrFromTokErrType(curTok, PARAMETER_LIST), PARAMETER_LIST
-		//panic(BuildErrFromTokErrType(curTok, PARAMETER_LIST))
+	e,_,param := a.IsParameter()
+	if e != nil {
+		return BuildErrFromTokErrType(curTok, PARAMETER_LIST), PARAMETER_LIST, params
 	}
+	params = append(params,param)
 	for err == nil {
 		curTok,err = a.GetCurr()
 		if err != nil {
@@ -554,30 +587,35 @@ func (a *Analyzer) IsParameterList() (error,ErrorType) {
 		}
 		if curTok.Lexeme == "," {
 			a.GetNext()
-			if e,_ := a.IsParameter(); e != nil {
+			e,_,param := a.IsParameter();
+			if e != nil {
 				panic(BuildErrFromTokErrType(curTok, PARAMETER_LIST))
 			}
+			params = append(params,param)
 		} else {
 			err = BuildErrFromTokErrType(curTok, PARAMETER_LIST)
 		}
 	}
 
 	a.debugMessage("is a parameter list!")
-	return nil, NONE
+	return nil, NONE, params
 }
 
-func (a *Analyzer) IsParameter() (error,ErrorType) {
+func (a *Analyzer) IsParameter() (error,ErrorType,sym.Parameter) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is parameter with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err, COMPILER
+		return err, COMPILER, sym.Parameter{}
 	}
-
+	
+	typ := curTok.Lexeme
 	if e,_ := a.IsType(); e != nil {
-		return BuildErrFromTokErrType(curTok, PARAMETER), PARAMETER
+		return BuildErrFromTokErrType(curTok, PARAMETER), PARAMETER, sym.Parameter{}
 		//panic(BuildErrFromTokErrType(curTok, PARAMETER))
 	}
 	curTok,_ = a.GetCurr() //what are the odds an err would occur? like none right? ... guys?
+	
+	identifier := curTok.Lexeme
 	if curTok.Type != tok.Identifier {
 		panic(BuildTtErrMessFromTok(curTok, tok.Identifier))
 	}
@@ -585,6 +623,8 @@ func (a *Analyzer) IsParameter() (error,ErrorType) {
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
+	
+	isArr := false
 	if curTok.Lexeme == "[" {
 		curTok, err = a.GetNext()
 		if err != nil {
@@ -594,9 +634,11 @@ func (a *Analyzer) IsParameter() (error,ErrorType) {
 			panic(BuildErrMessFromTok(curTok,"{"))
 		}
 		a.GetNext()
+
+		isArr = true
 	}
 	a.debugMessage("is a parameter!")
-	return nil, NONE
+	return nil, NONE, sym.Parameter{Typ:typ,Identifier:identifier,IsArr:isArr}
 }
 
 func (a *Analyzer) IsStatement() (error,ErrorType) {

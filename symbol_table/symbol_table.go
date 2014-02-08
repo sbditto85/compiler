@@ -6,6 +6,12 @@ import (
 	"strconv"
 )
 
+type Parameter struct {
+	Typ string
+	Identifier string
+	IsArr bool
+}
+
 type SymbolTable struct {
 	symIdNum int
 	scope string
@@ -27,8 +33,21 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	curScope := s.scope
 
 	switch kind {
-	case "Class","Method","Main":
+	case "Class","Method","Main","Constructor":
 		s.AddScope(value)
+		if v,ok := data["parameters"]; ok {
+			paramSymIds := make([]string,0) 
+			if parameters,ok := v.([]Parameter); ok { 
+				for _,p := range(parameters) {
+					pmap := make(map[string]interface{})
+					pmap["type"] = p.Typ
+					pmap["isArray"] = p.IsArr
+					paramSymId := s.AddElement(p.Identifier,"Parameter",pmap)
+					paramSymIds = append(paramSymIds,paramSymId)
+				}
+			}
+			data["paramSymIds"] = paramSymIds
+		}
 	}
 
 	symId = s.GenSymId(kind)
