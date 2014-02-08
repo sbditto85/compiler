@@ -1,4 +1,4 @@
-package analyzer
+package symbol_table
 
 import (
 	//"testing"
@@ -18,7 +18,7 @@ func ExampleDefaultSymbolTable() {
 func ExampleAddSymbol() {
 	sym := NewSymbolTable()
 
-	d := make(map[string]string)
+	d := make(map[string]interface{})
 
 	sym.AddElement("myclass","Class",d)
 	sym.PrintTable()
@@ -32,8 +32,8 @@ func ExampleAddSymbol() {
 func ExampleAddSymbolClassFuncThenRemove() {
 	sym := NewSymbolTable()
 
-	dClass := make(map[string]string)
-	dMethod := make(map[string]string)
+	dClass := make(map[string]interface{})
+	dMethod := make(map[string]interface{})
 
 	sym.AddElement("myclass","Class",dClass)
 	dMethod["additional"] = "more"
@@ -47,7 +47,7 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	sym.PrintTable()
 	fmt.Println()
 
-	otherMethod := make(map[string]string)
+	otherMethod := make(map[string]interface{})
 	otherMethod["testing"] = "testing"
 
 	sym.AddElement("othermethod","Method",otherMethod)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	lex "github.com/sbditto85/compiler/lexer"
 	tok "github.com/sbditto85/compiler/token"
+	sym "github.com/sbditto85/compiler/symbol_table"
 )
 
 type ErrorType int
@@ -91,10 +92,12 @@ type Analyzer struct {
 	lex *lex.Lexer
 	pass int
 	debug bool
+	st *sym.SymbolTable
 }
 
 func NewAnalyzer(l *lex.Lexer,debug bool) *Analyzer {
-	a := &Analyzer{lex:l,debug:debug}
+	st := sym.NewSymbolTable()
+	a := &Analyzer{lex:l,debug:debug,st:st}
 	return a
 }
 
@@ -102,6 +105,14 @@ func (a *Analyzer) debugMessage(s string) {
 	if a.debug {
 		fmt.Println(s)
 	}
+}
+
+func (a *Analyzer) AddSymbol(value string, kind string, data map[string]interface{}) string {
+	return a.st.AddElement(value,kind,data)
+}
+
+func (a *Analyzer) DropScope() error {
+	return a.st.DownScope()
 }
 
 func (a *Analyzer) GetNext() (*tok.Token,error) {
@@ -143,20 +154,20 @@ func (a *Analyzer) IsModifier() (error,ErrorType) {
 	return nil, NONE
 }
 
-func (a *Analyzer) IsClassName() (error,ErrorType) {
+func (a *Analyzer) IsClassName() (error,ErrorType,string) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is classname with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err, COMPILER
+		return err, COMPILER, ""
 	}
 	switch curTok.Type {
-	case tok.Identifier:
+	case tok.Identifier:		
 		a.GetNext()
 	default:
-		return BuildErrFromTokErrType(curTok, CLASS_NAME), CLASS_NAME
+		return BuildErrFromTokErrType(curTok, CLASS_NAME), CLASS_NAME, ""
 	}
 	a.debugMessage("is classname!")
-	return nil, NONE
+	return nil, NONE, curTok.Lexeme
 }
 
 func (a *Analyzer) IsType() (error,ErrorType) {
@@ -169,7 +180,7 @@ func (a *Analyzer) IsType() (error,ErrorType) {
 	case "int","char","bool","void":
 		a.GetNext()
 	default:
-		if err,_ := a.IsClassName(); err != nil {
+		if err,_,_ := a.IsClassName(); err != nil {
 			return BuildErrFromTokErrType(curTok, TYPE), TYPE
 		}
 	}
@@ -218,6 +229,12 @@ func (a *Analyzer) IsCompilationUnit() (error,ErrorType) {
 		if curTok.Lexeme != ")" {
 			panic(BuildErrMessFromTok(curTok,")"))
 		}
+		
+		//symbol table opperation
+		symdata := make(map[string]interface{})
+		symdata["type"] = "void"
+		a.AddSymbol("main", "Main", symdata)
+
 		curTok,err = a.GetNext()
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
@@ -242,9 +259,15 @@ func (a *Analyzer) IsClassDeclaration() (error,ErrorType) {
 		panic(BuildErrMessFromTok(curTok,"class"))
 	}
 	a.GetNext()
-	if err,_ := a.IsClassName(); err != nil {
+	err,_,className := a.IsClassName()
+	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, CLASS_DECLARATION))
 	}
+
+	//symbol table opperation
+	symdata := make(map[string]interface{})
+	a.AddSymbol(className, "Class", symdata)
+
 	curTok,err = a.GetCurr()
 	if curTok.Lexeme != "{" {
 		panic(BuildErrMessFromTok(curTok,"{"))
@@ -254,7 +277,7 @@ func (a *Analyzer) IsClassDeclaration() (error,ErrorType) {
 	for err == nil {
 		err,_ = a.IsClassMemberDeclaration()
 	}
-	//fmt.Printf("MY ERROR %s\n",err.Error())
+
 	curTok,err = a.GetCurr()
 	if curTok.Lexeme != "}" {
 		panic(BuildErrMessFromTok(curTok,"}"))
@@ -378,7 +401,7 @@ func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 		return err, COMPILER
 	}
 
-	if e,_ := a.IsClassName(); e != nil {
+	if e,_,_ := a.IsClassName(); e != nil {
 		curTok,_ = a.GetCurr()
 		return BuildErrFromTokErrType(curTok, CONSTRUCTOR_DECLARATION), CONSTRUCTOR_DECLARATION
 	}

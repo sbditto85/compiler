@@ -1,4 +1,4 @@
-package analyzer
+package symbol_table
 
 import (
 	str "strings"
@@ -22,12 +22,12 @@ func (s *SymbolTable) GenSymId(kind string) string {
 	return string(([]rune)(kind)[0]) + strconv.Itoa(s.symIdNum)
 }
 
-func (s *SymbolTable) AddElement(value string, kind string, data map[string]string) (symId string) {
+func (s *SymbolTable) AddElement(value string, kind string, data map[string]interface{}) (symId string) {
 
 	curScope := s.scope
 
 	switch kind {
-	case "Class","Method":
+	case "Class","Method","Main":
 		s.AddScope(value)
 	}
 
@@ -75,13 +75,13 @@ type SymbolTableElement struct {
 	symid string
 	value string
 	kind string
-	data map[string]string
+	data map[string]interface{}
 }
 
 func (s *SymbolTableElement) PrintElement() {
 	fmt.Printf("Scope: %s, SymId: %s, Value: %s, Kind: %s\n",s.scope,s.symid,s.value,s.kind)
 	fmt.Println("Extra Data:")
 	for k,v := range(s.data) {
-		fmt.Printf("Key: %s, Value: %s\n",k,v)
+		fmt.Printf("Key: %s, Value: %v\n",k,v)
 	}
 }
