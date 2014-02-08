@@ -5,7 +5,7 @@ import (
 	lex "github.com/sbditto85/compiler/lexer"
 	tok "github.com/sbditto85/compiler/token"
 	"fmt"
-)
+) 
 
 func ExampleParseXEqualsY() {
 	var str []string
