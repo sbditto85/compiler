@@ -119,6 +119,10 @@ func (a *Analyzer) PrintSymbolTable() {
 	a.st.PrintTable()
 }
 
+func (a *Analyzer) PrintTableInAddOrder() {
+	a.st.PrintTableInAddOrder()
+}
+
 func (a *Analyzer) GetNext() (*tok.Token,error) {
 	curTok,err := a.lex.GetNextToken()
 	if curTok.Lexeme == "" {
@@ -360,6 +364,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 
 	switch curTok.Lexeme {
 	case "[","=",";":
+		isArr := false
 		if curTok.Lexeme == "[" {
 			curTok, err = a.GetNext()
 			if err != nil {
@@ -369,9 +374,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 				panic(BuildErrMessFromTok(curTok, "]"))
 			}
 
-			//symbol table operation
-			symdata["isArray"] = true
-			a.AddSymbol(identifier, "Ivar", symdata)
+			isArr = true
 
 			curTok, err = a.GetNext()
 			if err != nil {
@@ -379,6 +382,10 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			}
 		}
 		
+		//symbol table operation
+		symdata["isArray"] = isArr
+		a.AddSymbol(identifier, "Ivar", symdata)
+
 		if curTok.Lexeme == "=" {
 			curTok, err = a.GetNext()
 			if err != nil {

@@ -4,6 +4,7 @@ import (
 	str "strings"
 	"fmt"
 	"strconv"
+	"sort"
 )
 
 type Parameter struct {
@@ -16,16 +17,20 @@ type SymbolTable struct {
 	symIdNum int
 	scope string
 	elems map[string]SymbolTableElement
+	symIds []string
 }
 
 func NewSymbolTable() *SymbolTable {
 	e := make(map[string]SymbolTableElement)
-	return &SymbolTable{scope:"g",elems:e}
+	s := make([]string,0)
+	return &SymbolTable{scope:"g",elems:e,symIds:s}
 }
 
 func (s *SymbolTable) GenSymId(kind string) string {
 	s.symIdNum++
-	return string(([]rune)(kind)[0]) + strconv.Itoa(s.symIdNum)
+	symId := string(([]rune)(kind)[0]) + strconv.Itoa(s.symIdNum)
+	s.symIds = append(s.symIds,symId)
+	return symId
 }
 
 func (s *SymbolTable) AddElement(value string, kind string, data map[string]interface{}) (symId string) {
@@ -89,7 +94,24 @@ func (s *SymbolTable) PrintTable() {
 	fmt.Printf("Current Scope: %s\n",s.scope)
 	fmt.Println("=================")
 	fmt.Println("Elements:")
-	for _,e := range(s.elems) {
+	keys := make([]string,0,len(s.elems))
+	for k := range(s.elems) {
+		keys = append(keys,k)
+	}
+	sort.Strings(keys)
+	for _,key := range(keys) {
+		e := s.elems[key]
+		e.PrintElement()
+		fmt.Println("--------------")
+	}
+}
+
+func (s *SymbolTable) PrintTableInAddOrder() {
+	fmt.Printf("Current Scope: %s\n",s.scope)
+	fmt.Println("=================")
+	fmt.Println("Elements:")
+	for _,key := range(s.symIds) {
+		e := s.elems[key]
 		e.PrintElement()
 		fmt.Println("--------------")
 	}

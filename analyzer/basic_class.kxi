@@ -9,6 +9,8 @@ class Cat {
             x = x;
       }
 
+      private char c[];
+
       public bool Run(int i,char c) {
             int x = 1;
             if(x == i) {
