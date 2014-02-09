@@ -282,6 +282,12 @@ func (a *Analyzer) IsClassDeclaration() (error,ErrorType) {
 	if curTok.Lexeme != "}" {
 		panic(BuildErrMessFromTok(curTok,"}"))
 	}
+
+
+	//symbol table opperation
+	a.DropScope()
+
+
 	a.GetNext()
 	a.debugMessage("is a class declaration!")
 	return nil, NONE
@@ -337,7 +343,6 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 		if e,_ := a.IsConstructorDeclaration(); e != nil {
 			curTok,_ = a.GetCurr()
 			return BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION), CLASS_MEMBER_DECLARATION
-			//panic(BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION))
 		}
 	}
 
@@ -497,6 +502,10 @@ func (a *Analyzer) IsMethodBody() (error,ErrorType) {
 	if curTok.Lexeme != "}" {
 		panic(BuildErrMessFromTok(curTok, "}"))
 	}
+
+	//symbol table opperation
+	a.DropScope()
+
 	curTok,err = a.GetNext()
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
@@ -518,12 +527,15 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 		return BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION), VARIABLE_DECLARATION
 	}
 
+	typ := curTok.Lexeme
 	if e,_ := a.IsType(); e != nil {
 		curTok,_ = a.GetCurr()
 		return BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION), VARIABLE_DECLARATION
 		//panic(BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION))
 	}
 	curTok,err = a.GetCurr()
+
+	identifier := curTok.Lexeme
 	if curTok.Type != tok.Identifier {
 		return BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION), VARIABLE_DECLARATION
 		//panic(BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION))
@@ -532,6 +544,8 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
+
+	isArr := false
 	if curTok.Lexeme == "[" {
 		curTok, err = a.GetNext()
 		if err != nil {
@@ -540,11 +554,20 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 		if curTok.Lexeme != "]" {
 			panic(BuildErrMessFromTok(curTok,"{"))
 		}
+		isArr = true
+
 		curTok,err = a.GetNext()
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
 	}
+
+	//symbol table opperation
+	symdata := make(map[string]interface{})
+	symdata["isArray"] = isArr
+	symdata["type"] = typ
+	a.AddSymbol(identifier, "Lvar", symdata)
+
 	curTok,_ = a.GetCurr()
 	if curTok.Lexeme == "=" {
 		curTok,err = a.GetNext()
