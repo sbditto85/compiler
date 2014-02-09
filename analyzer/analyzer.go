@@ -115,6 +115,10 @@ func (a *Analyzer) DropScope() error {
 	return a.st.DownScope()
 }
 
+func (a *Analyzer) PrintSymbolTable() {
+	a.st.PrintTable()
+}
+
 func (a *Analyzer) GetNext() (*tok.Token,error) {
 	curTok,err := a.lex.GetNextToken()
 	if curTok.Lexeme == "" {
@@ -202,6 +206,7 @@ func (a *Analyzer) IsCompilationUnit() (error,ErrorType) {
 		}
 		fallthrough
 	default:
+		curTok,_ = a.GetCurr()
 		if curTok.Lexeme != "void" {
 			panic(BuildErrMessFromTok(curTok,"void"))
 		}
@@ -285,6 +290,7 @@ func (a *Analyzer) IsClassDeclaration() (error,ErrorType) {
 
 
 	//symbol table opperation
+	//fmt.Println("in class declaration")
 	a.DropScope()
 
 
@@ -322,22 +328,10 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
 		
-		e,_,isVar,isArr,params := a.IsFieldDeclaration()
+		e,_ := a.IsFieldDeclaration(modifier,typ,identifier)
 		if e != nil {
 			curTok,_ = a.GetCurr()
 			panic(BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION))
-		}
-		
-		
-		symdata := make(map[string]interface{})
-		symdata["accessMod"] = modifier
-		symdata["type"] = typ
-		if !isVar {
-			symdata["parameters"] = params
-			a.AddSymbol(identifier, "Method", symdata)
-		} else {
-			symdata["isArray"] = isArr
-			a.AddSymbol(identifier, "Ivar", symdata)
 		}
 	default:
 		if e,_ := a.IsConstructorDeclaration(); e != nil {
@@ -350,16 +344,22 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 	return nil, NONE
 }
 
-func (a *Analyzer) IsFieldDeclaration() (e error,et ErrorType,isVar bool,isArr bool,params []sym.Parameter) {
+func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier string) (e error,et ErrorType) {
 	curTok,err := a.GetCurr()
 	a.debugMessage(fmt.Sprintf("Testing is field declaration with token %s...",curTok.Lexeme))
 	if err != nil {
-		return err, COMPILER,false,false,[]sym.Parameter{}
+		return err, COMPILER
 	}
+
+
+	//symbol table operation
+	symdata := make(map[string]interface{})
+	symdata["accessMod"] = modifier
+	symdata["type"] = typ
+
 
 	switch curTok.Lexeme {
 	case "[","=",";":
-		isArr := false
 		if curTok.Lexeme == "[" {
 			curTok, err = a.GetNext()
 			if err != nil {
@@ -368,7 +368,11 @@ func (a *Analyzer) IsFieldDeclaration() (e error,et ErrorType,isVar bool,isArr b
 			if curTok.Lexeme != "]" {
 				panic(BuildErrMessFromTok(curTok, "]"))
 			}
-			isArr = true
+
+			//symbol table operation
+			symdata["isArray"] = true
+			a.AddSymbol(identifier, "Ivar", symdata)
+
 			curTok, err = a.GetNext()
 			if err != nil {
 				panic(BuildErrFromTokErrType(curTok, COMPILER))
@@ -395,7 +399,7 @@ func (a *Analyzer) IsFieldDeclaration() (e error,et ErrorType,isVar bool,isArr b
 		}
 
 		a.debugMessage("is a field declaration!")
-		return nil, NONE, true, isArr, []sym.Parameter{}
+		return nil, NONE
 	}
 	if curTok.Lexeme == "(" {
 		curTok, err = a.GetNext()
@@ -411,16 +415,23 @@ func (a *Analyzer) IsFieldDeclaration() (e error,et ErrorType,isVar bool,isArr b
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
+
+
+		//symbol table operation
+		symdata["parameters"] = paramList
+		a.AddSymbol(identifier, "Method", symdata)
+
+
 		if e,_ := a.IsMethodBody(); e != nil {
 			panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
 		}
 
 		a.debugMessage("is a field declaration!")
-		return nil, NONE, false, false, paramList
+		return nil, NONE
 	}
 
 	a.debugMessage("is a field declaration!")
-	return BuildErrFromTokErrType(curTok, FIELD_DECLARATION), FIELD_DECLARATION, false, false, []sym.Parameter{}
+	return BuildErrFromTokErrType(curTok, FIELD_DECLARATION), FIELD_DECLARATION
 }
 
 func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
@@ -504,6 +515,7 @@ func (a *Analyzer) IsMethodBody() (error,ErrorType) {
 	}
 
 	//symbol table opperation
+	//fmt.Println("in method body")
 	a.DropScope()
 
 	curTok,err = a.GetNext()
@@ -596,7 +608,7 @@ func (a *Analyzer) IsParameterList() (error,ErrorType,[]sym.Parameter) {
 	if err != nil {
 		return err, COMPILER,[]sym.Parameter{}
 	}
-	params := make([]sym.Parameter,1)
+	params := make([]sym.Parameter,0)
 
 	e,_,param := a.IsParameter()
 	if e != nil {
@@ -899,6 +911,7 @@ func (a *Analyzer) IsMemberRefz() (error,ErrorType) {
 	if curTok.Type != tok.Identifier {
 		panic( BuildTtErrMessFromTok(curTok, tok.Identifier))
 	}
+	a.GetNext()
 	if e,t := a.IsFnArrMember(); e != nil && t != FN_ARR_MEMBER {
 		panic(e.Error())
 	}

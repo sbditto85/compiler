@@ -35,6 +35,7 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	switch kind {
 	case "Class","Method","Main","Constructor":
 		s.AddScope(value)
+		//fmt.Printf("added scope to %s for value %s of kind %s\n",s.scope,value,kind)
 		if v,ok := data["parameters"]; ok {
 			paramSymIds := make([]string,0) 
 			if parameters,ok := v.([]Parameter); ok { 
@@ -51,6 +52,8 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	}
 
 	symId = s.GenSymId(kind)
+
+	//fmt.Printf("scope %s for value %s for kind %s\n",curScope,value,kind)
 	
 	s.elems[symId] = SymbolTableElement{
 		scope: curScope,
@@ -74,6 +77,7 @@ func (s *SymbolTable) DownScope() error {
 	}
 	tmp = tmp[:len(tmp)-1]
 	s.scope = str.Join(tmp,".")
+	//fmt.Printf("Scope dropped down to %s now \n",s.scope)
 	return nil
 }
 
@@ -83,9 +87,11 @@ func (s *SymbolTable) GetScope() string {
 
 func (s *SymbolTable) PrintTable() {
 	fmt.Printf("Current Scope: %s\n",s.scope)
+	fmt.Println("=================")
 	fmt.Println("Elements:")
 	for _,e := range(s.elems) {
 		e.PrintElement()
+		fmt.Println("--------------")
 	}
 }
 

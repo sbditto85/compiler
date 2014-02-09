@@ -12,6 +12,7 @@ func ExampleDefaultSymbolTable() {
 	sym.PrintTable()
 	//Output:
 	//Current Scope: g
+	//=================
 	//Elements:
 }
 
@@ -24,9 +25,11 @@ func ExampleAddSymbol() {
 	sym.PrintTable()
 	//Output:
 	//Current Scope: g.myclass
+	//=================
 	//Elements:
 	//Scope: g, SymId: C1, Value: myclass, Kind: Class
 	//Extra Data:
+	//--------------
 }
 
 func ExampleAddSymbolClassFuncThenRemove() {
@@ -61,49 +64,65 @@ func ExampleAddSymbolClassFuncThenRemove() {
 
 	//Output:
 	//Current Scope: g.myclass.myfun
+	//=================
 	//Elements:
 	//Scope: g, SymId: C1, Value: myclass, Kind: Class
 	//Extra Data:
+	//--------------
 	//Scope: g.myclass, SymId: M2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//--------------
 	//
 	//Current Scope: g.myclass
+	//=================
 	//Elements:
 	//Scope: g, SymId: C1, Value: myclass, Kind: Class
 	//Extra Data:
+	//--------------
 	//Scope: g.myclass, SymId: M2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//--------------
 	//
 	//Current Scope: g
+	//=================
 	//Elements:
 	//Scope: g, SymId: C1, Value: myclass, Kind: Class
 	//Extra Data:
+	//--------------
 	//Scope: g.myclass, SymId: M2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//--------------
 	//
 	//Current Scope: g.othermethod
+	//=================
 	//Elements:
 	//Scope: g, SymId: C1, Value: myclass, Kind: Class
 	//Extra Data:
+	//--------------
 	//Scope: g.myclass, SymId: M2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//--------------
 	//Scope: g, SymId: M3, Value: othermethod, Kind: Method
 	//Extra Data:
 	//Key: testing, Value: testing
+	//--------------
 	//
 	//Current Scope: g
+	//=================
 	//Elements:
 	//Scope: g, SymId: C1, Value: myclass, Kind: Class
 	//Extra Data:
+	//--------------
 	//Scope: g.myclass, SymId: M2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//--------------
 	//Scope: g, SymId: M3, Value: othermethod, Kind: Method
 	//Extra Data:
 	//Key: testing, Value: testing
-
+	//--------------
 }

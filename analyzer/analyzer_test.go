@@ -1544,7 +1544,7 @@ func ExampleFieldDeclarationPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_,_,_,_ := a.IsFieldDeclaration()
+	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1578,7 +1578,7 @@ func ExampleFieldDeclarationArrPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_,_,_,_ := a.IsFieldDeclaration()
+	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1614,7 +1614,7 @@ func ExampleFieldDeclarationAssignPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_,_,_,_ := a.IsFieldDeclaration()
+	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
 	
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1665,7 +1665,7 @@ func ExampleFieldDeclarationArrAssignPass() {
 
 	a := NewAnalyzer(l,true)
 	a.GetNext()
-	err,_,_,_,_ := a.IsFieldDeclaration()
+	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
 	
 	if err != nil {
 		fmt.Println(err.Error())

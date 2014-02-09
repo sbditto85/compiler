@@ -1,0 +1,24 @@
+//Basic class ... simple and easy
+
+class Cat {
+      private char paw = 'p';
+      public int legsNum = 4;
+      private bool myArr[];
+
+      Cat() {
+            x = x;
+      }
+
+      public bool Run(int i,char c) {
+            int x = 1;
+            if(x == i) {
+                 print(c);
+            } 
+      }
+}
+
+void main () {
+     Cat c = new Cat();
+     
+     c.Run(1,'d');
+}
