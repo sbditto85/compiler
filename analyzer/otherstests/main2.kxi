@@ -1,0 +1,28 @@
+void main() {
+    int x = 5;
+    int y = 10;
+    int z;
+    bool a;
+    char c;
+
+    z = x + y;
+    z = x * y + z / x;
+    a = x < y;
+
+    if(x < y){
+        cout << y;
+	cout << '\n';
+    }
+    else{
+        cout << z;
+	cout << '\n';
+    }
+
+    cout << x;
+    cout << '\n';
+    cout << z;
+    cout << '\n';
+    cin >> c;
+    cout << c;
+    cout << '\n';
+}

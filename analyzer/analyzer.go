@@ -203,55 +203,58 @@ func (a *Analyzer) IsCompilationUnit() (error,ErrorType) {
 		return err, COMPILER
 	}
 	
-	switch curTok.Lexeme {
-	case "class":
-		if e,_ := a.IsClassDeclaration(); e != nil {
-			panic(BuildErrMessFromTokErrType(curTok, CLASS_DECLARATION))
-		}
-		fallthrough
-	default:
+	for err == nil {
 		curTok,_ = a.GetCurr()
-		if curTok.Lexeme != "void" {
-			panic(BuildErrMessFromTok(curTok,"void"))
+		if curTok.Lexeme == "class"{
+			if e,_ := a.IsClassDeclaration(); e != nil {
+				panic(BuildErrMessFromTokErrType(curTok, CLASS_DECLARATION))
+			}
+		} else {
+			err = fmt.Errorf("Move along")
 		}
-		curTok,err = a.GetNext()
-		if err != nil {
-			panic(BuildErrFromTokErrType(curTok, COMPILER))
-		}
+	}
 
-		if curTok.Lexeme != "main" {
-			panic(BuildErrMessFromTok(curTok,"main"))
-		}
-		curTok,err = a.GetNext()
-		if err != nil {
-			panic(BuildErrFromTokErrType(curTok, COMPILER))
-		}
-
-		if curTok.Lexeme != "(" {
-			panic(BuildErrMessFromTok(curTok,"("))
-		}
-		curTok,err = a.GetNext()
-		if err != nil {
-			panic(BuildErrFromTokErrType(curTok, COMPILER))
-		}
-
-		if curTok.Lexeme != ")" {
-			panic(BuildErrMessFromTok(curTok,")"))
-		}
-		
-		//symbol table opperation
-		symdata := make(map[string]interface{})
-		symdata["type"] = "void"
-		a.AddSymbol("main", "Main", symdata)
-
-		curTok,err = a.GetNext()
-		if err != nil {
-			panic(BuildErrFromTokErrType(curTok, COMPILER))
-		}
-
-		if e,_ := a.IsMethodBody(); e != nil {
-			panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
-		}
+	curTok,_ = a.GetCurr()
+	if curTok.Lexeme != "void" {
+		panic(BuildErrMessFromTok(curTok,"void"))
+	}
+	curTok,err = a.GetNext()
+	if err != nil {
+		panic(BuildErrFromTokErrType(curTok, COMPILER))
+	}
+	
+	if curTok.Lexeme != "main" {
+		panic(BuildErrMessFromTok(curTok,"main"))
+	}
+	curTok,err = a.GetNext()
+	if err != nil {
+		panic(BuildErrFromTokErrType(curTok, COMPILER))
+	}
+	
+	if curTok.Lexeme != "(" {
+		panic(BuildErrMessFromTok(curTok,"("))
+	}
+	curTok,err = a.GetNext()
+	if err != nil {
+		panic(BuildErrFromTokErrType(curTok, COMPILER))
+	}
+	
+	if curTok.Lexeme != ")" {
+		panic(BuildErrMessFromTok(curTok,")"))
+	}
+	
+	//symbol table opperation
+	symdata := make(map[string]interface{})
+	symdata["type"] = "void"
+	a.AddSymbol("main", "Main", symdata)
+	
+	curTok,err = a.GetNext()
+	if err != nil {
+		panic(BuildErrFromTokErrType(curTok, COMPILER))
+	}
+	
+	if e,_ := a.IsMethodBody(); e != nil {
+		panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
 	}
 
 	a.debugMessage("is a compliation unit!")
@@ -874,9 +877,14 @@ func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 	}
 	switch curTok.Lexeme {
 	case "(":
-		a.GetNext()
-		if err,_ := a.IsArgumentList(); err != nil {
-			return err, FN_ARR_MEMBER
+		curTok, err = a.GetNext()
+		if err != nil {
+			panic(BuildErrFromTokErrType(curTok, COMPILER))
+		}
+		if curTok.Lexeme != ")" {
+			if err,_ := a.IsArgumentList(); err != nil {
+				return err, FN_ARR_MEMBER
+			}
 		}
 		//should be pointing at ")"
 		curTok,err = a.GetCurr()

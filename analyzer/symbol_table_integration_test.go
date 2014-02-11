@@ -50,50 +50,52 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: type, Value: bool
 	//Key: isArray, Value: true
 	//--------------
-	//Scope: g.Cat, SymId: C5, Value: Cat, Kind: Constructor
+	//Scope: g.Cat.Cat, SymId: P5, Value: legsNum, Kind: Parameter
+	//Extra Data:
+	//Key: type, Value: int
+	//Key: isArray, Value: false
+	//--------------
+	//Scope: g.Cat, SymId: C6, Value: Cat, Kind: Constructor
 	//Extra Data:
 	//Key: class, Value: Cat
-	//Key: parameters, Value: []
-	//Key: paramSymIds, Value: []
+	//Key: parameters, Value: [{int legsNum false}]
+	//Key: paramSymIds, Value: [P5]
 	//--------------
-	//Scope: g.Cat, SymId: I6, Value: c, Kind: Ivar
+	//Scope: g.Cat, SymId: I7, Value: c, Kind: Ivar
 	//Extra Data:
 	//Key: accessMod, Value: private
 	//Key: type, Value: char
 	//Key: isArray, Value: true
 	//--------------
-	//Scope: g.Cat.Run, SymId: P7, Value: i, Kind: Parameter
+	//Scope: g.Cat.Run, SymId: P8, Value: i, Kind: Parameter
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: isArray, Value: false
 	//--------------
-	//Scope: g.Cat.Run, SymId: P8, Value: c, Kind: Parameter
+	//Scope: g.Cat.Run, SymId: P9, Value: c, Kind: Parameter
 	//Extra Data:
 	//Key: type, Value: char
 	//Key: isArray, Value: false
 	//--------------
-	//Scope: g.Cat, SymId: M9, Value: Run, Kind: Method
+	//Scope: g.Cat, SymId: M10, Value: Run, Kind: Method
 	//Extra Data:
 	//Key: accessMod, Value: public
 	//Key: type, Value: bool
 	//Key: parameters, Value: [{int i false} {char c false}]
-	//Key: paramSymIds, Value: [P7 P8]
+	//Key: paramSymIds, Value: [P8 P9]
 	//--------------
-	//Scope: g.Cat.Run, SymId: L10, Value: x, Kind: Lvar
+	//Scope: g.Cat.Run, SymId: L11, Value: x, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: int
 	//--------------
-	//Scope: g, SymId: M11, Value: main, Kind: Main
+	//Scope: g, SymId: M12, Value: main, Kind: Main
 	//Extra Data:
 	//Key: type, Value: void
 	//--------------
-	//Scope: g.main, SymId: L12, Value: c, Kind: Lvar
+	//Scope: g.main, SymId: L13, Value: c, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: Cat
 	//--------------
-
 }
-
-

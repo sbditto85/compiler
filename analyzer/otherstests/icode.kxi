@@ -1,0 +1,12 @@
+class Cat {
+	public int i;
+	
+	Cat (int f, int g){
+	}
+}
+
+void main() {
+	int r;
+	int k;
+	int a[] = new int[r*k];	
+}

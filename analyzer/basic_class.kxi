@@ -5,8 +5,8 @@ class Cat {
       public int legsNum = 4;
       private bool myArr[];
 
-      Cat() {
-            x = x;
+      Cat(int legsNum) {
+            legsNum = legsNum;
       }
 
       private char c[];

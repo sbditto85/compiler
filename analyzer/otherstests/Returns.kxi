@@ -1,0 +1,9 @@
+class A {
+	public int test(int k){
+		return k;
+	}
+}
+
+void main() {
+	return;
+}

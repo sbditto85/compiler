@@ -1,0 +1,21 @@
+class DemoC {
+	DemoC() {}
+	public int x = 25;
+
+	public int fib(int k) {
+		if (k == 0) return k;
+		else if (k == 1) return 1;
+		else return fib(k - 1) + fib(k - 2);
+	}
+}
+
+void main() {
+	int k;
+	int j;
+	int sum;
+	DemoC dc;
+
+	cout << dc.x;
+// This is a comment
+	cout << '\n';
+}

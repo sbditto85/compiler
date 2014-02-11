@@ -1,0 +1,16 @@
+void main() {
+    int k;
+
+    cout << ':';
+    cin >> k;
+    cout << '\n';
+
+    while (k != 0) {
+	cout << k;
+	cout << '\n';
+
+	k = k - 1;
+    }
+    cout << k;
+    cout << '\n';
+}

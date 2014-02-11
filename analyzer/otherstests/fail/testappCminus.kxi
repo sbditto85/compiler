@@ -1,0 +1,43 @@
+class DemoC {
+	DemoC() {}
+
+	public int fib(int k) {
+		if (k == 0) return j;
+		else if (k == 1) return 1;
+		else return fib(k - 1) + fib(k - 2);
+	}
+}
+
+void main() {
+	int k;
+	int j;
+	int sum;
+	DemoC dc;
+
+	dc = new DemoC();
+	cout << ">";
+	cin >> x;
+	cout << "\n";
+
+	while (k != 0) {
+		if (k !< 0) {
+			k = 5 + ff * -1 - 2;
+			sum = 0;
+			while ( 0) {
+				j = k;
+				while (j > 0) {
+					if (( j % 3) == 0)
+						sum = (sum + j);
+					j = (j - 1);
+				}
+
+				cout < sum;
+				cout << "\n";
+			}
+
+			cout << ">";
+			cin >> k;
+			cout << "\n";
+		}
+	}
+}

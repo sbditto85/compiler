@@ -10,12 +10,13 @@ import (
 )
 
 var WhiteSpace = regexp.MustCompile(`^(\s)+(.*)`)
-var Number = regexp.MustCompile(`^(\d+)(\s)*(.*)`) // only supports integers
+var Number = regexp.MustCompile(`^([-]?\d+)(\s)*(.*)`) // only supports integers
 var Character = regexp.MustCompile(`^('\\?.')(\s*)(.*)`)
 var Identifier = regexp.MustCompile(`^([A-Za-z][A-Za-z0-9_]{0,79})(\s*)(.*)`) // make sure the next 79 chars isn't something else
 var Punctuation = regexp.MustCompile(`^([;:,'"])(\s)*(.*)`)
 var Keyword = regexp.MustCompile(`^(atoi|bool|class|char|cin|cout|else|false|if|int|itoa|main|new|null|object|public|private|return|string|this|true|void|while)(\s)*(.*)`)
-var Symbol = regexp.MustCompile(`^([-+*/]|[<>=]{1,2}|[&|]{2}|[\[\]]|[{}()])(\s)*(.*)`)
+var Symbol = regexp.MustCompile(`^([-+*/]|[<>=!]{1,2}|[&|]{2}|[\[\]]|[{}()])(\s)*(.*)`)
+var Comment = regexp.MustCompile(`^//.*$`)
 
 //for comparing if the line is done or not
 var emptyString = []byte("")
@@ -46,6 +47,11 @@ func (l *Lexer) ReadFile(f string) error {
 	for scanner.Scan() {
 		l.file = append(l.file, scanner.Text())
 	}
+	
+	if len(l.file) > 0 {
+		l.curline = []byte(l.file[0])
+	}
+	
 	return scanner.Err()
 }
 
@@ -100,7 +106,7 @@ func (l *Lexer) GetNextToken() (*token.Token, error) {
 	}
 
 	//if the line is blank get the next one if nothing then return EOT
-	if bytes.Equal(l.curline,emptyString) {
+	if bytes.Equal(l.curline,emptyString) || Comment.Match(l.curline) {
 		//can we get a new line?
 		if l.loadNextLine() {
 			tok, e := l.GetNextToken()
@@ -120,10 +126,10 @@ func (l *Lexer) GetNextToken() (*token.Token, error) {
 	if tok,found := testType(l,Character,token.Character,false); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Symbol,token.Symbol,false); found {
+	if tok,found := testType(l,Number,token.Number,false); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Number,token.Number,false); found {
+	if tok,found := testType(l,Symbol,token.Symbol,false); found {
 		return tok,nil
 	}
 	if tok,found := testType(l,Punctuation,token.Punctuation,false); found {
@@ -154,7 +160,7 @@ func (l *Lexer) PeekNextToken() (*token.Token, error) {
 	}
 
 	//if the line is blank get the next one if nothing then return EOT
-	if bytes.Equal(l.curline,emptyString) {
+	if bytes.Equal(l.curline,emptyString) || Comment.Match(l.curline) {
 		//can we get a new line?
 		if l.loadNextLine() {
 			tok, e := l.PeekNextToken()
@@ -174,10 +180,10 @@ func (l *Lexer) PeekNextToken() (*token.Token, error) {
 	if tok,found := testType(l,Character,token.Character,true); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Symbol,token.Symbol,true); found {
+	if tok,found := testType(l,Number,token.Number,true); found {
 		return tok,nil
 	}
-	if tok,found := testType(l,Number,token.Number,true); found {
+	if tok,found := testType(l,Symbol,token.Symbol,true); found {
 		return tok,nil
 	}
 	if tok,found := testType(l,Punctuation,token.Punctuation,true); found {
