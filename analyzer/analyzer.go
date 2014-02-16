@@ -5,6 +5,7 @@ import (
 	lex "github.com/sbditto85/compiler/lexer"
 	tok "github.com/sbditto85/compiler/token"
 	sym "github.com/sbditto85/compiler/symbol_table"
+	sem "github.com/sbditto85/compiler/analyzer/semantics"
 )
 
 type ErrorType int
@@ -93,11 +94,13 @@ type Analyzer struct {
 	pass int
 	debug bool
 	st *sym.SymbolTable
+	sm *sem.SemanticManager
 }
 
 func NewAnalyzer(l *lex.Lexer,debug bool) *Analyzer {
 	st := sym.NewSymbolTable()
-	a := &Analyzer{lex:l,debug:debug,st:st}
+	sm := sem.NewSemanticManager()
+	a := &Analyzer{lex:l, debug:debug, st:st, sm:sm, pass:1}
 	return a
 }
 
@@ -852,10 +855,23 @@ func (a *Analyzer) IsExpression() (error,ErrorType) {
 			panic(e.Error())
 		}
 	case curTok.Type == tok.Identifier:
+		//Semantic Action
+		if a.pass == 2 {
+			a.sm.IPush(curTok.Lexeme, a.st.GetScope(),curTok)
+		}
+
 		a.GetNext()
 		if e,t := a.IsFnArrMember(); e != nil && t != FN_ARR_MEMBER {
 			panic(e.Error())
 		}
+
+		//Semantic Action
+		if a.pass == 2 {
+			if e := a.sm.IExist(); e != nil {
+				panic(e.Error())
+			}
+		}
+
 		if e,t := a.IsMemberRefz(); e != nil && t != MEMBER_REFZ {
 			panic(e.Error())
 		}
