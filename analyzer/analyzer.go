@@ -32,6 +32,7 @@ const (
 	METHOD_BODY
 	VARIABLE_DECLARATION
 	CONSTRUCTOR_DECLARATION
+	SEMANTICS
 )
 func GetErrorToStringMap() map[ErrorType]string {
 	ErrorToString := make(map[ErrorType]string)
@@ -99,13 +100,22 @@ type Analyzer struct {
 
 func NewAnalyzer(l *lex.Lexer,debug bool) *Analyzer {
 	st := sym.NewSymbolTable()
-	sm := sem.NewSemanticManager()
+	sm := sem.NewSemanticManager(debug)
 	a := &Analyzer{lex:l, debug:debug, st:st, sm:sm, pass:1}
 	return a
 }
 
-func (a *Analyzer) debugMessage(s string) {
-	if a.debug {
+func (a *Analyzer) SetLexer(l *lex.Lexer) {
+	a.lex = l
+}
+
+func (a *Analyzer) debugMessagePassOne(s string) {
+	if a.debug && a.pass == 1 {
+		fmt.Println(s)
+	}
+}
+func (a *Analyzer) debugMessagePassTwo(s string) {
+	if a.debug && a.pass == 2 {
 		fmt.Println(s)
 	}
 }
@@ -129,9 +139,9 @@ func (a *Analyzer) PrintTableInAddOrder() {
 func (a *Analyzer) GetNext() (*tok.Token,error) {
 	curTok,err := a.lex.GetNextToken()
 	if curTok.Lexeme == "" {
-		a.debugMessage("Token: ''")
+		a.debugMessagePassOne("Token: ''")
 	} else {
-		a.debugMessage("Token: " + curTok.Lexeme)
+		a.debugMessagePassOne("Token: " + curTok.Lexeme)
 	}
 	return curTok,err
 }
@@ -145,13 +155,35 @@ func (a *Analyzer) Peek() (*tok.Token,error) {
 	return a.lex.PeekNextToken()
 }
 
+func (a *Analyzer) PerformPass() (err error) {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+			switch r.(type) {
+			case string:
+				err = fmt.Errorf(r.(string))
+			case error:
+				err = r.(error)
+			}
+		}
+	}()
+
+	err,_ = a.IsCompilationUnit()
+
+	return err
+}
+
 func (a *Analyzer) PerformNextPass(debug bool) error {
-	return nil
+	a.pass += 1
+	a.debug = debug
+	a.sm.SetDebug(debug)
+	err := a.PerformPass()
+	return err
 }
 
 func (a *Analyzer) IsModifier() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is modifier with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is modifier with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -161,13 +193,13 @@ func (a *Analyzer) IsModifier() (error,ErrorType) {
 	default:
 		return BuildErrFromTokErrType(curTok, MODIFIER), MODIFIER
 	}
-	a.debugMessage("is modifier!")
+	a.debugMessagePassOne("is modifier!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsClassName() (error,ErrorType,string) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is classname with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is classname with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER, ""
 	}
@@ -177,13 +209,13 @@ func (a *Analyzer) IsClassName() (error,ErrorType,string) {
 	default:
 		return BuildErrFromTokErrType(curTok, CLASS_NAME), CLASS_NAME, ""
 	}
-	a.debugMessage("is classname!")
+	a.debugMessagePassOne("is classname!")
 	return nil, NONE, curTok.Lexeme
 }
 
 func (a *Analyzer) IsType() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is type with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is type with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -195,13 +227,13 @@ func (a *Analyzer) IsType() (error,ErrorType) {
 			return BuildErrFromTokErrType(curTok, TYPE), TYPE
 		}
 	}
-	a.debugMessage("is type!")
+	a.debugMessagePassOne("is type!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsCompilationUnit() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is compilation unit with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is compilation unit with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -260,13 +292,13 @@ func (a *Analyzer) IsCompilationUnit() (error,ErrorType) {
 		panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
 	}
 
-	a.debugMessage("is a compliation unit!")
+	a.debugMessagePassOne("is a compliation unit!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsClassDeclaration() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is class declaration with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is class declaration with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -305,13 +337,13 @@ func (a *Analyzer) IsClassDeclaration() (error,ErrorType) {
 
 
 	a.GetNext()
-	a.debugMessage("is a class declaration!")
+	a.debugMessagePassOne("is a class declaration!")
 	return nil, NONE
 }
  
 func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is class member declaration with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is class member declaration with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -350,13 +382,13 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 		}
 	}
 
-	a.debugMessage("is a class member declaration!")
+	a.debugMessagePassOne("is a class member declaration!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier string) (e error,et ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is field declaration with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is field declaration with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -411,7 +443,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
 
-		a.debugMessage("is a field declaration!")
+		a.debugMessagePassOne("is a field declaration!")
 		return nil, NONE
 	}
 	if curTok.Lexeme == "(" {
@@ -439,17 +471,17 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
 		}
 
-		a.debugMessage("is a field declaration!")
+		a.debugMessagePassOne("is a field declaration!")
 		return nil, NONE
 	}
 
-	a.debugMessage("is a field declaration!")
+	a.debugMessagePassOne("is a field declaration!")
 	return BuildErrFromTokErrType(curTok, FIELD_DECLARATION), FIELD_DECLARATION
 }
 
 func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is constructor declaration with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is constructor declaration with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -487,13 +519,13 @@ func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 	if e,t := a.IsMethodBody(); e != nil {
 		panic(BuildErrMessFromTokErrType(curTok, t))
 	}
-	a.debugMessage("is a constructor declaration!")
+	a.debugMessagePassOne("is a constructor declaration!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsMethodBody() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is method body with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is method body with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -536,13 +568,13 @@ func (a *Analyzer) IsMethodBody() (error,ErrorType) {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
 
-	a.debugMessage("is a method body!")
+	a.debugMessagePassOne("is a method body!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is variable declaration with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is variable declaration with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -611,13 +643,13 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
-	a.debugMessage("is a variable declaration!")
+	a.debugMessagePassOne("is a variable declaration!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsParameterList() (error,ErrorType,[]sym.Parameter) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is parameter list with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is parameter list with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER,[]sym.Parameter{}
 	}
@@ -645,13 +677,13 @@ func (a *Analyzer) IsParameterList() (error,ErrorType,[]sym.Parameter) {
 		}
 	}
 
-	a.debugMessage("is a parameter list!")
+	a.debugMessagePassOne("is a parameter list!")
 	return nil, NONE, params
 }
 
 func (a *Analyzer) IsParameter() (error,ErrorType,sym.Parameter) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is parameter with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is parameter with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER, sym.Parameter{}
 	}
@@ -685,13 +717,13 @@ func (a *Analyzer) IsParameter() (error,ErrorType,sym.Parameter) {
 
 		isArr = true
 	}
-	a.debugMessage("is a parameter!")
+	a.debugMessagePassOne("is a parameter!")
 	return nil, NONE, sym.Parameter{Typ:typ,Identifier:identifier,IsArr:isArr}
 }
 
 func (a *Analyzer) IsStatement() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is statement with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is statement with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -799,18 +831,25 @@ func (a *Analyzer) IsStatement() (error,ErrorType) {
 			if curTok.Lexeme != ";" {
 				panic(BuildErrMessFromTok(curTok, ";"))
 			}
+			//Semantic Action
+			if a.pass == 2 {
+				if err := a.sm.EoE(); err != nil {
+					panic(err.Error())
+				}
+				a.debugMessagePassTwo("EOE")
+			}
 			a.GetNext()
 		} else {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
 		}
 	}
-	a.debugMessage("is a statement!")
+	a.debugMessagePassOne("is a statement!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsExpression() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is expression with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is expression with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -858,6 +897,7 @@ func (a *Analyzer) IsExpression() (error,ErrorType) {
 		//Semantic Action
 		if a.pass == 2 {
 			a.sm.IPush(curTok.Lexeme, a.st.GetScope(),curTok)
+			a.debugMessagePassTwo(fmt.Sprintf("IPush: %s from scope %s",curTok.Lexeme,a.st.GetScope()))
 		}
 
 		a.GetNext()
@@ -867,9 +907,10 @@ func (a *Analyzer) IsExpression() (error,ErrorType) {
 
 		//Semantic Action
 		if a.pass == 2 {
-			if e := a.sm.IExist(); e != nil {
+			if e := a.sm.IExist(a.st); e != nil {
 				panic(e.Error())
 			}
+			a.debugMessagePassTwo("IExists!");
 		}
 
 		if e,t := a.IsMemberRefz(); e != nil && t != MEMBER_REFZ {
@@ -881,13 +922,13 @@ func (a *Analyzer) IsExpression() (error,ErrorType) {
 	default:
 		return BuildErrFromTokErrType(curTok, EXPRESSION), EXPRESSION
 	}
-	a.debugMessage("is expression!");
+	a.debugMessagePassOne("is expression!");
 	return nil, NONE
 }
 
 func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is fn arr member with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is fn arr member with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -921,13 +962,13 @@ func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 	default:
 		return BuildErrFromTokErrType(curTok, FN_ARR_MEMBER), FN_ARR_MEMBER
 	}
-	a.debugMessage("is fn arr member!")
+	a.debugMessagePassOne("is fn arr member!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsMemberRefz() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is member refz with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is member refz with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -949,13 +990,13 @@ func (a *Analyzer) IsMemberRefz() (error,ErrorType) {
 	if e,t := a.IsMemberRefz(); e != nil && t != MEMBER_REFZ {
 		panic(e.Error())
 	}
-	a.debugMessage("is member refz!")
+	a.debugMessagePassOne("is member refz!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsExpressionZ() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is expressionz with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is expressionz with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -966,6 +1007,14 @@ func (a *Analyzer) IsExpressionZ() (error,ErrorType) {
 			panic(err.Error())
 		}
 	case "=":
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush("=",1,1); err != nil {
+				panic(err.Error())
+			}
+			a.debugMessagePassTwo("Pushed operator =")
+		}
+
 		a.GetNext()
 		if err,_ := a.IsAssignmentExpression(); err != nil {
 			panic(err.Error())
@@ -973,13 +1022,13 @@ func (a *Analyzer) IsExpressionZ() (error,ErrorType) {
 	default:
 		return BuildErrFromTokErrType(curTok, EXPRESSIONZ), EXPRESSIONZ
 	}
-	a.debugMessage("is expressionz!");
+	a.debugMessagePassOne("is expressionz!");
 	return nil, NONE
 }
 
 func (a *Analyzer) IsAssignmentExpression() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is assignment_expression with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is assignment_expression with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -1027,13 +1076,13 @@ func (a *Analyzer) IsAssignmentExpression() (error,ErrorType) {
 			return err, ASSIGNMENT_EXPRESSION
 		}
 	}
-	a.debugMessage("is assignment_expression!");
+	a.debugMessagePassOne("is assignment_expression!");
 	return nil, NONE
 }
 
 func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is new declaration with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is new declaration with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -1060,13 +1109,13 @@ func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 	default:
 		return BuildErrFromTokErrType(curTok, NEW_DECLARATION), NEW_DECLARATION
 	}
-	a.debugMessage("is new declaration!")
+	a.debugMessagePassOne("is new declaration!")
 	return nil, NONE
 }
 
 func (a *Analyzer) IsArgumentList() (error,ErrorType) {
 	curTok,err := a.GetCurr()
-	a.debugMessage(fmt.Sprintf("Testing is argument list with token %s...",curTok.Lexeme))
+	a.debugMessagePassOne(fmt.Sprintf("Testing is argument list with token %s...",curTok.Lexeme))
 	if err != nil {
 		return err, COMPILER
 	}
@@ -1086,7 +1135,7 @@ func (a *Analyzer) IsArgumentList() (error,ErrorType) {
 			panic(e.Error())
 		}
 	}
-	a.debugMessage("is argument list!")
+	a.debugMessagePassOne("is argument list!")
 	return nil, NONE
 }
 

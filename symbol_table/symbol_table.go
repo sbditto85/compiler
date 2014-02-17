@@ -18,12 +18,14 @@ type SymbolTable struct {
 	scope string
 	elems map[string]SymbolTableElement
 	symIds []string
+	scopeElements map[string][]string
 }
 
 func NewSymbolTable() *SymbolTable {
 	e := make(map[string]SymbolTableElement)
 	s := make([]string,0)
-	return &SymbolTable{scope:"g",elems:e,symIds:s}
+	se := make(map[string][]string)
+	return &SymbolTable{scope:"g", elems:e, symIds:s, scopeElements:se}
 }
 
 func (s *SymbolTable) GenSymId(kind string) string {
@@ -59,13 +61,15 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	symId = s.GenSymId(kind)
 
 	//fmt.Printf("scope %s for value %s for kind %s\n",curScope,value,kind)
+
+	s.scopeElements[curScope] = append(s.scopeElements[curScope],symId)
 	
 	s.elems[symId] = SymbolTableElement{
-		scope: curScope,
-		symid: symId,
-		value: value,
-		kind: kind,
-		data: data,
+		Scope: curScope,
+		Symid: symId,
+		Value: value,
+		Kind: kind,
+		Data: data,
 	}
 	
 	return symId
@@ -73,21 +77,43 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 
 func (s *SymbolTable) AddScope(scope string) {
 	s.scope += "." + scope
+	if _,ok := s.scopeElements[s.scope]; !ok {
+		s.scopeElements[s.scope] = make([]string,0)
+	}
 }
 
 func (s *SymbolTable) DownScope() error {
-	tmp := str.Split(s.scope,".")
+	newscope,err := s.ScopeBelow(s.scope)
+	if err == nil {
+		s.scope = newscope
+		//fmt.Printf("Scope dropped down to %s now \n",s.scope)
+	}
+	return err
+}
+
+func (s *SymbolTable) ScopeBelow(scope string) (string,error) {
+	tmp := str.Split(scope,".")
 	if len(tmp) < 1 {
-		return fmt.Errorf("Can't drop scope, current scope is %s",s.scope)
+		return "", fmt.Errorf("Can't drop scope, current scope is %s",s.scope)
 	}
 	tmp = tmp[:len(tmp)-1]
-	s.scope = str.Join(tmp,".")
-	//fmt.Printf("Scope dropped down to %s now \n",s.scope)
-	return nil
+	newscope := str.Join(tmp,".")
+	return newscope, nil
 }
 
 func (s *SymbolTable) GetScope() string {
 	return s.scope
+}
+
+func (s *SymbolTable) GetScopeElements(scope string) []SymbolTableElement {
+	if elemsSymIds, ok := s.scopeElements[scope]; ok {
+		elems := make([]SymbolTableElement,0,len(elemsSymIds))
+		for _,symId := range(elemsSymIds) {
+			elems = append(elems,s.elems[symId])
+		}
+		return elems
+	}
+	return make([]SymbolTableElement,0) //if we aint got nut'n for the scope they get nut'n
 }
 
 func (s *SymbolTable) PrintTable() {
@@ -118,17 +144,17 @@ func (s *SymbolTable) PrintTableInAddOrder() {
 }
 
 type SymbolTableElement struct {
-	scope string
-	symid string
-	value string
-	kind string
-	data map[string]interface{}
+	Scope string
+	Symid string
+	Value string
+	Kind string
+	Data map[string]interface{}
 }
 
 func (s *SymbolTableElement) PrintElement() {
-	fmt.Printf("Scope: %s, SymId: %s, Value: %s, Kind: %s\n",s.scope,s.symid,s.value,s.kind)
+	fmt.Printf("Scope: %s, SymId: %s, Value: %s, Kind: %s\n",s.Scope,s.Symid,s.Value,s.Kind)
 	fmt.Println("Extra Data:")
-	for k,v := range(s.data) {
+	for k,v := range(s.Data) {
 		fmt.Printf("Key: %s, Value: %v\n",k,v)
 	}
 }
