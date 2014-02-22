@@ -1,0 +1,23 @@
+
+class Foo {
+      private char f;
+
+      public int f(bool b, int i) {
+             //if(b) {
+             //      return i;
+             //}
+             //return 0;
+      }
+
+}
+
+
+
+void main() {
+     bool k = true;
+     int g = 1;
+     int r = 2;
+     Foo y;
+     int x;
+     x = y . f (k, g) + g  * r ;
+}

@@ -35,7 +35,7 @@ func (s *SymbolTable) GenSymId(kind string) string {
 	return symId
 }
 
-func (s *SymbolTable) AddElement(value string, kind string, data map[string]interface{}) (symId string) {
+func (s *SymbolTable) AddElement(value string, kind string, data map[string]interface{}, addToHash bool) (symId string) {
 
 	curScope := s.scope
 
@@ -50,12 +50,16 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 					pmap := make(map[string]interface{})
 					pmap["type"] = p.Typ
 					pmap["isArray"] = p.IsArr
-					paramSymId := s.AddElement(p.Identifier,"Parameter",pmap)
+					paramSymId := s.AddElement(p.Identifier,"Parameter",pmap,addToHash)
 					paramSymIds = append(paramSymIds,paramSymId)
 				}
 			}
 			data["paramSymIds"] = paramSymIds
 		}
+	}
+
+	if !addToHash {
+		return ""
 	}
 
 	symId = s.GenSymId(kind)
@@ -76,10 +80,13 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 }
 
 func (s *SymbolTable) AddScope(scope string) {
-	s.scope += "." + scope
+	s.scope = s.ScopeAbove(s.scope,scope)
 	if _,ok := s.scopeElements[s.scope]; !ok {
 		s.scopeElements[s.scope] = make([]string,0)
 	}
+}
+func (s *SymbolTable) ScopeAbove(scope, add string) (string) {
+	return scope + "." + add
 }
 
 func (s *SymbolTable) DownScope() error {
@@ -90,7 +97,6 @@ func (s *SymbolTable) DownScope() error {
 	}
 	return err
 }
-
 func (s *SymbolTable) ScopeBelow(scope string) (string,error) {
 	tmp := str.Split(scope,".")
 	if len(tmp) < 1 {

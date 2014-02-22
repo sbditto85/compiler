@@ -2,7 +2,6 @@ package semantics
 
 import (
 	"fmt"
-	tok "github.com/sbditto85/compiler/token"
 	sym "github.com/sbditto85/compiler/symbol_table"
 )
 
@@ -12,12 +11,13 @@ import (
 type SemanticManager struct {
 	ops *OperatorStack
 	sas *SemanticActionStack
+	st *sym.SymbolTable
 	debug bool
 }
-func NewSemanticManager(debug bool) *SemanticManager {
+func NewSemanticManager(st *sym.SymbolTable, debug bool) *SemanticManager {
 	ops := NewOperatorStack()
 	sas := NewSemanticActionStack()
-	return &SemanticManager{ops:ops, sas:sas, debug:debug}
+	return &SemanticManager{ops:ops, sas:sas, st:st, debug:debug}
 }
 func (s *SemanticManager) debugMessage(msg string) {
 	if s.debug {
@@ -68,6 +68,28 @@ func (s *OperatorStack) topElement() (value *Operator) {
 	}
 	return nil
 }
+func (s *OperatorStack) GetPrec(op string) (precIn, precOn int, err error) {
+	switch op {
+	case "=":
+		precIn = 1
+		precOn = 1
+	case "+","-":
+		precIn = 11
+		precOn = 11
+	case "*","/","%":
+		precIn = 13
+		precOn = 13
+	case "(","[":
+		precIn = 15
+		precOn = -1
+	case ")","]":
+		precIn = 0
+		precOn = 0
+	default:
+		err = fmt.Errorf("No Precidence for operator %s",op)
+	}
+	return
+}
 
 type Operator struct{
 	value string
@@ -78,8 +100,11 @@ func (o *Operator) Perform(s *SemanticManager) error {
 	switch o.value {
 	case "=":
 		return s.AssignmentOperator()
+	case "+","-","*","/":
+		return s.ArithmeticOperator(o.value)
 	}
-	return fmt.Errorf("Operator not found")
+	//panic(fmt.Sprintf("Operator not found %s",o.value))
+	return fmt.Errorf("Operator not found %s",o.value)
 }
 
 //////////////////////////////////
@@ -120,8 +145,8 @@ func (s *SemanticActionStack) pop() (value SemanticActionRecord) {
 type SemanticActionRecord interface {
 	GetValue() string
 	GetType() string
+	GetScope() string
 	IsSameType(other SemanticActionRecord) bool
-	GetToken() *tok.Token
 	Exists(st *sym.SymbolTable) bool
 }
 
@@ -133,7 +158,6 @@ type Id_Sar struct {
 	typ string
 	scope string
 	exists bool
-	token *tok.Token
 }
 func (i *Id_Sar) GetValue() string {
 	return i.value
@@ -141,32 +165,151 @@ func (i *Id_Sar) GetValue() string {
 func (i *Id_Sar) GetType() string {
 	return i.typ
 }
+func (i *Id_Sar) GetScope() string {
+	return i.scope
+}
 func (i *Id_Sar) IsSameType(other SemanticActionRecord) bool {
 	return i.typ == other.GetType()
 }
-func (i *Id_Sar) GetToken() *tok.Token {
-	return i.token
-}
 func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 	scopeChecking := st.GetScope()
+	var err error
+	for scopeChecking != "" {
+		elems := st.GetScopeElements(scopeChecking)
+		for _,elem := range(elems) {
+			switch elem.Kind {
+			case "Lvar","Ivar":
+				if elem.Value == i.value {
+					//fmt.Printf("elem: %#v\n",elem)
+					//fmt.Printf("i: %#v\n",i)
+					//set type and exists on *Id_Sar
+					if typ,ok := elem.Data["type"]; ok {
+						i.typ = typ.(string)
+					} else {
+						return false //NEED TYPE, break? check other scopes?
+					}
+					i.exists = true
+					return true
+				}
+			} 
+		}
+		scopeChecking,err = st.ScopeBelow(scopeChecking)
+		if err != nil {
+			return false
+		}
+	}
+	return false
+}
 
-	elems := st.GetScopeElements(scopeChecking)
+type Tvar_Sar struct {
+	value string
+	typ string
+	scope string
+	symId string
+}
+func (i *Tvar_Sar) GetValue() string {
+	return i.value
+}
+func (i *Tvar_Sar) GetType() string {
+	return i.typ
+}
+func (i *Tvar_Sar) GetScope() string {
+	return i.scope
+}
+func (i *Tvar_Sar) IsSameType(other SemanticActionRecord) bool {
+	return i.typ == other.GetType()
+}
+func (i *Tvar_Sar) Exists(st *sym.SymbolTable) bool {
+	return true
+}
+
+type Ref_Sar struct {
+	value string
+	typ string
+	scope string
+	exists bool
+}
+func (r *Ref_Sar) GetValue() string {
+	return r.value
+}
+func (r *Ref_Sar) GetType() string {
+	return r.typ
+}
+func (r *Ref_Sar) GetScope() string {
+	return r.scope
+}
+func (r *Ref_Sar) IsSameType(other SemanticActionRecord) bool {
+	return r.typ == other.GetType()
+}
+func (r *Ref_Sar) Exists(st *sym.SymbolTable) bool {
+	return r.exists
+}
+func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) bool {
+	elems := st.GetScopeElements(r.scope)
+	//fmt.Printf("%s\n",r.scope)
+	//fmt.Printf("%#v\n",elems)
+
 	for _,elem := range(elems) {
 		switch elem.Kind {
-		case "Lvar","Ivar":
-			if elem.Value == i.value {
+		case "Ivar":
+			if elem.Value == inside.GetValue() {
 				//fmt.Printf("elem: %#v\n",elem)
 				//fmt.Printf("i: %#v\n",i)
+				//check modifier
+				if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
+					continue;
+				}
+
 				//set type and exists on *Id_Sar
 				if typ,ok := elem.Data["type"]; ok {
-					i.typ = typ.(string)
+					r.typ = typ.(string)
 				} else {
 					return false //NEED TYPE, break? check other scopes?
 				}
-				i.exists = true
+				r.exists = true
 				return true
 			}
 		} 
 	}
+	return false
+}
+
+type Bal_Sar struct {
+	scope string
+}
+func (b *Bal_Sar) GetValue() string {
+	return ""
+}
+func (b *Bal_Sar) GetType() string {
+	return ""
+}
+func (b *Bal_Sar) GetScope() string {
+	return b.scope
+}
+func (b *Bal_Sar) IsSameType(other SemanticActionRecord) bool {
+	return false
+}
+func (b *Bal_Sar) Exists(st *sym.SymbolTable) bool {
+	return true
+}
+
+
+type Al_Sar struct {
+	scope string
+	args []SemanticActionRecord
+}
+func (a *Al_Sar) GetValue() string {
+	return ""
+}
+func (a *Al_Sar) GetType() string {
+	return ""
+}
+func (a *Al_Sar) GetScope() string {
+	return a.scope
+}
+func (a *Al_Sar) IsSameType(other SemanticActionRecord) bool {
+	return false
+}
+func (a *Al_Sar) Exists(st *sym.SymbolTable) bool {
 	return true
 }

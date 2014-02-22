@@ -1,0 +1,13 @@
+class Cat {
+      public int x;
+}
+
+class Dog {
+      public int y;
+}
+
+void main() {
+     Cat a;
+     Dog b;
+     a.x = b.y;
+}

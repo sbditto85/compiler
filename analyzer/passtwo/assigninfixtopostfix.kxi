@@ -1,0 +1,8 @@
+void main() {
+     int x;
+     int y;
+     int g;
+     int f;
+     int k;
+     x = y * g + f / k;
+}
