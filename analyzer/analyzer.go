@@ -1175,6 +1175,15 @@ func (a *Analyzer) IsArgumentList() (error,ErrorType) {
 		if curTok.Lexeme != "," {
 			break
 		}
+
+		//Semantic Action
+		if a.pass == 2 {
+			if err := a.sm.Comma(); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("Comma")
+		}		
+
 		a.GetNext()
 		if e,_ := a.IsExpression(); e != nil {
 			panic(e.Error())

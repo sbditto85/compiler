@@ -21,7 +21,7 @@ func ExampleAddSymbol() {
 
 	d := make(map[string]interface{})
 
-	sym.AddElement("myclass","Class",d)
+	sym.AddElement("myclass","Class",d,true)
 	sym.PrintTable()
 	//Output:
 	//Current Scope: g.myclass
@@ -38,9 +38,9 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	dClass := make(map[string]interface{})
 	dMethod := make(map[string]interface{})
 
-	sym.AddElement("myclass","Class",dClass)
+	sym.AddElement("myclass","Class",dClass,true)
 	dMethod["additional"] = "more"
-	sym.AddElement("myfun","Method",dMethod)
+	sym.AddElement("myfun","Method",dMethod,true)
 	sym.PrintTable()
 	fmt.Println()
 	sym.DownScope()
@@ -53,7 +53,7 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	otherMethod := make(map[string]interface{})
 	otherMethod["testing"] = "testing"
 
-	sym.AddElement("othermethod","Method",otherMethod)
+	sym.AddElement("othermethod","Method",otherMethod,true)
 	sym.PrintTable()
 	fmt.Println()
 	sym.DownScope()

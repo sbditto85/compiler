@@ -52,13 +52,12 @@ func (s *SemanticManager) BAL(scope string) {
 
 func (s *SemanticManager) EAL(scope string) {
 	len := s.sas.len()
-	args := make([]SemanticActionRecord,0,len)
+	args := make([]SemanticActionRecord,len,len)
 	len--
-	cont := true
-	for arg := s.sas.pop(); cont && arg != nil; arg = s.sas.pop() {
+LOOP:	for arg := s.sas.pop(); arg != nil; arg = s.sas.pop() {
 		switch arg.(type) {
 		case *Bal_Sar:
-			cont = false
+			break LOOP
 		}
 		args[len] = arg
 		len--
@@ -67,8 +66,37 @@ func (s *SemanticManager) EAL(scope string) {
 	s.sas.push(&Al_Sar{scope:scope,args:args[len:]})
 }
 
-func (s *SemanticManager) Func(scope string) {
+func (s *SemanticManager) Func(scope string) (err error) {
+	as := s.sas.pop()
+	var al_sar *Al_Sar
+	switch a := as.(type) {
+	case *Al_Sar:
+		al_sar = a
+	default:
+		return fmt.Errorf("Expected Argument List for function")
+	}
 	
+	is := s.sas.pop()
+	var id_sar *Id_Sar
+	switch i := is.(type) {
+	case *Id_Sar:
+		id_sar = i
+	default:
+		return fmt.Errorf("Expected identifier for function")
+	}
+
+	s.debugMessage(fmt.Sprintf("Identifer: %s, with %d Arguments",id_sar.GetValue(),len(al_sar.GetArgs())))
+
+	fun_val := id_sar.GetValue() + "("
+	for i,a := range(al_sar.GetArgs()) {
+		if i != 0 {
+			fun_val += ", "
+		}
+		fun_val += a.GetType()
+	}
+	fun_val += ")"
+	s.sas.push(&Func_Sar{value:fun_val, scope:scope, id_sar:id_sar, al_sar:al_sar})
+	return nil
 }
 
 func (s *SemanticManager) OPush(value string) (err error) {
@@ -91,12 +119,29 @@ func (s *SemanticManager) OPush(value string) (err error) {
 	return
 }
 
-func (s *SemanticManager) CloseParen() {
-	
+func (s *SemanticManager) CloseParen() (err error) {
+	err = s.Comma()
+	if err != nil {
+		return err
+	}
+	op := s.ops.pop()
+	if op.value != "(" || op == nil {
+		return fmt.Errorf("Close paren didn't find opening paren")
+	}
+	return
 }
 
-func (s *SemanticManager) Comma() {
-	
+func (s *SemanticManager) Comma() (err error) {
+	for op := s.ops.topElement(); op != nil && op.value != "("; op = s.ops.topElement() {
+		s.ops.pop()
+		s.debugMessage(fmt.Sprintf("Testing operation %s ...",op.value))
+		err := op.Perform(s)
+		if err != nil {
+			return err
+		}
+		s.debugMessage(fmt.Sprintf("... finished operation %s",op.value))
+	}
+	return
 }
 
 func (s *SemanticManager) EoE() (err error) {

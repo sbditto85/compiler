@@ -313,3 +313,37 @@ func (a *Al_Sar) IsSameType(other SemanticActionRecord) bool {
 func (a *Al_Sar) Exists(st *sym.SymbolTable) bool {
 	return true
 }
+func (a *Al_Sar) GetArgs() []SemanticActionRecord {
+	return a.args
+}
+
+type Func_Sar struct {
+	value string
+	typ string
+	scope string
+	exists bool
+	id_sar *Id_Sar
+	al_sar *Al_Sar
+}
+func (f *Func_Sar) GetValue() string {
+	return f.value
+}
+func (f *Func_Sar) GetType() string {
+	return f.typ
+}
+func (f *Func_Sar) GetScope() string {
+	return f.scope
+}
+func (f *Func_Sar) IsSameType(other SemanticActionRecord) bool {
+	return f.typ == other.GetType()
+}
+func (f *Func_Sar) Exists(st *sym.SymbolTable) bool {
+
+	return false
+}
+func (f *Func_Sar) GetIdSar() *Id_Sar {
+	return f.id_sar
+}
+func (f *Func_Sar) GetAlSar() *Al_Sar {
+	return f.al_sar
+}
