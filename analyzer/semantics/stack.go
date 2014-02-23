@@ -246,30 +246,35 @@ func (r *Ref_Sar) Exists(st *sym.SymbolTable) bool {
 }
 func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) bool {
 	elems := st.GetScopeElements(r.scope)
-	//fmt.Printf("%s\n",r.scope)
-	//fmt.Printf("%#v\n",elems)
 
-	for _,elem := range(elems) {
-		switch elem.Kind {
-		case "Ivar":
-			if elem.Value == inside.GetValue() {
-				//fmt.Printf("elem: %#v\n",elem)
-				//fmt.Printf("i: %#v\n",i)
-				//check modifier
-				if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
-					continue;
+	switch sar := inside.(type) {
+	case *Func_Sar:
+		owner := sar.GetIdSar()
+		if !owner.Exists(st) {
+			return false
+		}
+		//TODO: finish the check for the function and compare the method args etc
+	default:
+		for _,elem := range(elems) {
+			switch elem.Kind {
+			case "Ivar":
+				if elem.Value == inside.GetValue() {
+					//check modifier
+					if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
+						continue;
+					}
+					
+					//set type and exists on *Id_Sar
+					if typ,ok := elem.Data["type"]; ok {
+						r.typ = typ.(string)
+					} else {
+						return false //NEED TYPE, break? check other scopes?
+					}
+					r.exists = true
+					return true
 				}
-
-				//set type and exists on *Id_Sar
-				if typ,ok := elem.Data["type"]; ok {
-					r.typ = typ.(string)
-				} else {
-					return false //NEED TYPE, break? check other scopes?
-				}
-				r.exists = true
-				return true
-			}
-		} 
+			} 
+		}
 	}
 	return false
 }
@@ -338,8 +343,7 @@ func (f *Func_Sar) IsSameType(other SemanticActionRecord) bool {
 	return f.typ == other.GetType()
 }
 func (f *Func_Sar) Exists(st *sym.SymbolTable) bool {
-
-	return false
+	return f.exists
 }
 func (f *Func_Sar) GetIdSar() *Id_Sar {
 	return f.id_sar
