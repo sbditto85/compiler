@@ -1,0 +1,15 @@
+class Baz {
+
+      Baz() {
+
+      }
+      
+      public int y;
+      public int y() {
+
+      }
+}
+
+void main() {
+     Baz b = new Baz();
+}

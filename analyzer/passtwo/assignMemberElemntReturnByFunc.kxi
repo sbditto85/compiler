@@ -1,0 +1,27 @@
+
+class Foo {
+      private char f;
+
+      public Bar f() {
+      }
+
+}
+
+class Bar {
+      public Baz g() {
+      }
+}
+
+class Baz {
+      public int y;
+      public int y() {
+
+      }
+}
+
+void main() {
+     int r = 2;
+     Foo x;
+
+     x . f () . g () . y = r;
+}

@@ -36,7 +36,7 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 	scopeToTest := st.ScopeAbove("g",class_sar.GetType())
 
 	value := class_sar.GetValue()+"."+var_sar.GetValue()
-	ref_sar := &Ref_Sar{value:value, scope:scopeToTest}
+	ref_sar := &Ref_Sar{value:value, scope:scopeToTest, class_sar:class_sar, var_sar:var_sar}
 
 	if ref_sar.InstExists(st,var_sar) {
 		s.sas.push(ref_sar)
@@ -120,14 +120,20 @@ func (s *SemanticManager) OPush(value string) (err error) {
 }
 
 func (s *SemanticManager) CloseParen() (err error) {
-	err = s.Comma()
-	if err != nil {
-		return err
+	for op := s.ops.topElement(); op != nil && op.value != "("; op = s.ops.topElement() {
+		s.ops.pop()
+		s.debugMessage(fmt.Sprintf("Testing operation %s ...",op.value))
+		err := op.Perform(s)
+		if err != nil {
+			return err
+		}
+		s.debugMessage(fmt.Sprintf("... finished operation %s",op.value))
 	}
 	op := s.ops.pop()
 	if op.value != "(" || op == nil {
 		return fmt.Errorf("Close paren didn't find opening paren")
 	}
+	s.debugMessage("Finished )")
 	return
 }
 
@@ -141,6 +147,7 @@ func (s *SemanticManager) Comma() (err error) {
 		}
 		s.debugMessage(fmt.Sprintf("... finished operation %s",op.value))
 	}
+	s.debugMessage("Finished ,")
 	return
 }
 

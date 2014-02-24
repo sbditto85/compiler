@@ -964,6 +964,9 @@ func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 
 		//Semantic Action EAL
 		if a.pass == 2 {
+			a.sm.CloseParen()
+			a.debugMessagePassTwo("Close Paren")
+			
 			a.sm.EAL(a.st.GetScope())
 			a.debugMessagePassTwo("EAL")
 

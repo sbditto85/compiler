@@ -228,6 +228,8 @@ type Ref_Sar struct {
 	typ string
 	scope string
 	exists bool
+	class_sar SemanticActionRecord
+	var_sar SemanticActionRecord
 }
 func (r *Ref_Sar) GetValue() string {
 	return r.value
@@ -247,13 +249,49 @@ func (r *Ref_Sar) Exists(st *sym.SymbolTable) bool {
 func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) bool {
 	elems := st.GetScopeElements(r.scope)
 
+	//fmt.Printf("INSIDE: %#v\n",inside)
+
+	if !r.class_sar.Exists(st) {
+		return false
+	}
+
 	switch sar := inside.(type) {
 	case *Func_Sar:
-		owner := sar.GetIdSar()
-		if !owner.Exists(st) {
-			return false
+		method_sar := sar.GetIdSar()
+		method_sar.scope = r.scope
+
+		for _,elem := range(elems) {
+			if elem.Kind == "Method" && elem.Value == method_sar.GetValue() {
+				//check modifier
+				if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
+					continue;
+				}
+				if p, ok := elem.Data["parameters"]; ok {
+					switch params := p.(type) {
+					case []sym.Parameter:
+						al := sar.GetAlSar().GetArgs()
+						for i,a := range(al) {
+							if params[i].Typ != a.GetType() {
+								return false
+							}
+						}
+					default:
+						return false //only one type should be
+						}
+				} else {
+					return false //gotta have params to be a method
+				}
+				
+				//set type and exists on *Id_Sar
+				if typ,ok := elem.Data["type"]; ok {
+					r.typ = typ.(string)
+				} else {
+					return false //NEED TYPE, break? check other scopes?
+				}
+				r.exists = true
+				return true
+			}
 		}
-		//TODO: finish the check for the function and compare the method args etc
 	default:
 		for _,elem := range(elems) {
 			switch elem.Kind {
