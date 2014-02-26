@@ -51,6 +51,14 @@ func ExampleXEqualYPass2() {
 	}
 	
 	//Output:
+	//Type int pushed
+	//TExists!
+	//vPush x (int)
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush y (int)
+	//EOE
 	//IPush: x from scope g.main
 	//IExists!
 	//Pushed operator =
@@ -106,6 +114,26 @@ func ExampleAssignInfixToPostfix() {
 	}
 	
 	//Output:
+	//Type int pushed
+	//TExists!
+	//vPush x (int)
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush y (int)
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush g (int)
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush f (int)
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush k (int)
+	//EOE
 	//IPush: x from scope g.main
 	//IExists!
 	//Pushed operator =
@@ -177,6 +205,18 @@ func ExampleAssignClassRef() {
 	}
 	
 	//Output:
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type Cat pushed
+	//TExists!
+	//vPush a (Cat)
+	//EOE
+	//Type Dog pushed
+	//TExists!
+	//vPush b (Dog)
+	//EOE
 	//IPush: a from scope g.main
 	//IExists!
 	//IPush: x from scope g.main
@@ -236,6 +276,49 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 	}
 	
 	//Output:
+	//Type char pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type bool pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type bool pushed
+	//TExists!
+	//vPush k (bool)
+	//Pushed operator =
+	//LPush: true from scope g.main
+	//SM: Testing operation = ...
+	//SM: Comparing true(bool) to k(bool)
+	//SM: ... finished operation =
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush g (int)
+	//Pushed operator =
+	//LPush: 1 from scope g.main
+	//SM: Testing operation = ...
+	//SM: Comparing 1(int) to g(int)
+	//SM: ... finished operation =
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush r (int)
+	//Pushed operator =
+	//LPush: 2 from scope g.main
+	//SM: Testing operation = ...
+	//SM: Comparing 2(int) to r(int)
+	//SM: ... finished operation =
+	//EOE
+	//Type Foo pushed
+	//TExists!
+	//vPush y (Foo)
+	//EOE
+	//Type int pushed
+	//TExists!
+	//vPush x (int)
+	//EOE
 	//IPush: x from scope g.main
 	//IExists!
 	//Pushed operator =
@@ -318,6 +401,29 @@ func ExampleAssignMemberElemntReturnByFunc() {
 	}
 	
 	//Output:
+	//Type char pushed
+	//TExists!
+	//Type Bar pushed
+	//TExists!
+	//Type Baz pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//vPush r (int)
+	//Pushed operator =
+	//LPush: 2 from scope g.main
+	//SM: Testing operation = ...
+	//SM: Comparing 2(int) to r(int)
+	//SM: ... finished operation =
+	//EOE
+	//Type Foo pushed
+	//TExists!
+	//vPush x (Foo)
+	//EOE
 	//IPush: x from scope g.main
 	//IExists!
 	//IPush: f from scope g.main
@@ -393,5 +499,24 @@ func ExampleCreateInstanceOfClass() {
 	}
 	
 	//Output:
-	//
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type Baz pushed
+	//TExists!
+	//vPush b (Baz)
+	//Pushed operator =
+	//Type Baz pushed
+	//Pushed operator (
+	//BAL
+	//SM: Finished )
+	//Close Paren
+	//EAL
+	//SM: Type: Baz, with 0 Arguments
+	//newObj
+	//SM: Testing operation = ...
+	//SM: Comparing Baz()(Baz) to b(Baz)
+	//SM: ... finished operation =
+	//EOE
 }

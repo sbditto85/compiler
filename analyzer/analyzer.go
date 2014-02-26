@@ -229,6 +229,13 @@ func (a *Analyzer) IsType() (error,ErrorType) {
 			return BuildErrFromTokErrType(curTok, TYPE), TYPE
 		}
 	}
+	
+	//Semantic Action EAL
+	if a.pass == 2 {
+		a.sm.TPush(curTok.Lexeme,a.st.GetScope())
+		a.debugMessagePassTwo(fmt.Sprintf("Type %s pushed",curTok.Lexeme))
+	}
+
 	a.debugMessagePassOne("is type!")
 	return nil, NONE
 }
@@ -362,6 +369,15 @@ func (a *Analyzer) IsClassMemberDeclaration() (error,ErrorType) {
 			curTok,_ = a.GetCurr()
 			panic(BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION))
 		}
+
+		//Semantic Action
+		if a.pass == 2 {
+			if err := a.sm.TExists(a.st); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("TExists!")
+		}
+
 		curTok,err = a.GetCurr()
 		identifier := curTok.Lexeme
 		if curTok.Type != tok.Identifier {
@@ -515,7 +531,9 @@ func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 	//symbol table opperation
 	symdata := make(map[string]interface{})
 	symdata["class"] = className
+	symdata["type"] = className
 	symdata["parameters"] = paramsList
+	symdata["accessMod"] = "public"
 	a.AddSymbol(className, "Constructor", symdata, a.pass==1)
 	
 	if e,t := a.IsMethodBody(); e != nil {
@@ -592,6 +610,15 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 		return BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION), VARIABLE_DECLARATION
 		//panic(BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION))
 	}
+
+	//Semantic Action
+	if a.pass == 2 {
+		if err := a.sm.TExists(a.st); err != nil {
+			panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+		}
+		a.debugMessagePassTwo("TExists!")
+	}
+
 	curTok,err = a.GetCurr()
 
 	identifier := curTok.Lexeme
@@ -621,6 +648,12 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 		}
 	}
 
+	//Semantic Action
+	if a.pass == 2 {
+		a.sm.VPush(identifier,a.st.GetScope(),typ)
+		a.debugMessagePassTwo(fmt.Sprintf("vPush %s (%s)",identifier,typ))
+	}
+
 	//symbol table opperation
 	symdata := make(map[string]interface{})
 	symdata["isArray"] = isArr
@@ -629,6 +662,15 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 
 	curTok,_ = a.GetCurr()
 	if curTok.Lexeme == "=" {
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+		}
+
 		curTok,err = a.GetNext()
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
@@ -641,6 +683,15 @@ func (a *Analyzer) IsVariableDeclaration() (error,ErrorType) {
 	if curTok.Lexeme != ";" {
 		panic(BuildErrMessFromTok(curTok,";"))
 	}
+
+	//Semantic Action
+	if a.pass == 2 {
+		if err := a.sm.EoE(); err != nil {
+			panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+		}
+		a.debugMessagePassTwo("EOE")
+	}
+
 	curTok,err = a.GetNext()
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
@@ -695,6 +746,15 @@ func (a *Analyzer) IsParameter() (error,ErrorType,sym.Parameter) {
 		return BuildErrFromTokErrType(curTok, PARAMETER), PARAMETER, sym.Parameter{}
 		//panic(BuildErrFromTokErrType(curTok, PARAMETER))
 	}
+
+	//Semantic Action
+	if a.pass == 2 {
+		if err := a.sm.TExists(a.st); err != nil {
+			panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+		}
+		a.debugMessagePassTwo("TExists!")
+	}
+
 	curTok,_ = a.GetCurr() //what are the odds an err would occur? like none right? ... guys?
 	
 	identifier := curTok.Lexeme
@@ -871,26 +931,61 @@ func (a *Analyzer) IsExpression() (error,ErrorType) {
 			panic(e.Error())
 		}
 	case curTok.Lexeme == "true":
+		
+		//Semantic Action
+		if a.pass == 2 {
+			a.sm.LPush(curTok.Lexeme, a.st.GetScope(), "bool")
+			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s",curTok.Lexeme,a.st.GetScope()))
+		}
+
 		a.GetNext()
 		if e,t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
 	case curTok.Lexeme == "false":
+
+		//Semantic Action
+		if a.pass == 2 {
+			a.sm.LPush(curTok.Lexeme, a.st.GetScope(), "bool")
+			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s",curTok.Lexeme,a.st.GetScope()))
+		}
+
 		a.GetNext()
 		if e,t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
 	case curTok.Lexeme == "null":
+
+		//Semantic Action
+		if a.pass == 2 {
+			a.sm.LPush(curTok.Lexeme, a.st.GetScope(), "null")
+			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s",curTok.Lexeme,a.st.GetScope()))
+		}
+
 		a.GetNext()
 		if e,t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
 	case curTok.Type == tok.Number:
+
+		//Semantic Action
+		if a.pass == 2 {
+			a.sm.LPush(curTok.Lexeme, a.st.GetScope(), "int")
+			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s",curTok.Lexeme,a.st.GetScope()))
+		}
+
 		a.GetNext()
 		if e,t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
 	case curTok.Type == tok.Character:
+
+		//Semantic Action
+		if a.pass == 2 {
+			a.sm.LPush(curTok.Lexeme, a.st.GetScope(), "char")
+			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s",curTok.Lexeme,a.st.GetScope()))
+		}
+
 		a.GetNext()
 		if e,t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
@@ -1136,6 +1231,18 @@ func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 	}
 	switch curTok.Lexeme {
 	case "(":
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+
+			a.sm.BAL(a.st.GetScope())
+			a.debugMessagePassTwo("BAL")
+		}
+
 		a.GetNext()
 		a.IsArgumentList() //dont care if fails
 		//should be pointing at ")"
@@ -1143,6 +1250,21 @@ func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 		if curTok.Lexeme != ")" {
 			panic(BuildErrMessFromTok(curTok,")"))
 		}
+
+		//Semantic Action EAL
+		if a.pass == 2 {
+			a.sm.CloseParen()
+			a.debugMessagePassTwo("Close Paren")
+			
+			a.sm.EAL(a.st.GetScope())
+			a.debugMessagePassTwo("EAL")
+
+			if err := a.sm.NewObj(a.st); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("newObj")
+		}
+
 		a.GetNext()
 	case "[":
 		a.GetNext()

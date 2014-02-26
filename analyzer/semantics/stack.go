@@ -389,3 +389,122 @@ func (f *Func_Sar) GetIdSar() *Id_Sar {
 func (f *Func_Sar) GetAlSar() *Al_Sar {
 	return f.al_sar
 }
+
+type Type_Sar struct {
+	value string
+	typ string
+	scope string
+	exists bool
+}
+func (t *Type_Sar) GetValue() string {
+	return t.value
+}
+func (t *Type_Sar) GetType() string {
+	return t.typ
+}
+func (t *Type_Sar) GetScope() string {
+	return t.scope
+}
+func (t *Type_Sar) IsSameType(other SemanticActionRecord) bool {
+	return t.typ == other.GetType()
+}
+func (t *Type_Sar) Exists(st *sym.SymbolTable) bool {
+	switch t.value {
+	case "int","char","bool":
+		return true
+	}
+
+	elems := st.GetScopeElements("g")
+
+	for _,elem := range(elems) {
+		if elem.Kind == "Class" && elem.Value == t.GetValue() {
+			t.exists = true
+			t.typ = elem.Value
+			return true
+		}
+	}
+
+	return false
+}
+
+type New_Sar struct {
+	value string
+	typ string
+	scope string
+	exists bool
+	type_sar *Type_Sar
+	al_sar *Al_Sar
+}
+func (n *New_Sar) GetValue() string {
+	return n.value
+}
+func (n *New_Sar) GetType() string {
+	return n.typ
+}
+func (n *New_Sar) GetScope() string {
+	return n.scope
+}
+func (n *New_Sar) IsSameType(other SemanticActionRecord) bool {
+	return n.typ == other.GetType()
+}
+func (n *New_Sar) Exists(st *sym.SymbolTable) bool {
+	return n.exists
+}
+func (n *New_Sar) ConstructorExists(st *sym.SymbolTable) bool {
+	elems := st.GetScopeElements("g." + n.type_sar.GetValue())
+
+	for _,elem := range(elems) {
+		if elem.Kind == "Constructor" && elem.Value == n.type_sar.GetValue() {
+			//check modifier
+			if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
+				continue;
+			}
+			if p, ok := elem.Data["parameters"]; ok {
+				switch params := p.(type) {
+				case []sym.Parameter:
+					al := n.al_sar.GetArgs()
+					for i,a := range(al) {
+						if params[i].Typ != a.GetType() {
+							return false
+						}
+					}
+				default:
+					return false //only one type should be
+				}
+			} else {
+				return false //gotta have params to be a method
+			}
+			
+			//set type and exists on *Id_Sar
+			if typ,ok := elem.Data["type"]; ok {
+				n.typ = typ.(string)
+			} else {
+				return false //NEED TYPE, break? check other scopes?
+			}
+			n.exists = true
+			return true
+		}
+	}
+	return false
+}
+
+type Lit_Sar struct {
+	value string
+	typ string
+	scope string
+}
+func (l *Lit_Sar) GetValue() string {
+	return l.value
+}
+func (l *Lit_Sar) GetType() string {
+	return l.typ
+}
+func (l *Lit_Sar) GetScope() string {
+	return l.scope
+}
+func (l *Lit_Sar) IsSameType(other SemanticActionRecord) bool {
+	return l.typ == other.GetType()
+}
+func (l *Lit_Sar) Exists(st *sym.SymbolTable) bool {
+	return true
+}

@@ -1,0 +1,6 @@
+echo "go test files: "
+find ./ -name "*_test.go" -exec cat {} \; | wc -l
+echo "kxi files: "
+find ./ -name "*.kxi" -exec cat {} \; | wc -l
+echo "go files: "
+find ./ -name "*.go" ! -name "*_test.go" -exec cat {} \; | wc -l

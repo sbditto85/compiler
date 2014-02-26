@@ -58,7 +58,9 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Scope: g.Cat, SymId: C6, Value: Cat, Kind: Constructor
 	//Extra Data:
 	//Key: class, Value: Cat
+	//Key: type, Value: Cat
 	//Key: parameters, Value: [{int legsNum false}]
+	//Key: accessMod, Value: public
 	//Key: paramSymIds, Value: [P5]
 	//--------------
 	//Scope: g.Cat, SymId: I7, Value: c, Kind: Ivar
