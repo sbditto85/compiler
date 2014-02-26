@@ -200,6 +200,41 @@ func (s *SemanticManager) NewObj(st *sym.SymbolTable) (err error) {
 	return
 }
 
+
+func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
+	sar := s.sas.pop()
+	if sar.GetType() != "int" {
+		return fmt.Errorf("Invalid array count, should be int")
+	}
+
+	ts := s.sas.pop()
+	var type_sar *Type_Sar
+	switch t := ts.(type) {
+	case *Type_Sar:
+		type_sar = t
+	default:
+		return fmt.Errorf("Expected identifier for function")
+	}
+
+	if !type_sar.Exists(st) {
+		return fmt.Errorf("Type %s doesn't exist",type_sar.GetValue())
+	}
+
+	value := type_sar.GetValue() + "[" + sar.GetValue() + "]"
+
+	new_sar := &New_Sar{value:value, typ:type_sar.GetValue(), scope:"g."+type_sar.GetValue(), type_sar:type_sar, al_sar:nil}
+
+	if type_sar.GetType() == "void" {
+		return fmt.Errorf("Array cannot be of type void")
+	}
+
+	s.sas.push(new_sar)
+
+	s.debugMessage(fmt.Sprintf("Type: %s, with array size %s",type_sar.GetValue(),sar.GetValue()))
+	
+	return
+}
+
 func (s *SemanticManager) CloseParen() (err error) {
 	for op := s.ops.topElement(); op != nil && op.value != "("; op = s.ops.topElement() {
 		s.ops.pop()
@@ -217,7 +252,23 @@ func (s *SemanticManager) CloseParen() (err error) {
 	s.debugMessage("Finished )")
 	return
 }
-
+func (s *SemanticManager) CloseAngleBracket() (err error) {
+	for op := s.ops.topElement(); op != nil && op.value != "["; op = s.ops.topElement() {
+		s.ops.pop()
+		s.debugMessage(fmt.Sprintf("Testing operation %s ...",op.value))
+		err := op.Perform(s)
+		if err != nil {
+			return err
+		}
+		s.debugMessage(fmt.Sprintf("... finished operation %s",op.value))
+	}
+	op := s.ops.pop()
+	if op.value != "[" || op == nil {
+		return fmt.Errorf("Close paren didn't find opening paren")
+	}
+	s.debugMessage("Finished ]")
+	return
+}
 func (s *SemanticManager) Comma() (err error) {
 	for op := s.ops.topElement(); op != nil && op.value != "("; op = s.ops.topElement() {
 		s.ops.pop()
@@ -255,16 +306,16 @@ func (s *SemanticManager) ArithmeticOperator(op string) error {
 	op1Typ := op1.GetType()
 	op2Typ := op2.GetType()
 	if op1Typ == "" {
-		return fmt.Errorf("Operand doesn't have type %#v\n",op1)
+		return fmt.Errorf("Operand doesn't have type %#v",op1)
 	}
 	if op2Typ == "" {
-		return fmt.Errorf("Operand doesn't have type %#v\n",op2)
+		return fmt.Errorf("Operand doesn't have type %#v",op2)
 	}
 	if op1Typ != "int" {
-		return fmt.Errorf("Operand of type %s cannot perform %s\n",op1,op)
+		return fmt.Errorf("Operand of type %s cannot perform %s",op1,op)
 	}
 	if op2Typ != "int" {
-		return fmt.Errorf("Operand of type %s cannot perform %s\n",op1,op)
+		return fmt.Errorf("Operand of type %s cannot perform %s",op1,op)
 	}
 	s.debugMessage(fmt.Sprintf("Comparing %s(%s) to %s(%s) for %s",op1.GetValue(), op1Typ, op2.GetValue(), op2Typ,op))
 	if op1Typ != op2Typ {
@@ -289,10 +340,10 @@ func (s *SemanticManager) AssignmentOperator() error {
 	op1Typ := op1.GetType()
 	op2Typ := op2.GetType()
 	if op1Typ == "" {
-		return fmt.Errorf("Operand doesn't have type %#v\n",op1)
+		return fmt.Errorf("Operand doesn't have type %#v",op1)
 	}
 	if op2Typ == "" {
-		return fmt.Errorf("Operand doesn't have type %#v\n",op2)
+		return fmt.Errorf("Operand doesn't have type %#v",op2)
 	}
 	s.debugMessage(fmt.Sprintf("Comparing %s(%s) to %s(%s)",op1.GetValue(), op1Typ, op2.GetValue(), op2Typ))
 	if op1Typ != op2Typ {

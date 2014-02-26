@@ -503,6 +503,12 @@ func ExampleCreateInstanceOfClass() {
 	//TExists!
 	//Type int pushed
 	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//vPush r (int)
+	//EOE
 	//Type Baz pushed
 	//TExists!
 	//vPush b (Baz)
@@ -510,13 +516,87 @@ func ExampleCreateInstanceOfClass() {
 	//Type Baz pushed
 	//Pushed operator (
 	//BAL
+	//IPush: r from scope g.main
+	//IExists!
 	//SM: Finished )
 	//Close Paren
 	//EAL
-	//SM: Type: Baz, with 0 Arguments
+	//SM: Type: Baz, with 1 Arguments
 	//newObj
 	//SM: Testing operation = ...
-	//SM: Comparing Baz()(Baz) to b(Baz)
+	//SM: Comparing Baz(r)(Baz) to b(Baz)
+	//SM: ... finished operation =
+	//EOE
+}
+
+func ExampleCreateInstanceOfArray() {
+	defer func(){
+		if r:= recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "passtwo/createInstanceOfArray.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := NewAnalyzer(l,false)
+	a.GetNext()
+	err := a.PerformPass()
+	
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(true)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok,err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+	
+	//Output:
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//Type int pushed
+	//TExists!
+	//vPush r (int)
+	//EOE
+	//Type Baz pushed
+	//TExists!
+	//vPush b (Baz)
+	//Pushed operator =
+	//Type Baz pushed
+	//Pushed operator [
+	//IPush: r from scope g.main
+	//IExists!
+	//SM: Finished ]
+	//Close AngleBracket
+	//SM: Type: Baz, with array size r
+	//Close AngleBracket
+	//SM: Testing operation = ...
+	//SM: Comparing Baz[r](Baz) to b(Baz)
 	//SM: ... finished operation =
 	//EOE
 }

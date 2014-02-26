@@ -12,5 +12,5 @@ class Baz {
 
 void main() {
      int r;
-     Baz b = new Baz(r);
+     Baz b[] = new Baz[r];
 }

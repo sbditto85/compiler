@@ -1267,6 +1267,15 @@ func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 
 		a.GetNext()
 	case "[":
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+		}
+
 		a.GetNext()
 		if err,_ := a.IsExpression(); err != nil {
 			panic(err.Error())
@@ -1275,6 +1284,21 @@ func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 		if curTok.Lexeme != "]" {
 			panic(BuildErrMessFromTok(curTok,"]"))
 		}
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.CloseAngleBracket(); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("Close AngleBracket")
+
+			if err := a.sm.NewArray(a.st); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("Close AngleBracket")
+
+		}
+
 		a.GetNext()
 	default:
 		return BuildErrFromTokErrType(curTok, NEW_DECLARATION), NEW_DECLARATION
