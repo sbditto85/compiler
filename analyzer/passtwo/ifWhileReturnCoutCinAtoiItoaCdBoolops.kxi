@@ -1,0 +1,20 @@
+class Baz {
+      Baz () {}
+}
+
+void main() {
+     int i;
+     int j;
+     char c;
+     bool b;
+     bool b2;
+     
+     if(i<j) {
+             while(b && b2 || b) {
+                     i = atoi(c);
+                     cout << i;
+                     cin >> i;
+                     c = itoa(i);
+             }
+     }
+}

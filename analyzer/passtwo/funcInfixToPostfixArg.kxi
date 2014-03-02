@@ -1,0 +1,14 @@
+class Baz {
+      public int y(int i, bool b) {
+             int g = 1;
+             int k = 2;
+             f(i * 3, g < k);
+      }
+
+      private int f (int i, bool b) {
+
+      }
+}
+
+void main() {
+}

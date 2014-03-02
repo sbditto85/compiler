@@ -85,6 +85,18 @@ func (s *OperatorStack) GetPrec(op string) (precIn, precOn int, err error) {
 	case ")","]":
 		precIn = 0
 		precOn = 0
+	case "<", ">", "<=",">=":
+		precIn = 9
+		precOn = 9
+	case "==","!=":
+		precIn = 7
+		precOn = 7
+	case "&&":
+		precIn = 5
+		precOn = 5
+	case "||":
+		precIn = 3
+		precOn = 3
 	default:
 		err = fmt.Errorf("No Precidence for operator %s",op)
 	}
@@ -102,6 +114,12 @@ func (o *Operator) Perform(s *SemanticManager) error {
 		return s.AssignmentOperator()
 	case "+","-","*","/":
 		return s.ArithmeticOperator(o.value)
+	case "<",">","<=",">=":
+		return s.GreaterLesser(o.value)
+	case "==","!=":
+		return s.EqualNot(o.value)
+	case "&&","||":
+		return s.IsBoolean(o.value)
 	}
 	//panic(fmt.Sprintf("Operator not found %s",o.value))
 	return fmt.Errorf("Operator not found %s",o.value)
@@ -158,6 +176,7 @@ type Id_Sar struct {
 	typ string
 	scope string
 	exists bool
+	symid string
 }
 func (i *Id_Sar) GetValue() string {
 	return i.value
@@ -178,7 +197,7 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 		elems := st.GetScopeElements(scopeChecking)
 		for _,elem := range(elems) {
 			switch elem.Kind {
-			case "Lvar","Ivar":
+			case "Lvar","Ivar","Parameter":
 				if elem.Value == i.value {
 					//fmt.Printf("elem: %#v\n",elem)
 					//fmt.Printf("i: %#v\n",i)
@@ -188,6 +207,7 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 					} else {
 						return false //NEED TYPE, break? check other scopes?
 					}
+					i.symid = elem.Symid
 					i.exists = true
 					return true
 				}
@@ -381,6 +401,42 @@ func (f *Func_Sar) IsSameType(other SemanticActionRecord) bool {
 	return f.typ == other.GetType()
 }
 func (f *Func_Sar) Exists(st *sym.SymbolTable) bool {
+
+	scope,err := st.ScopeBelow(f.id_sar.GetScope())
+	if err != nil {
+		return false
+	}
+	elems := st.GetScopeElements(scope)
+	
+	for _,elem := range(elems) {
+		if elem.Kind == "Method" && elem.Value == f.id_sar.GetValue() {
+			//Check params
+			if p, ok := elem.Data["parameters"]; ok {
+				switch params := p.(type) {
+				case []sym.Parameter:
+					al := f.al_sar.GetArgs()
+					for i,a := range(al) {
+						if params[i].Typ != a.GetType() {
+							return false
+						}
+					}
+				default:
+					return false //only one type should be
+				}
+			} else {
+				return false //gotta have params to be a method
+			}
+			
+			//set type and exists on *Id_Sar
+			if typ,ok := elem.Data["type"]; ok {
+				f.typ = typ.(string)
+			} else {
+				return false //NEED TYPE, break? check other scopes?
+			}
+			f.exists = true
+			return true
+		}
+	}
 	return f.exists
 }
 func (f *Func_Sar) GetIdSar() *Id_Sar {
@@ -507,4 +563,49 @@ func (l *Lit_Sar) IsSameType(other SemanticActionRecord) bool {
 }
 func (l *Lit_Sar) Exists(st *sym.SymbolTable) bool {
 	return true
+}
+
+type Arr_Sar struct {
+	value string
+	typ string
+	scope string
+	exp SemanticActionRecord
+	id_sar *Id_Sar
+}
+func (a *Arr_Sar) GetValue() string {
+	return a.value
+}
+func (a *Arr_Sar) GetType() string {
+	return a.typ
+}
+func (a *Arr_Sar) GetScope() string {
+	return a.scope
+}
+func (a *Arr_Sar) IsSameType(other SemanticActionRecord) bool {
+	return a.typ == other.GetType()
+}
+func (a *Arr_Sar) Exists(st *sym.SymbolTable) bool {
+	if a.exp.GetType() != "int" {
+		return false
+	}
+	
+	if !a.id_sar.Exists(st) {
+		return false
+	}
+
+	a.typ = a.id_sar.GetType()
+
+	symid := a.id_sar.symid
+
+	if elem, err := st.GetElement(symid); err == nil {
+		if val, ok := elem.Data["isArray"]; ok {
+			switch v := val.(type) {
+			case bool:
+				
+				return v
+			}
+		}
+	}
+	
+	return false
 }

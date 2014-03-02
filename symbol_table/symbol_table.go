@@ -111,6 +111,13 @@ func (s *SymbolTable) GetScope() string {
 	return s.scope
 }
 
+func (s *SymbolTable) GetElement(symid string) (SymbolTableElement, error) {
+	if elem, ok := s.elems[symid]; ok {
+		return elem, nil
+	}
+	return SymbolTableElement{},fmt.Errorf("Element doesn't exists")
+}
+
 func (s *SymbolTable) GetScopeElements(scope string) []SymbolTableElement {
 	if elemsSymIds, ok := s.scopeElements[scope]; ok {
 		elems := make([]SymbolTableElement,0,len(elemsSymIds))

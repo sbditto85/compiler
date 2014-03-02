@@ -1,0 +1,9 @@
+class Baz {
+      Baz () {}
+}
+
+void main() {
+     Baz c[] = new Baz[10];
+     int r = 7;
+     c [ r + 3 ] = c [ r - 5 ];
+}

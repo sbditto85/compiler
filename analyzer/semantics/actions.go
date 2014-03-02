@@ -13,6 +13,26 @@ func (s *SemanticManager) LPush(value, scope, typ string) {
 	s.sas.push(&Lit_Sar{value:value, scope:scope, typ:typ})
 }
 
+func (s *SemanticManager) OPush(value string) (err error) {
+	topOp := s.ops.topElement()
+	precIn, precOn, errPrec := s.ops.GetPrec(value)
+	if errPrec != nil {
+		return errPrec
+	}
+	for s.ops.len() != 0 && topOp.precOn >= precIn {
+		op := s.ops.pop()
+		err = op.Perform(s)
+		if err != nil {
+			//panic(err.Error())
+			return err
+		}
+		topOp = s.ops.topElement()
+	}
+	s.ops.push(&Operator{value:value, precIn:precIn, precOn:precOn})
+	//fmt.Printf("OPS: %#v\n",s.ops)
+	return
+}
+
 func (s *SemanticManager) TPush(value, scope string) {
 	s.sas.push(&Type_Sar{value:value, scope:scope})
 }
@@ -82,26 +102,6 @@ func (s *SemanticManager) TExists(st *sym.SymbolTable) (err error) {
 	return
 }
 
-func (s *SemanticManager) OPush(value string) (err error) {
-	topOp := s.ops.topElement()
-	precIn, precOn, errPrec := s.ops.GetPrec(value)
-	if errPrec != nil {
-		return errPrec
-	}
-	for s.ops.len() != 0 && topOp.precOn >= precIn {
-		op := s.ops.pop()
-		err = op.Perform(s)
-		if err != nil {
-			//panic(err.Error())
-			return err
-		}
-		topOp = s.ops.topElement()
-	}
-	s.ops.push(&Operator{value:value, precIn:precIn, precOn:precOn})
-	//fmt.Printf("OPS: %#v\n",s.ops)
-	return
-}
-
 func (s *SemanticManager) BAL(scope string) {
 	s.sas.push(&Bal_Sar{scope:scope})
 }
@@ -155,6 +155,101 @@ func (s *SemanticManager) Func(scope string) (err error) {
 	return nil
 }
 
+func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
+	exp := s.sas.pop()
+	if exp.GetType() != "int" {
+		return fmt.Errorf("Invalid array count, should be int")
+	}
+
+	id := s.sas.pop()
+	var id_sar *Id_Sar
+	switch i := id.(type) {
+	case *Id_Sar:
+		id_sar = i
+	default:
+		return fmt.Errorf("Expected identifier for array, received %s",id.GetValue())
+	}
+
+	value := id_sar.GetValue() + "[" + exp.GetValue() + "]"
+
+	arr_sar := &Arr_Sar{value:value, typ:id_sar.GetType(), scope:st.GetScope(), id_sar:id_sar, exp:exp}
+
+	if !arr_sar.Exists(st) {
+		return fmt.Errorf("%s does not exists",value)
+	}
+
+	s.sas.push(arr_sar)
+
+	s.debugMessage(fmt.Sprintf("Type: %s, with array size %s",id_sar.GetValue(),exp.GetValue()))
+	
+	return
+}
+
+func (s *SemanticManager) If() (err error) {
+	sar := s.sas.pop()
+	if sar.GetType() != "bool" {
+		err = fmt.Errorf("not a bool for if statement")
+	}
+	return 
+}
+
+func (s *SemanticManager) While() (err error) {
+	sar := s.sas.pop()
+	if sar.GetType() != "bool" {
+		err = fmt.Errorf("not a bool for while statement")
+	}
+	return 
+}
+
+func (s *SemanticManager) Cout() (err error) {
+	if err := s.EoE(); err != nil {
+		return err
+	}
+
+	sar := s.sas.pop()
+	if sar.GetType() != "char" && sar.GetType() != "int" {
+		err = fmt.Errorf("not a char or int for cout")
+	}
+	return 
+}
+
+func (s *SemanticManager) Cin() (err error) {
+	if err := s.EoE(); err != nil {
+		return err
+	}
+
+	sar := s.sas.pop()
+	if sar.GetType() != "char" && sar.GetType() != "int" {
+		err = fmt.Errorf("not a char or int for cin")
+	}
+	return 
+}
+
+func (s *SemanticManager) Atoi(scope string) (err error) {
+	sar := s.sas.pop()
+	if sar.GetType() != "char" {
+		err = fmt.Errorf("not a char for atoi")
+	}
+
+	//TODO: add new element to symbol table
+	value := "atoi("+sar.GetValue()+")"
+	s.sas.push(&Tvar_Sar{value:value, typ:"int", scope:scope})
+	return 
+}
+
+func (s *SemanticManager) Itoa(scope string) (err error) {
+	sar := s.sas.pop()
+	if sar.GetType() != "int" {
+		err = fmt.Errorf("not a int for itoa")
+	}
+
+	//TODO: add new element to symbol table
+	value := "itoa("+sar.GetValue()+")"
+	s.sas.push(&Tvar_Sar{value:value, typ:"char", scope:scope})
+	return 
+}
+
+
 func (s *SemanticManager) NewObj(st *sym.SymbolTable) (err error) {
 	as := s.sas.pop()
 	var al_sar *Al_Sar
@@ -200,7 +295,6 @@ func (s *SemanticManager) NewObj(st *sym.SymbolTable) (err error) {
 	return
 }
 
-
 func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
 	sar := s.sas.pop()
 	if sar.GetType() != "int" {
@@ -213,7 +307,7 @@ func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
 	case *Type_Sar:
 		type_sar = t
 	default:
-		return fmt.Errorf("Expected identifier for function")
+		return fmt.Errorf("Expected identifier for new array")
 	}
 
 	if !type_sar.Exists(st) {
@@ -349,5 +443,105 @@ func (s *SemanticManager) AssignmentOperator() error {
 	if op1Typ != op2Typ {
 		return fmt.Errorf("Cann't assign operand %s(%s) to %s(%s) types mismatch",op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
 	}
+	return nil
+}
+
+func (s *SemanticManager) GreaterLesser(op string) error {
+	op1 := s.sas.pop()
+	op2 := s.sas.pop()
+	if op1 == nil || op2 == nil {
+		return fmt.Errorf("Not enough operands to test assignment operator %s",op)
+	}
+	op1Typ := op1.GetType()
+	op2Typ := op2.GetType()
+	if op1Typ == "" {
+		return fmt.Errorf("Operand doesn't have type %#v",op1)
+	}
+	if op2Typ == "" {
+		return fmt.Errorf("Operand doesn't have type %#v",op2)
+	}
+
+	s.debugMessage(fmt.Sprintf("Comparing %s(%s) to %s(%s) for op %s",op1.GetValue(), op1Typ, op2.GetValue(), op2Typ, op))
+
+	if op1Typ != op2Typ {
+		return fmt.Errorf("Cann't assign operand %s(%s) to %s(%s) types mismatch",op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
+	}
+
+	if op1Typ != "int" && op1Typ != "char" {
+		return fmt.Errorf("%s not of comparable type (%s)",op1.GetValue(), op1Typ)
+	}
+	if op2Typ != "int" && op2Typ != "char" {
+		return fmt.Errorf("%s not of comparable type (%s)",op2.GetValue(), op2Typ)
+	}
+
+	data := make(map[string]interface{})
+	data["type"] = "bool"
+	value := fmt.Sprintf("%s %s %s",op2.GetValue(),op,op1.GetValue())
+	symId := s.st.AddElement(value,"Tvar",data,true)
+
+	s.sas.push(&Tvar_Sar{value:value, typ:"bool", scope:s.st.GetScope(), symId:symId})
+
+	return nil
+}
+
+func (s *SemanticManager) EqualNot(op string) error {
+	op1 := s.sas.pop()
+	op2 := s.sas.pop()
+	if op1 == nil || op2 == nil {
+		return fmt.Errorf("Not enough operands to test assignment operator %s",op)
+	}
+	op1Typ := op1.GetType()
+	op2Typ := op2.GetType()
+	if op1Typ == "" {
+		return fmt.Errorf("Operand doesn't have type %#v",op1)
+	}
+	if op2Typ == "" {
+		return fmt.Errorf("Operand doesn't have type %#v",op2)
+	}
+
+	s.debugMessage(fmt.Sprintf("Comparing %s(%s) to %s(%s) for op %s",op1.GetValue(), op1Typ, op2.GetValue(), op2Typ, op))
+
+	if op1Typ != op2Typ {
+		return fmt.Errorf("Cann't assign operand %s(%s) to %s(%s) types mismatch",op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
+	}
+
+	if op1Typ == "void" {
+		return fmt.Errorf("%s not of comparable type (%s)",op1.GetValue(), op1Typ)
+	}
+	if op2Typ == "void" {
+		return fmt.Errorf("%s not of comparable type (%s)",op2.GetValue(), op2Typ)
+	}
+
+	data := make(map[string]interface{})
+	data["type"] = "bool"
+	value := fmt.Sprintf("%s %s %s",op2.GetValue(),op,op1.GetValue())
+	symId := s.st.AddElement(value,"Tvar",data,true)
+
+	s.sas.push(&Tvar_Sar{value:value, typ:"bool", scope:s.st.GetScope(), symId:symId})
+
+	return nil
+}
+
+func (s *SemanticManager) IsBoolean(op string) error {
+	op1 := s.sas.pop()
+	if op1.GetType() != "bool" {
+		return fmt.Errorf("%s is not bool for %s",op1.GetValue(),op)
+	}
+
+	op2 := s.sas.pop()
+	if op2.GetType() != "bool" {
+		return fmt.Errorf("%s is not bool for %s",op2.GetValue(),op)
+	}
+
+	//symbol table action
+	data := make(map[string]interface{})
+	data["type"] = "bool"
+	value := fmt.Sprintf("%s %s %s",op2.GetValue(),op,op1.GetValue())
+	symId := s.st.AddElement(value,"Tvar",data,true)
+
+	s.debugMessage(fmt.Sprintf("Comparing %s and %s as bool for op %s",op1.GetValue(),op2.GetValue(),op))
+
+	s.sas.push(&Tvar_Sar{value:value, typ:"bool", scope:"", symId:symId})
+
 	return nil
 }

@@ -484,7 +484,6 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 		symdata["parameters"] = paramList
 		a.AddSymbol(identifier, "Method", symdata,a.pass==1)
 
-
 		if e,_ := a.IsMethodBody(); e != nil {
 			panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
 		}
@@ -806,12 +805,35 @@ func (a *Analyzer) IsStatement() (error,ErrorType) {
 		if curTok.Lexeme != "(" {
 			panic(BuildErrMessFromTok(curTok,"("))
 		}
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+		}
+
 		a.GetNext()
 		if err,_ :=  a.IsExpression(); err == nil {
 			curTok,err = a.GetCurr()
 			if curTok.Lexeme != ")" {
 				panic(BuildErrMessFromTok(curTok, ")"))
 			}
+
+			//Semantic Action EAL
+			if a.pass == 2 {
+				if err := a.sm.CloseParen(); err != nil {
+					panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+				}
+				a.debugMessagePassTwo("Close Paren")
+
+				if err := a.sm.If(); err != nil {
+					panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+				}
+				a.debugMessagePassTwo("If is bool")
+			}
+
 			a.GetNext()
 			if err,_ :=  a.IsStatement(); err != nil {
 				panic(BuildErrFromTokErrType(curTok, STATEMENT))
@@ -832,12 +854,35 @@ func (a *Analyzer) IsStatement() (error,ErrorType) {
 		if curTok.Lexeme != "(" {
 			panic(BuildErrMessFromTok(curTok,"("))
 		}
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+		}
+
 		a.GetNext()
 		if err,_ :=  a.IsExpression(); err == nil {
 			curTok,err = a.GetCurr()
 			if curTok.Lexeme != ")" {
 				panic(BuildErrMessFromTok(curTok, ")"))
 			}
+
+			//Semantic Action EAL
+			if a.pass == 2 {
+				if err := a.sm.CloseParen(); err != nil {
+					panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+				}
+				a.debugMessagePassTwo("Close Paren")
+
+				if err := a.sm.While(); err != nil {
+					panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+				}
+				a.debugMessagePassTwo("While is bool")
+			}
+
 			a.GetNext()
 			if err,_ :=  a.IsStatement(); err != nil {
 				panic(BuildErrFromTokErrType(curTok, STATEMENT))
@@ -867,6 +912,15 @@ func (a *Analyzer) IsStatement() (error,ErrorType) {
 			if curTok.Lexeme != ";" {
 				panic(BuildErrMessFromTok(curTok, ";"))
 			}
+
+			//Semantic Action
+			if a.pass == 2 {
+				if err := a.sm.Cout(); err != nil {
+					panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+				}
+				a.debugMessagePassTwo("Cout")
+			}
+
 			a.GetNext()
 		} else {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
@@ -883,6 +937,15 @@ func (a *Analyzer) IsStatement() (error,ErrorType) {
 			if curTok.Lexeme != ";" {
 				panic(BuildErrMessFromTok(curTok, ";"))
 			}
+
+			//Semantic Action
+			if a.pass == 2 {
+				if err := a.sm.Cout(); err != nil {
+					panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+				}
+				a.debugMessagePassTwo("Cout")
+			}
+
 			a.GetNext()
 		} else {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
@@ -1059,7 +1122,9 @@ func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 
 		//Semantic Action EAL
 		if a.pass == 2 {
-			a.sm.CloseParen()
+			if err := a.sm.CloseParen(); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+			}
 			a.debugMessagePassTwo("Close Paren")
 			
 			a.sm.EAL(a.st.GetScope())
@@ -1068,8 +1133,18 @@ func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 			a.sm.Func(a.st.GetScope())
 			a.debugMessagePassTwo("func")
 		}
+
 		a.GetNext()
 	case "[":
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+		}
+
 		a.GetNext()
 		if e,_ := a.IsExpression(); err != nil {
 			panic(e.Error())
@@ -1078,6 +1153,21 @@ func (a *Analyzer) IsFnArrMember() (error,ErrorType) {
 		if curTok.Lexeme != "]" {
 			panic(BuildErrMessFromTok(curTok, "]"))
 		}
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.CloseAngleBracket(); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("Close AngleBracket")
+			
+			if err := a.sm.Arr(a.st); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("Arr")
+
+		}
+
 		a.GetNext()
 	default:
 		return BuildErrFromTokErrType(curTok, FN_ARR_MEMBER), FN_ARR_MEMBER
@@ -1190,7 +1280,16 @@ func (a *Analyzer) IsAssignmentExpression() (error,ErrorType) {
 		curTok,err = a.GetNext()
 		if curTok.Lexeme != "(" || err != nil {
 			panic(BuildErrMessFromTok(curTok,"("))
-		}
+		}		
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+		}		
+
 		curTok,err = a.GetNext()
 		if e,_ := a.IsExpression(); e != nil {
 			panic(e.Error())
@@ -1199,12 +1298,33 @@ func (a *Analyzer) IsAssignmentExpression() (error,ErrorType) {
 		if curTok.Lexeme != ")" || err != nil {
 			panic(BuildErrMessFromTok(curTok,")"))
 		}
+
+		//Semantic Action EAL
+		if a.pass == 2 {
+			if err := a.sm.CloseParen(); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("Close Paren")
+
+			a.sm.Atoi(a.st.GetScope())
+			a.debugMessagePassTwo("atoi")
+		}
+
 		a.GetNext()
 	case curTok.Lexeme == "itoa":
 		curTok,err = a.GetNext()
 		if curTok.Lexeme != "(" || err != nil {
 			panic(BuildErrMessFromTok(curTok,"("))
 		}
+
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s",curTok.Lexeme))
+		}
+
 		curTok,err = a.GetNext()
 		if e,_ := a.IsExpression(); e != nil {
 			panic(e.Error())
@@ -1213,6 +1333,18 @@ func (a *Analyzer) IsAssignmentExpression() (error,ErrorType) {
 		if curTok.Lexeme != ")" || err != nil {
 			panic(BuildErrMessFromTok(curTok,")"))
 		}
+
+		//Semantic Action EAL
+		if a.pass == 2 {
+			if err := a.sm.CloseParen(); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+			}
+			a.debugMessagePassTwo("Close Paren")
+
+			a.sm.Itoa(a.st.GetScope())
+			a.debugMessagePassTwo("itoa")
+		}
+
 		a.GetNext()
 	default:
 		if err,_ := a.IsExpression(); err != nil {
@@ -1253,7 +1385,9 @@ func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 
 		//Semantic Action EAL
 		if a.pass == 2 {
-			a.sm.CloseParen()
+			if err := a.sm.CloseParen(); err != nil {
+				panic(fmt.Sprintf("%s on line %d",err.Error(), curTok.Linenum + 1))
+			}
 			a.debugMessagePassTwo("Close Paren")
 			
 			a.sm.EAL(a.st.GetScope())
@@ -1295,7 +1429,7 @@ func (a *Analyzer) IsNewDeclaration() (error,ErrorType) {
 			if err := a.sm.NewArray(a.st); err != nil {
 				panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
 			}
-			a.debugMessagePassTwo("Close AngleBracket")
+			a.debugMessagePassTwo("New Array")
 
 		}
 
