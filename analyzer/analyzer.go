@@ -508,6 +508,15 @@ func (a *Analyzer) IsConstructorDeclaration() (error,ErrorType) {
 		curTok,_ = a.GetCurr()
 		return BuildErrFromTokErrType(curTok, CONSTRUCTOR_DECLARATION), CONSTRUCTOR_DECLARATION
 	}
+
+	//Semantic Action
+	if a.pass == 2 {
+		if err := a.sm.Cd(a.st,className); err != nil {
+			panic(fmt.Sprintf("%s on line %d",err.Error(),curTok.Linenum + 1))
+		}
+		a.debugMessagePassTwo(fmt.Sprintf("Cd %s",className))
+	}	
+
 	curTok,_ = a.GetCurr()
 	if curTok.Lexeme != "(" {
 		return BuildErrFromTok(curTok, "("), CONSTRUCTOR_DECLARATION

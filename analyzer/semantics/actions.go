@@ -3,6 +3,7 @@ package semantics
 import (
 	"fmt"
 	sym "github.com/sbditto85/compiler/symbol_table"
+	str "strings"
 )
 
 func (s *SemanticManager) IPush(value, scope string) {
@@ -326,6 +327,20 @@ func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
 
 	s.debugMessage(fmt.Sprintf("Type: %s, with array size %s",type_sar.GetValue(),sar.GetValue()))
 	
+	return
+}
+
+func (s *SemanticManager) Cd(st *sym.SymbolTable, className string) (err error) {
+	scope := st.GetScope()
+	tmp := str.Split(scope,".")
+	if len(tmp) != 2 {
+		err = fmt.Errorf("Cannot get class name from scope",scope)
+	}
+
+	if tmp[1] != className {
+		err = fmt.Errorf("Constructor name (%s) does not match class name (%s)",tmp[1],className)
+	}
+
 	return
 }
 

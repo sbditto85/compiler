@@ -499,6 +499,7 @@ func ExampleCreateInstanceOfClass() {
 	}
 	
 	//Output:
+	//Cd Baz
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -573,6 +574,7 @@ func ExampleCreateInstanceOfArray() {
 	}
 	
 	//Output:
+	//Cd Baz
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -748,6 +750,7 @@ func ExampleArrayArrayInfixPostfix() {
 	}
 	
 	//Output:
+	//Cd Baz
 	//Type Baz pushed
 	//TExists!
 	//vPush c (Baz)
@@ -851,6 +854,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	}
 
 	//Output:
+	//Cd Baz
 	//Type int pushed
 	//TExists!
 	//vPush i (int)
