@@ -35,29 +35,33 @@ const (
 	SEMANTICS
 )
 
+var ErrorToString map[ErrorType]string = nil
+
 func GetErrorToStringMap() map[ErrorType]string {
-	ErrorToString := make(map[ErrorType]string)
-	ErrorToString[NONE] = "None"
-	ErrorToString[COMPILER] = "Compiler"
-	ErrorToString[STATEMENT] = "Statement"
-	ErrorToString[EXPRESSION] = "Expression"
-	ErrorToString[TYPE] = "Type"
-	ErrorToString[CLASS_NAME] = "Class Name"
-	ErrorToString[EXPRESSIONZ] = "Expressionz"
-	ErrorToString[FN_ARR_MEMBER] = "Function Arg Member"
-	ErrorToString[MEMBER_REFZ] = "Member Refz"
-	ErrorToString[ASSIGNMENT_EXPRESSION] = "Assignment Expression"
-	ErrorToString[NEW_DECLARATION] = "New Declaration"
-	ErrorToString[ARGUMENT_LIST] = "Argument List"
-	ErrorToString[CLASS_DECLARATION] = "Class Declaration"
-	ErrorToString[CLASS_MEMBER_DECLARATION] = "Class Member Declaration"
-	ErrorToString[MODIFIER] = "Modifier"
-	ErrorToString[PARAMETER] = "Parameter"
-	ErrorToString[PARAMETER_LIST] = "Parameter Lis"
-	ErrorToString[FIELD_DECLARATION] = "Field Declaration"
-	ErrorToString[METHOD_BODY] = "Method Body"
-	ErrorToString[VARIABLE_DECLARATION] = "Variable Declaration"
-	ErrorToString[CONSTRUCTOR_DECLARATION] = "Constructor Declaration"
+	if ErrorToString == nil {
+		ErrorToString = make(map[ErrorType]string)
+		ErrorToString[NONE] = "None"
+		ErrorToString[COMPILER] = "Compiler"
+		ErrorToString[STATEMENT] = "Statement"
+		ErrorToString[EXPRESSION] = "Expression"
+		ErrorToString[TYPE] = "Type"
+		ErrorToString[CLASS_NAME] = "Class Name"
+		ErrorToString[EXPRESSIONZ] = "Expressionz"
+		ErrorToString[FN_ARR_MEMBER] = "Function Arg Member"
+		ErrorToString[MEMBER_REFZ] = "Member Refz"
+		ErrorToString[ASSIGNMENT_EXPRESSION] = "Assignment Expression"
+		ErrorToString[NEW_DECLARATION] = "New Declaration"
+		ErrorToString[ARGUMENT_LIST] = "Argument List"
+		ErrorToString[CLASS_DECLARATION] = "Class Declaration"
+		ErrorToString[CLASS_MEMBER_DECLARATION] = "Class Member Declaration"
+		ErrorToString[MODIFIER] = "Modifier"
+		ErrorToString[PARAMETER] = "Parameter"
+		ErrorToString[PARAMETER_LIST] = "Parameter Lis"
+		ErrorToString[FIELD_DECLARATION] = "Field Declaration"
+		ErrorToString[METHOD_BODY] = "Method Body"
+		ErrorToString[VARIABLE_DECLARATION] = "Variable Declaration"
+		ErrorToString[CONSTRUCTOR_DECLARATION] = "Constructor Declaration"
+	}
 	return ErrorToString
 }
 func BuildErrFromTokErrType(t *tok.Token, e ErrorType) error {
