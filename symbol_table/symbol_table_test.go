@@ -5,7 +5,7 @@ import (
 	//lex "github.com/sbditto85/compiler/lexer"
 	//tok "github.com/sbditto85/compiler/token"
 	"fmt"
-) 
+)
 
 func ExampleDefaultSymbolTable() {
 	sym := NewSymbolTable()
@@ -21,7 +21,7 @@ func ExampleAddSymbol() {
 
 	d := make(map[string]interface{})
 
-	sym.AddElement("myclass","Class",d,true)
+	sym.AddElement("myclass", "Class", d, true)
 	sym.PrintTable()
 	//Output:
 	//Current Scope: g.myclass
@@ -38,9 +38,9 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	dClass := make(map[string]interface{})
 	dMethod := make(map[string]interface{})
 
-	sym.AddElement("myclass","Class",dClass,true)
+	sym.AddElement("myclass", "Class", dClass, true)
 	dMethod["additional"] = "more"
-	sym.AddElement("myfun","Method",dMethod,true)
+	sym.AddElement("myfun", "Method", dMethod, true)
 	sym.PrintTable()
 	fmt.Println()
 	sym.DownScope()
@@ -53,14 +53,12 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	otherMethod := make(map[string]interface{})
 	otherMethod["testing"] = "testing"
 
-	sym.AddElement("othermethod","Method",otherMethod,true)
+	sym.AddElement("othermethod", "Method", otherMethod, true)
 	sym.PrintTable()
 	fmt.Println()
 	sym.DownScope()
 	sym.PrintTable()
 	fmt.Println()
-
-
 
 	//Output:
 	//Current Scope: g.myclass.myfun

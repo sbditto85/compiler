@@ -2,18 +2,18 @@ package analyzer
 
 import (
 	//"testing"
+	"fmt"
 	lex "github.com/sbditto85/compiler/lexer"
 	tok "github.com/sbditto85/compiler/token"
-	"fmt"
-) 
+)
 
 func ExampleParseXEqualsY() {
 	var str []string
-	str = append(str,"x = y;")
+	str = append(str, "x = y;")
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -42,11 +42,11 @@ func ExampleParseXEqualsY() {
 
 func ExampleParseTrueEqualsFalse() {
 	var str []string
-	str = append(str,"true == false;")
+	str = append(str, "true == false;")
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -69,11 +69,11 @@ func ExampleParseTrueEqualsFalse() {
 
 func ExampleParseTrue() {
 	var str []string
-	str = append(str,"true;")
+	str = append(str, "true;")
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -90,11 +90,11 @@ func ExampleParseTrue() {
 
 func ExampleParse123() {
 	var str []string
-	str = append(str,"123;")
+	str = append(str, "123;")
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -111,11 +111,11 @@ func ExampleParse123() {
 
 func ExampleParseCharacter() {
 	var str []string
-	str = append(str,"'a';")
+	str = append(str, "'a';")
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -132,11 +132,11 @@ func ExampleParseCharacter() {
 
 func ExampleParseCharacterNewLine() {
 	var str []string
-	str = append(str,`'\n';`)
+	str = append(str, `'\n';`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -151,14 +151,13 @@ func ExampleParseCharacterNewLine() {
 	//is a statement!
 }
 
-
 func ExampleParseXGreaterThanYPlus3() {
 	var str []string
-	str = append(str,`x>y+3;`)
+	str = append(str, `x>y+3;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -191,11 +190,11 @@ func ExampleParseXGreaterThanYPlus3() {
 
 func ExampleParseXAssignThis() {
 	var str []string
-	str = append(str,`x=this;`)
+	str = append(str, `x=this;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -219,11 +218,11 @@ func ExampleParseXAssignThis() {
 
 func ExampleParseXAssignIToA() {
 	var str []string
-	str = append(str,`x=itoa(123);`)
+	str = append(str, `x=itoa(123);`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -253,11 +252,11 @@ func ExampleParseXAssignIToA() {
 
 func ExampleParseXAssignAToI() {
 	var str []string
-	str = append(str,`x=atoi('a');`)
+	str = append(str, `x=atoi('a');`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -287,11 +286,11 @@ func ExampleParseXAssignAToI() {
 
 func ExampleParseXAssignNewYNoArgs() {
 	var str []string
-	str = append(str,`x=new Y();`)
+	str = append(str, `x=new Y();`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -326,11 +325,11 @@ func ExampleParseXAssignNewYNoArgs() {
 
 func ExampleParseXAssignNewYArg() {
 	var str []string
-	str = append(str,`x=new Y(true);`)
+	str = append(str, `x=new Y(true);`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -369,11 +368,11 @@ func ExampleParseXAssignNewYArg() {
 
 func ExampleParseXAssignNewYArgs() {
 	var str []string
-	str = append(str,`x=new Y(true,false);`)
+	str = append(str, `x=new Y(true,false);`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -417,11 +416,11 @@ func ExampleParseXAssignNewYArgs() {
 
 func ExampleParseXAssignNewYArgs2() {
 	var str []string
-	str = append(str,`x=new Y(true,false,x<y);`)
+	str = append(str, `x=new Y(true,false,x<y);`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -480,11 +479,11 @@ func ExampleParseXAssignNewYArgs2() {
 
 func ExampleParseXAssignNewYArr() {
 	var str []string
-	str = append(str,`x=new Y[true];`)
+	str = append(str, `x=new Y[true];`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
 	a.IsStatement()
 
@@ -521,24 +520,24 @@ func ExampleParseXAssignNewYArr() {
 
 //x=;
 func ExampleFailXEqualSemi() {
-defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`x=;`)
+	str = append(str, `x=;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	
+
 	//Output:
 	//Token: x
 	//Testing is statement with token x...
@@ -552,47 +551,49 @@ defer func(){
 	//Testing is expression with token ;...
 	//Expected Expression, received ';' on line 1
 }
-//=y; 
+
+//=y;
 func ExampleFailEqualYSemi() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`=y;`)
+	str = append(str, `=y;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	
+
 	//Output:
 	//Token: =
 	//Testing is statement with token =...
 	//Testing is expression with token =...
 	//Expected Statement, received '=' on line 1
 }
+
 //f(g,((g+g)>(g*g)))
 func ExampleFunctionCallWithExpressionParams() {
 	var str []string
-	str = append(str,`f(g,((g+g)>(g*g)));`)
+	str = append(str, `f(g,((g+g)>(g*g)));`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	
+
 	//Output:
 	//Token: f
 	//Testing is statement with token f...
@@ -664,24 +665,24 @@ func ExampleFunctionCallWithExpressionParams() {
 }
 
 func ExampleCinPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`cin >> a;`)
+	str = append(str, `cin >> a;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	
+
 	//Output:
 	//Token: cin
 	//Testing is statement with token cin...
@@ -698,27 +699,27 @@ func ExampleCinPass() {
 }
 
 func ExampleCoutPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`cout << a;`)
+	str = append(str, `cout << a;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -737,31 +738,31 @@ func ExampleCoutPass() {
 	//is expression!
 	//Token: ''
 	//is a statement!
-	
+
 }
 
 func ExampleReturnPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`return;`)
+	str = append(str, `return;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -777,27 +778,27 @@ func ExampleReturnPass() {
 }
 
 func ExampleReturnParamPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`return a;`)
+	str = append(str, `return a;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -818,27 +819,27 @@ func ExampleReturnParamPass() {
 }
 
 func ExampleWhilePass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`while(true) a;`)
+	str = append(str, `while(true) a;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -867,27 +868,27 @@ func ExampleWhilePass() {
 }
 
 func ExampleIfPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`if(true)a;`)
+	str = append(str, `if(true)a;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -916,27 +917,27 @@ func ExampleIfPass() {
 }
 
 func ExampleIfElsePass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`if(true) a; else b;`)
+	str = append(str, `if(true) a; else b;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -975,27 +976,27 @@ func ExampleIfElsePass() {
 }
 
 func ExampleBlockStatementPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`{a;b;}`)
+	str = append(str, `{a;b;}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1030,27 +1031,27 @@ func ExampleBlockStatementPass() {
 }
 
 func ExampleEmptyBlockPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`{{}}`)
+	str = append(str, `{{}}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsStatement()
-	
+	err, _ := a.IsStatement()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1073,27 +1074,27 @@ func ExampleEmptyBlockPass() {
 }
 
 func ExampleParameterPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`int apple`)
+	str = append(str, `int apple`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_,_ := a.IsParameter()
-	
+	err, _, _ := a.IsParameter()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1110,27 +1111,27 @@ func ExampleParameterPass() {
 }
 
 func ExampleParameterArrPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`int apple[]`)
+	str = append(str, `int apple[]`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_,_ := a.IsParameter()
-	
+	err, _, _ := a.IsParameter()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1149,27 +1150,27 @@ func ExampleParameterArrPass() {
 }
 
 func ExampleParameterAsParameterListPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`int apple[]`)
+	str = append(str, `int apple[]`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_,_ := a.IsParameterList()
-	
+	err, _, _ := a.IsParameterList()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1190,27 +1191,27 @@ func ExampleParameterAsParameterListPass() {
 }
 
 func ExampleParameterListPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`int a, cat c[]`)
+	str = append(str, `int a, cat c[]`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_,_ := a.IsParameterList()
-	
+	err, _, _ := a.IsParameterList()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1240,27 +1241,27 @@ func ExampleParameterListPass() {
 }
 
 func ExampleVariableDeclarationPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`bool a;`)
+	str = append(str, `bool a;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsVariableDeclaration()
-	
+	err, _ := a.IsVariableDeclaration()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1278,27 +1279,27 @@ func ExampleVariableDeclarationPass() {
 }
 
 func ExampleVariableDeclarationAssignPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`bool a = true;`)
+	str = append(str, `bool a = true;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsVariableDeclaration()
-	
+	err, _ := a.IsVariableDeclaration()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1323,27 +1324,27 @@ func ExampleVariableDeclarationAssignPass() {
 }
 
 func ExampleMethodBodyPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`{}`)
+	str = append(str, `{}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsMethodBody()
-	
+	err, _ := a.IsMethodBody()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1361,27 +1362,27 @@ func ExampleMethodBodyPass() {
 }
 
 func ExampleMethodBodyFullPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`{ bool a; a = true; }`)
+	str = append(str, `{ bool a; a = true; }`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsMethodBody()
-	
+	err, _ := a.IsMethodBody()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1423,27 +1424,27 @@ func ExampleMethodBodyFullPass() {
 }
 
 func ExampleConstructorPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`Cat() {}`)
+	str = append(str, `Cat() {}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsConstructorDeclaration()
-	
+	err, _ := a.IsConstructorDeclaration()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1472,27 +1473,27 @@ func ExampleConstructorPass() {
 }
 
 func ExampleConstructorParamsPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`Cat(bool a, void c) {}`)
+	str = append(str, `Cat(bool a, void c) {}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsConstructorDeclaration()
-	
+	err, _ := a.IsConstructorDeclaration()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1532,27 +1533,27 @@ func ExampleConstructorParamsPass() {
 }
 
 func ExampleFieldDeclarationPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`;`)
+	str = append(str, `;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
-	
+	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1566,27 +1567,27 @@ func ExampleFieldDeclarationPass() {
 }
 
 func ExampleFieldDeclarationArrPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`[];`)
+	str = append(str, `[];`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
-	
+	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1602,27 +1603,27 @@ func ExampleFieldDeclarationArrPass() {
 }
 
 func ExampleFieldDeclarationAssignPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`= x + y;`)
+	str = append(str, `= x + y;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
-	
+	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1653,27 +1654,27 @@ func ExampleFieldDeclarationAssignPass() {
 }
 
 func ExampleFieldDeclarationArrAssignPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`[] = true;`)
+	str = append(str, `[] = true;`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsFieldDeclaration("modifier","typ","identifier")
-	
+	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1696,27 +1697,27 @@ func ExampleFieldDeclarationArrAssignPass() {
 }
 
 func ExampleBasicClassDeclarationPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`class myclass {}`)
+	str = append(str, `class myclass {}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsClassDeclaration()
-	
+	err, _ := a.IsClassDeclaration()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1738,31 +1739,31 @@ func ExampleBasicClassDeclarationPass() {
 }
 
 func ExampleBasicClassDeclarationComplexPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`class myclass {`)
-	str = append(str,`private int x;`)
-	str = append(str,`myclass(){}`)
-	str = append(str,`public int f(){}`)
-	str = append(str,`}`)
+	str = append(str, `class myclass {`)
+	str = append(str, `private int x;`)
+	str = append(str, `myclass(){}`)
+	str = append(str, `public int f(){}`)
+	str = append(str, `}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsClassDeclaration()
-	
+	err, _ := a.IsClassDeclaration()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1840,27 +1841,27 @@ func ExampleBasicClassDeclarationComplexPass() {
 }
 
 func ExampleCompilationUnitPass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	var str []string
-	str = append(str,`void main () {}`)
+	str = append(str, `void main () {}`)
 	l := lex.NewLexer()
 	l.LoadStrings(str)
 
-	a := NewAnalyzer(l,true)
+	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err,_ := a.IsCompilationUnit()
-	
+	err, _ := a.IsCompilationUnit()
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -1891,8 +1892,6 @@ func ExampleCompilationUnitPass() {
 // a[i] = b;
 // a[] = b[];
 
-
-
 /*
 func ExamplePass() {
 	defer func(){
@@ -1908,7 +1907,7 @@ func ExamplePass() {
 	a := NewAnalyzer(l,true)
 	a.GetNext()
 	err,_ := a.IsParameter()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}

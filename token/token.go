@@ -1,8 +1,8 @@
 package token
 
 type Token struct {
-	Type TokenType
-	Lexeme string
+	Type    TokenType
+	Lexeme  string
 	Linenum int
 }
 
@@ -33,4 +33,3 @@ func GetTokToStringMap() map[TokenType]string {
 	TokTypeTrans[EOT] = "EOT"
 	return TokTypeTrans
 }
-

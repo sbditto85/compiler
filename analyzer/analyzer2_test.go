@@ -2,14 +2,14 @@ package analyzer
 
 import (
 	//"testing"
+	"fmt"
 	lex "github.com/sbditto85/compiler/lexer"
 	tok "github.com/sbditto85/compiler/token"
-	"fmt"
-) 
+)
 
 func ExampleXEqualYPass2() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -17,17 +17,17 @@ func ExampleXEqualYPass2() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -42,14 +42,14 @@ func ExampleXEqualYPass2() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Type int pushed
 	//TExists!
@@ -71,8 +71,8 @@ func ExampleXEqualYPass2() {
 }
 
 func ExampleAssignInfixToPostfix() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -80,17 +80,17 @@ func ExampleAssignInfixToPostfix() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -105,14 +105,14 @@ func ExampleAssignInfixToPostfix() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Type int pushed
 	//TExists!
@@ -162,8 +162,8 @@ func ExampleAssignInfixToPostfix() {
 }
 
 func ExampleAssignClassRef() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -171,17 +171,17 @@ func ExampleAssignClassRef() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -196,14 +196,14 @@ func ExampleAssignClassRef() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Type int pushed
 	//TExists!
@@ -233,8 +233,8 @@ func ExampleAssignClassRef() {
 }
 
 func ExampleAssignMemberFunctionWInfixToPostfix() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -242,17 +242,17 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -267,14 +267,14 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Type char pushed
 	//TExists!
@@ -358,8 +358,8 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 }
 
 func ExampleAssignMemberElemntReturnByFunc() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -367,17 +367,17 @@ func ExampleAssignMemberElemntReturnByFunc() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -392,14 +392,14 @@ func ExampleAssignMemberElemntReturnByFunc() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Type char pushed
 	//TExists!
@@ -456,8 +456,8 @@ func ExampleAssignMemberElemntReturnByFunc() {
 }
 
 func ExampleCreateInstanceOfClass() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -465,17 +465,17 @@ func ExampleCreateInstanceOfClass() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -490,14 +490,14 @@ func ExampleCreateInstanceOfClass() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Cd Baz
 	//Type int pushed
@@ -531,8 +531,8 @@ func ExampleCreateInstanceOfClass() {
 }
 
 func ExampleCreateInstanceOfArray() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -540,17 +540,17 @@ func ExampleCreateInstanceOfArray() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -565,14 +565,14 @@ func ExampleCreateInstanceOfArray() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Cd Baz
 	//Type int pushed
@@ -604,8 +604,8 @@ func ExampleCreateInstanceOfArray() {
 }
 
 func ExampleFuncInfixToPostfixArg() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -613,17 +613,17 @@ func ExampleFuncInfixToPostfixArg() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -638,14 +638,14 @@ func ExampleFuncInfixToPostfixArg() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Type int pushed
 	//TExists!
@@ -707,8 +707,8 @@ func ExampleFuncInfixToPostfixArg() {
 }
 
 func ExampleArrayArrayInfixPostfix() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -716,17 +716,17 @@ func ExampleArrayArrayInfixPostfix() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -741,14 +741,14 @@ func ExampleArrayArrayInfixPostfix() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
 	}
-	
+
 	//Output:
 	//Cd Baz
 	//Type Baz pushed
@@ -811,8 +811,8 @@ func ExampleArrayArrayInfixPostfix() {
 }
 
 func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -820,17 +820,17 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
-	a := NewAnalyzer(l,false)
+	a := NewAnalyzer(l, false)
 	a.GetNext()
 	err := a.PerformPass()
-	
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err := l.GetCurrentToken()
+	curTok, err := l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")
@@ -845,9 +845,9 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 		fmt.Println(err.Error())
 	}
 
-	curTok,err = l.GetCurrentToken()
+	curTok, err = l.GetCurrentToken()
 	if curTok.Type != tok.EOT {
-		fmt.Printf("Last token not EOT it is %s\n",curTok.Lexeme)
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
 	}
 	if err != nil {
 		fmt.Println("Error getting last token!")

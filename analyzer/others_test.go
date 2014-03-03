@@ -1,14 +1,14 @@
 package analyzer
 
 import (
-	lex "github.com/sbditto85/compiler/lexer"
 	"fmt"
+	lex "github.com/sbditto85/compiler/lexer"
 	"path/filepath"
-) 
+)
 
 func ExampleOthersTests() {
-	defer func(){
-		if r:= recover(); r != nil {
+	defer func() {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
@@ -21,13 +21,13 @@ func ExampleOthersTests() {
 
 	//fmt.Printf("%d\n",len(files))
 
-	for _, f := range(files) {
+	for _, f := range files {
 		fmt.Println(f)
 
 		l := lex.NewLexer()
 		l.ReadFile(f)
-		
-		a := NewAnalyzer(l,false)
+
+		a := NewAnalyzer(l, false)
 		a.IsCompilationUnit()
 
 		fmt.Println("Valid")

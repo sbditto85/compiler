@@ -9,20 +9,21 @@ import (
 // SemanticManager
 //////////////////////////////////
 type SemanticManager struct {
-	ops *OperatorStack
-	sas *SemanticActionStack
-	st *sym.SymbolTable
+	ops   *OperatorStack
+	sas   *SemanticActionStack
+	st    *sym.SymbolTable
 	debug bool
 }
+
 func NewSemanticManager(st *sym.SymbolTable, debug bool) *SemanticManager {
 	ops := NewOperatorStack()
 	sas := NewSemanticActionStack()
-	return &SemanticManager{ops:ops, sas:sas, st:st, debug:debug}
+	return &SemanticManager{ops: ops, sas: sas, st: st, debug: debug}
 }
 func (s *SemanticManager) debugMessage(msg string) {
 	if s.debug {
-		fmt.Printf("SM: %s\n",msg)
-	} 
+		fmt.Printf("SM: %s\n", msg)
+	}
 }
 func (s *SemanticManager) SetDebug(debug bool) {
 	s.debug = debug
@@ -32,25 +33,30 @@ func (s *SemanticManager) SetDebug(debug bool) {
 // OpS
 //////////////////////////////////
 type OperatorStack struct {
-	top *OpElement
+	top  *OpElement
 	size int
 }
+
 func NewOperatorStack() *OperatorStack {
 	return &OperatorStack{}
 }
+
 type OpElement struct {
 	value *Operator
-	next *OpElement
+	next  *OpElement
 }
+
 // Return the stack's length
 func (s *OperatorStack) len() int {
 	return s.size
 }
+
 // Push a new element onto the stack
 func (s *OperatorStack) push(value *Operator) {
 	s.top = &OpElement{value, s.top}
 	s.size++
 }
+
 // Remove the top element from the stack and return it's value
 // If the stack is empty, return nil
 func (s *OperatorStack) pop() (value *Operator) {
@@ -73,22 +79,22 @@ func (s *OperatorStack) GetPrec(op string) (precIn, precOn int, err error) {
 	case "=":
 		precIn = 1
 		precOn = 1
-	case "+","-":
+	case "+", "-":
 		precIn = 11
 		precOn = 11
-	case "*","/","%":
+	case "*", "/", "%":
 		precIn = 13
 		precOn = 13
-	case "(","[":
+	case "(", "[":
 		precIn = 15
 		precOn = -1
-	case ")","]":
+	case ")", "]":
 		precIn = 0
 		precOn = 0
-	case "<", ">", "<=",">=":
+	case "<", ">", "<=", ">=":
 		precIn = 9
 		precOn = 9
-	case "==","!=":
+	case "==", "!=":
 		precIn = 7
 		precOn = 7
 	case "&&":
@@ -98,51 +104,56 @@ func (s *OperatorStack) GetPrec(op string) (precIn, precOn int, err error) {
 		precIn = 3
 		precOn = 3
 	default:
-		err = fmt.Errorf("No Precidence for operator %s",op)
+		err = fmt.Errorf("No Precidence for operator %s", op)
 	}
 	return
 }
 
-type Operator struct{
-	value string
+type Operator struct {
+	value  string
 	precIn int
 	precOn int
 }
+
 func (o *Operator) Perform(s *SemanticManager) error {
 	switch o.value {
 	case "=":
 		return s.AssignmentOperator()
-	case "+","-","*","/":
+	case "+", "-", "*", "/":
 		return s.ArithmeticOperator(o.value)
-	case "<",">","<=",">=":
+	case "<", ">", "<=", ">=":
 		return s.GreaterLesser(o.value)
-	case "==","!=":
+	case "==", "!=":
 		return s.EqualNot(o.value)
-	case "&&","||":
+	case "&&", "||":
 		return s.IsBoolean(o.value)
 	}
 	//panic(fmt.Sprintf("Operator not found %s",o.value))
-	return fmt.Errorf("Operator not found %s",o.value)
+	return fmt.Errorf("Operator not found %s", o.value)
 }
 
 //////////////////////////////////
 // SAS
 //////////////////////////////////
 type SemanticActionStack struct {
-	top *Element
+	top  *Element
 	size int
 }
+
 func NewSemanticActionStack() *SemanticActionStack {
 	return &SemanticActionStack{}
 }
+
 type Element struct {
 	value SemanticActionRecord
-	next *Element
+	next  *Element
 }
+
 // Return the stack's length
 func (s *SemanticActionStack) len() int {
 	return s.size
 }
+
 // Push a new element onto the stack
 func (s *SemanticActionStack) push(value SemanticActionRecord) {
 	s.top = &Element{value, s.top}
@@ -172,12 +183,13 @@ type SemanticActionRecord interface {
 // SARS
 //////////////////////////////////
 type Id_Sar struct {
-	value string
-	typ string
-	scope string
+	value  string
+	typ    string
+	scope  string
 	exists bool
-	symid string
+	symid  string
 }
+
 func (i *Id_Sar) GetValue() string {
 	return i.value
 }
@@ -195,14 +207,14 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 	var err error
 	for scopeChecking != "" {
 		elems := st.GetScopeElements(scopeChecking)
-		for _,elem := range(elems) {
+		for _, elem := range elems {
 			switch elem.Kind {
-			case "Lvar","Ivar","Parameter":
+			case "Lvar", "Ivar", "Parameter":
 				if elem.Value == i.value {
 					//fmt.Printf("elem: %#v\n",elem)
 					//fmt.Printf("i: %#v\n",i)
 					//set type and exists on *Id_Sar
-					if typ,ok := elem.Data["type"]; ok {
+					if typ, ok := elem.Data["type"]; ok {
 						i.typ = typ.(string)
 					} else {
 						return false //NEED TYPE, break? check other scopes?
@@ -211,9 +223,9 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 					i.exists = true
 					return true
 				}
-			} 
+			}
 		}
-		scopeChecking,err = st.ScopeBelow(scopeChecking)
+		scopeChecking, err = st.ScopeBelow(scopeChecking)
 		if err != nil {
 			return false
 		}
@@ -223,10 +235,11 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 
 type Tvar_Sar struct {
 	value string
-	typ string
+	typ   string
 	scope string
 	symId string
 }
+
 func (i *Tvar_Sar) GetValue() string {
 	return i.value
 }
@@ -244,13 +257,14 @@ func (i *Tvar_Sar) Exists(st *sym.SymbolTable) bool {
 }
 
 type Ref_Sar struct {
-	value string
-	typ string
-	scope string
-	exists bool
+	value     string
+	typ       string
+	scope     string
+	exists    bool
 	class_sar SemanticActionRecord
-	var_sar SemanticActionRecord
+	var_sar   SemanticActionRecord
 }
+
 func (r *Ref_Sar) GetValue() string {
 	return r.value
 }
@@ -280,30 +294,30 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 		method_sar := sar.GetIdSar()
 		method_sar.scope = r.scope
 
-		for _,elem := range(elems) {
+		for _, elem := range elems {
 			if elem.Kind == "Method" && elem.Value == method_sar.GetValue() {
 				//check modifier
 				if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
-					continue;
+					continue
 				}
 				if p, ok := elem.Data["parameters"]; ok {
 					switch params := p.(type) {
 					case []sym.Parameter:
 						al := sar.GetAlSar().GetArgs()
-						for i,a := range(al) {
+						for i, a := range al {
 							if params[i].Typ != a.GetType() {
 								return false
 							}
 						}
 					default:
 						return false //only one type should be
-						}
+					}
 				} else {
 					return false //gotta have params to be a method
 				}
-				
+
 				//set type and exists on *Id_Sar
-				if typ,ok := elem.Data["type"]; ok {
+				if typ, ok := elem.Data["type"]; ok {
 					r.typ = typ.(string)
 				} else {
 					return false //NEED TYPE, break? check other scopes?
@@ -313,17 +327,17 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 			}
 		}
 	default:
-		for _,elem := range(elems) {
+		for _, elem := range elems {
 			switch elem.Kind {
 			case "Ivar":
 				if elem.Value == inside.GetValue() {
 					//check modifier
 					if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
-						continue;
+						continue
 					}
-					
+
 					//set type and exists on *Id_Sar
-					if typ,ok := elem.Data["type"]; ok {
+					if typ, ok := elem.Data["type"]; ok {
 						r.typ = typ.(string)
 					} else {
 						return false //NEED TYPE, break? check other scopes?
@@ -331,7 +345,7 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 					r.exists = true
 					return true
 				}
-			} 
+			}
 		}
 	}
 	return false
@@ -340,6 +354,7 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 type Bal_Sar struct {
 	scope string
 }
+
 func (b *Bal_Sar) GetValue() string {
 	return ""
 }
@@ -356,11 +371,11 @@ func (b *Bal_Sar) Exists(st *sym.SymbolTable) bool {
 	return true
 }
 
-
 type Al_Sar struct {
 	scope string
-	args []SemanticActionRecord
+	args  []SemanticActionRecord
 }
+
 func (a *Al_Sar) GetValue() string {
 	return ""
 }
@@ -381,13 +396,14 @@ func (a *Al_Sar) GetArgs() []SemanticActionRecord {
 }
 
 type Func_Sar struct {
-	value string
-	typ string
-	scope string
+	value  string
+	typ    string
+	scope  string
 	exists bool
 	id_sar *Id_Sar
 	al_sar *Al_Sar
 }
+
 func (f *Func_Sar) GetValue() string {
 	return f.value
 }
@@ -402,20 +418,20 @@ func (f *Func_Sar) IsSameType(other SemanticActionRecord) bool {
 }
 func (f *Func_Sar) Exists(st *sym.SymbolTable) bool {
 
-	scope,err := st.ScopeBelow(f.id_sar.GetScope())
+	scope, err := st.ScopeBelow(f.id_sar.GetScope())
 	if err != nil {
 		return false
 	}
 	elems := st.GetScopeElements(scope)
-	
-	for _,elem := range(elems) {
+
+	for _, elem := range elems {
 		if elem.Kind == "Method" && elem.Value == f.id_sar.GetValue() {
 			//Check params
 			if p, ok := elem.Data["parameters"]; ok {
 				switch params := p.(type) {
 				case []sym.Parameter:
 					al := f.al_sar.GetArgs()
-					for i,a := range(al) {
+					for i, a := range al {
 						if params[i].Typ != a.GetType() {
 							return false
 						}
@@ -426,9 +442,9 @@ func (f *Func_Sar) Exists(st *sym.SymbolTable) bool {
 			} else {
 				return false //gotta have params to be a method
 			}
-			
+
 			//set type and exists on *Id_Sar
-			if typ,ok := elem.Data["type"]; ok {
+			if typ, ok := elem.Data["type"]; ok {
 				f.typ = typ.(string)
 			} else {
 				return false //NEED TYPE, break? check other scopes?
@@ -447,11 +463,12 @@ func (f *Func_Sar) GetAlSar() *Al_Sar {
 }
 
 type Type_Sar struct {
-	value string
-	typ string
-	scope string
+	value  string
+	typ    string
+	scope  string
 	exists bool
 }
+
 func (t *Type_Sar) GetValue() string {
 	return t.value
 }
@@ -466,13 +483,13 @@ func (t *Type_Sar) IsSameType(other SemanticActionRecord) bool {
 }
 func (t *Type_Sar) Exists(st *sym.SymbolTable) bool {
 	switch t.value {
-	case "int","char","bool":
+	case "int", "char", "bool":
 		return true
 	}
 
 	elems := st.GetScopeElements("g")
 
-	for _,elem := range(elems) {
+	for _, elem := range elems {
 		if elem.Kind == "Class" && elem.Value == t.GetValue() {
 			t.exists = true
 			t.typ = elem.Value
@@ -484,13 +501,14 @@ func (t *Type_Sar) Exists(st *sym.SymbolTable) bool {
 }
 
 type New_Sar struct {
-	value string
-	typ string
-	scope string
-	exists bool
+	value    string
+	typ      string
+	scope    string
+	exists   bool
 	type_sar *Type_Sar
-	al_sar *Al_Sar
+	al_sar   *Al_Sar
 }
+
 func (n *New_Sar) GetValue() string {
 	return n.value
 }
@@ -509,17 +527,17 @@ func (n *New_Sar) Exists(st *sym.SymbolTable) bool {
 func (n *New_Sar) ConstructorExists(st *sym.SymbolTable) bool {
 	elems := st.GetScopeElements("g." + n.type_sar.GetValue())
 
-	for _,elem := range(elems) {
+	for _, elem := range elems {
 		if elem.Kind == "Constructor" && elem.Value == n.type_sar.GetValue() {
 			//check modifier
 			if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
-				continue;
+				continue
 			}
 			if p, ok := elem.Data["parameters"]; ok {
 				switch params := p.(type) {
 				case []sym.Parameter:
 					al := n.al_sar.GetArgs()
-					for i,a := range(al) {
+					for i, a := range al {
 						if params[i].Typ != a.GetType() {
 							return false
 						}
@@ -530,9 +548,9 @@ func (n *New_Sar) ConstructorExists(st *sym.SymbolTable) bool {
 			} else {
 				return false //gotta have params to be a method
 			}
-			
+
 			//set type and exists on *Id_Sar
-			if typ,ok := elem.Data["type"]; ok {
+			if typ, ok := elem.Data["type"]; ok {
 				n.typ = typ.(string)
 			} else {
 				return false //NEED TYPE, break? check other scopes?
@@ -546,9 +564,10 @@ func (n *New_Sar) ConstructorExists(st *sym.SymbolTable) bool {
 
 type Lit_Sar struct {
 	value string
-	typ string
+	typ   string
 	scope string
 }
+
 func (l *Lit_Sar) GetValue() string {
 	return l.value
 }
@@ -566,12 +585,13 @@ func (l *Lit_Sar) Exists(st *sym.SymbolTable) bool {
 }
 
 type Arr_Sar struct {
-	value string
-	typ string
-	scope string
-	exp SemanticActionRecord
+	value  string
+	typ    string
+	scope  string
+	exp    SemanticActionRecord
 	id_sar *Id_Sar
 }
+
 func (a *Arr_Sar) GetValue() string {
 	return a.value
 }
@@ -588,7 +608,7 @@ func (a *Arr_Sar) Exists(st *sym.SymbolTable) bool {
 	if a.exp.GetType() != "int" {
 		return false
 	}
-	
+
 	if !a.id_sar.Exists(st) {
 		return false
 	}
@@ -601,11 +621,11 @@ func (a *Arr_Sar) Exists(st *sym.SymbolTable) bool {
 		if val, ok := elem.Data["isArray"]; ok {
 			switch v := val.(type) {
 			case bool:
-				
+
 				return v
 			}
 		}
 	}
-	
+
 	return false
 }
