@@ -19,6 +19,7 @@ type SymbolTable struct {
 	elems         map[string]SymbolTableElement
 	symIds        []string
 	scopeElements map[string][]string
+	funcType      string
 }
 
 func NewSymbolTable() *SymbolTable {
@@ -26,6 +27,10 @@ func NewSymbolTable() *SymbolTable {
 	s := make([]string, 0)
 	se := make(map[string][]string)
 	return &SymbolTable{scope: "g", elems: e, symIds: s, scopeElements: se}
+}
+
+func (s *SymbolTable) GetFunctionType() string {
+	return s.funcType
 }
 
 func (s *SymbolTable) GenSymId(kind string) string {
@@ -40,7 +45,19 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	curScope := s.scope
 
 	switch kind {
-	case "Class", "Method", "Main", "Constructor":
+	case "Method", "Main", "Constructor":
+		if typ, ok := data["type"]; ok {
+			switch t := typ.(type) {
+			case string:
+				s.funcType = t
+			default:
+				s.funcType = kind
+			}
+		} else {
+			s.funcType = kind
+		}
+		fallthrough
+	case "Class":
 		s.AddScope(value)
 		//fmt.Printf("added scope to %s for value %s of kind %s\n",s.scope,value,kind)
 		if v, ok := data["parameters"]; ok {
@@ -94,6 +111,9 @@ func (s *SymbolTable) DownScope() error {
 	if err == nil {
 		s.scope = newscope
 		//fmt.Printf("Scope dropped down to %s now \n",s.scope)
+	}
+	if s.funcType != "" {
+		s.funcType = ""
 	}
 	return err
 }

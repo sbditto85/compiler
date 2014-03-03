@@ -438,6 +438,12 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			}
 		}
 
+		//Semantic Action
+		if a.pass == 2 {
+			a.sm.VPush(identifier, a.st.GetScope(), typ)
+			a.debugMessagePassTwo(fmt.Sprintf("vPush %s (%s)", identifier, typ))
+		}
+
 		//symbol table operation
 		symdata["isArray"] = isArr
 		a.AddSymbol(identifier, "Ivar", symdata, a.pass == 1)
@@ -900,12 +906,27 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 		}
 	case curTok.Lexeme == "return":
 		a.GetNext()
-		if err, _ := a.IsExpression(); err == nil {
+
+		//Semantic Action Meta
+		var isVoid bool
+		curTok, err = a.GetCurr()
+		if curTok.Lexeme == ";" {
+			isVoid = true
+		}
+
+		if err, _ := a.IsExpression(); err != nil {
 			//TODO: do anything about this?
 		}
 		curTok, err = a.GetCurr()
 		if curTok.Lexeme != ";" {
 			panic(BuildErrMessFromTok(curTok, ";"))
+		}
+		//Semantic Action EAL
+		if a.pass == 2 {
+			if err := a.sm.Return(a.st,isVoid); err != nil {
+				panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
+			}
+			a.debugMessagePassTwo("Return")
 		}
 		a.GetNext()
 	case curTok.Lexeme == "cout":

@@ -203,6 +203,37 @@ func (s *SemanticManager) While() (err error) {
 	return
 }
 
+func (s *SemanticManager) Return(st *sym.SymbolTable, isVoid bool) (err error) {
+	if err := s.EoE(); err != nil {
+		return err
+	}
+
+	funType := st.GetFunctionType()
+
+	if isVoid {
+		if funType != "void" {
+			err = fmt.Errorf("Returning something from a void function")
+		}
+		s.debugMessage("Returning from a void function")
+		return
+	}
+
+	sar := s.sas.pop()
+
+	s.debugMessage(fmt.Sprintf("Expression return type (%s) expected (%s)",sar.GetType(),funType))
+	switch funType {
+	case "int","char","bool","void":
+		if sar.GetType() != funType {
+			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)",sar.GetType(), funType)	
+		}
+	default:
+		if sar.GetType() != funType && sar.GetValue() != "null" {
+			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)",sar.GetType(), funType)	
+		}
+	}
+	return
+}
+
 func (s *SemanticManager) Cout() (err error) {
 	if err := s.EoE(); err != nil {
 		return err

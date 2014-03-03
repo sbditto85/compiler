@@ -171,6 +171,14 @@ func (s *SemanticActionStack) pop() (value SemanticActionRecord) {
 	return nil
 }
 
+func (s *SemanticActionStack) print() {
+	elem := s.top
+	for elem != nil {
+		fmt.Printf("%#v\n",elem.value)
+		elem = elem.next
+	}
+}
+
 type SemanticActionRecord interface {
 	GetValue() string
 	GetType() string

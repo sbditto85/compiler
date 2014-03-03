@@ -207,8 +207,10 @@ func ExampleAssignClassRef() {
 	//Output:
 	//Type int pushed
 	//TExists!
+	//vPush x (int)
 	//Type int pushed
 	//TExists!
+	//vPush y (int)
 	//Type Cat pushed
 	//TExists!
 	//vPush a (Cat)
@@ -278,6 +280,7 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 	//Output:
 	//Type char pushed
 	//TExists!
+	//vPush f (char)
 	//Type int pushed
 	//TExists!
 	//Type bool pushed
@@ -403,12 +406,14 @@ func ExampleAssignMemberElemntReturnByFunc() {
 	//Output:
 	//Type char pushed
 	//TExists!
+	//vPush f (char)
 	//Type Bar pushed
 	//TExists!
 	//Type Baz pushed
 	//TExists!
 	//Type int pushed
 	//TExists!
+	//vPush y (int)
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -504,6 +509,7 @@ func ExampleCreateInstanceOfClass() {
 	//TExists!
 	//Type int pushed
 	//TExists!
+	//vPush y (int)
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -579,6 +585,7 @@ func ExampleCreateInstanceOfArray() {
 	//TExists!
 	//Type int pushed
 	//TExists!
+	//vPush y (int)
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -854,7 +861,15 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	}
 
 	//Output:
+	//Type int pushed
+	//TExists!
+	//vPush notused (int)
 	//Cd Baz
+	//Type int pushed
+	//TExists!
+	//LPush: 1 from scope g.Baz.FUNC
+	//SM: Expression return type (int) expected (int)
+	//Return
 	//Type int pushed
 	//TExists!
 	//vPush i (int)
@@ -935,5 +950,8 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	//SM: Comparing itoa(i)(char) to c(char)
 	//SM: ... finished operation =
 	//EOE
+	//SM: Returning from a void function
+	//Return
 
 }
+
