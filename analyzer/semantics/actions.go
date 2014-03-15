@@ -11,7 +11,13 @@ func (s *SemanticManager) IPush(value, scope string) {
 }
 
 func (s *SemanticManager) LPush(value, scope, typ string) {
-	s.sas.push(&Lit_Sar{value: value, scope: scope, typ: typ})
+
+	//symbol table action
+	data := make(map[string]interface{})
+	data["type"] = typ
+	symId := s.st.AddElement(value,"LitVar",data,true)
+
+	s.sas.push(&Lit_Sar{value: value, scope: scope, typ: typ, symId: symId})
 }
 
 func (s *SemanticManager) OPush(value string) (err error) {
@@ -35,7 +41,14 @@ func (s *SemanticManager) OPush(value string) (err error) {
 }
 
 func (s *SemanticManager) TPush(value, scope string) {
-	s.sas.push(&Type_Sar{value: value, scope: scope})
+
+	//symbol table action
+	//check if its in the symbol table
+	data := make(map[string]interface{})
+	data["type"] = value
+	symId := s.st.AddElement(value,"Type",data,true)
+
+	s.sas.push(&Type_Sar{value: value, scope: scope, symId: symId})
 }
 
 func (s *SemanticManager) IExist(st *sym.SymbolTable) error {
@@ -220,15 +233,15 @@ func (s *SemanticManager) Return(st *sym.SymbolTable, isVoid bool) (err error) {
 
 	sar := s.sas.pop()
 
-	s.debugMessage(fmt.Sprintf("Expression return type (%s) expected (%s)",sar.GetType(),funType))
+	s.debugMessage(fmt.Sprintf("Expression return type (%s) expected (%s)", sar.GetType(), funType))
 	switch funType {
-	case "int","char","bool","void":
+	case "int", "char", "bool", "void":
 		if sar.GetType() != funType {
-			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)",sar.GetType(), funType)	
+			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)", sar.GetType(), funType)
 		}
 	default:
 		if sar.GetType() != funType && sar.GetValue() != "null" {
-			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)",sar.GetType(), funType)	
+			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)", sar.GetType(), funType)
 		}
 	}
 	return

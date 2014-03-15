@@ -954,4 +954,3 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	//Return
 
 }
-

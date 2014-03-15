@@ -174,7 +174,7 @@ func (s *SemanticActionStack) pop() (value SemanticActionRecord) {
 func (s *SemanticActionStack) print() {
 	elem := s.top
 	for elem != nil {
-		fmt.Printf("%#v\n",elem.value)
+		fmt.Printf("%#v\n", elem.value)
 		elem = elem.next
 	}
 }
@@ -185,6 +185,7 @@ type SemanticActionRecord interface {
 	GetScope() string
 	IsSameType(other SemanticActionRecord) bool
 	Exists(st *sym.SymbolTable) bool
+	GetSymId() string
 }
 
 //////////////////////////////////
@@ -195,7 +196,7 @@ type Id_Sar struct {
 	typ    string
 	scope  string
 	exists bool
-	symid  string
+	symId  string
 }
 
 func (i *Id_Sar) GetValue() string {
@@ -227,7 +228,7 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 					} else {
 						return false //NEED TYPE, break? check other scopes?
 					}
-					i.symid = elem.Symid
+					i.symId = elem.Symid
 					i.exists = true
 					return true
 				}
@@ -240,6 +241,9 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 	}
 	return false
 }
+func (i *Id_Sar) GetSymId() string {
+	return i.symId
+}
 
 type Tvar_Sar struct {
 	value string
@@ -248,20 +252,23 @@ type Tvar_Sar struct {
 	symId string
 }
 
-func (i *Tvar_Sar) GetValue() string {
-	return i.value
+func (t *Tvar_Sar) GetValue() string {
+	return t.value
 }
-func (i *Tvar_Sar) GetType() string {
-	return i.typ
+func (t *Tvar_Sar) GetType() string {
+	return t.typ
 }
-func (i *Tvar_Sar) GetScope() string {
-	return i.scope
+func (t *Tvar_Sar) GetScope() string {
+	return t.scope
 }
-func (i *Tvar_Sar) IsSameType(other SemanticActionRecord) bool {
-	return i.typ == other.GetType()
+func (t *Tvar_Sar) IsSameType(other SemanticActionRecord) bool {
+	return t.typ == other.GetType()
 }
-func (i *Tvar_Sar) Exists(st *sym.SymbolTable) bool {
+func (t *Tvar_Sar) Exists(st *sym.SymbolTable) bool {
 	return true
+}
+func (t *Tvar_Sar) GetSymId() string {
+	return t.symId
 }
 
 type Ref_Sar struct {
@@ -271,6 +278,7 @@ type Ref_Sar struct {
 	exists    bool
 	class_sar SemanticActionRecord
 	var_sar   SemanticActionRecord
+	symId     string
 }
 
 func (r *Ref_Sar) GetValue() string {
@@ -358,11 +366,18 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 	}
 	return false
 }
+func (r *Ref_Sar) GetSymId() string {
+	return r.symId
+}
 
 type Bal_Sar struct {
 	scope string
+	symId string
 }
 
+func (b *Bal_Sar) GetSymId() string {
+	return b.symId
+}
 func (b *Bal_Sar) GetValue() string {
 	return ""
 }
@@ -381,9 +396,13 @@ func (b *Bal_Sar) Exists(st *sym.SymbolTable) bool {
 
 type Al_Sar struct {
 	scope string
+	symId string
 	args  []SemanticActionRecord
 }
 
+func (a *Al_Sar) GetSymId() string {
+	return a.symId
+}
 func (a *Al_Sar) GetValue() string {
 	return ""
 }
@@ -407,11 +426,15 @@ type Func_Sar struct {
 	value  string
 	typ    string
 	scope  string
+	symId  string
 	exists bool
 	id_sar *Id_Sar
 	al_sar *Al_Sar
 }
 
+func (f *Func_Sar) GetSymId() string {
+	return f.symId
+}
 func (f *Func_Sar) GetValue() string {
 	return f.value
 }
@@ -474,9 +497,13 @@ type Type_Sar struct {
 	value  string
 	typ    string
 	scope  string
+	symId  string
 	exists bool
 }
 
+func (t *Type_Sar) GetSymId() string {
+	return t.symId
+}
 func (t *Type_Sar) GetValue() string {
 	return t.value
 }
@@ -512,11 +539,15 @@ type New_Sar struct {
 	value    string
 	typ      string
 	scope    string
+	symId    string
 	exists   bool
 	type_sar *Type_Sar
 	al_sar   *Al_Sar
 }
 
+func (n *New_Sar) GetSymId() string {
+	return n.symId
+}
 func (n *New_Sar) GetValue() string {
 	return n.value
 }
@@ -574,8 +605,12 @@ type Lit_Sar struct {
 	value string
 	typ   string
 	scope string
+	symId string
 }
 
+func (l *Lit_Sar) GetSymId() string {
+	return l.symId
+}
 func (l *Lit_Sar) GetValue() string {
 	return l.value
 }
@@ -596,10 +631,14 @@ type Arr_Sar struct {
 	value  string
 	typ    string
 	scope  string
+	symId  string
 	exp    SemanticActionRecord
 	id_sar *Id_Sar
 }
 
+func (a *Arr_Sar) GetSymId() string {
+	return a.symId
+}
 func (a *Arr_Sar) GetValue() string {
 	return a.value
 }
@@ -623,9 +662,9 @@ func (a *Arr_Sar) Exists(st *sym.SymbolTable) bool {
 
 	a.typ = a.id_sar.GetType()
 
-	symid := a.id_sar.symid
+	symId := a.id_sar.GetSymId()
 
-	if elem, err := st.GetElement(symid); err == nil {
+	if elem, err := st.GetElement(symId); err == nil {
 		if val, ok := elem.Data["isArray"]; ok {
 			switch v := val.(type) {
 			case bool:

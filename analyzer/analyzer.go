@@ -923,7 +923,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 		}
 		//Semantic Action EAL
 		if a.pass == 2 {
-			if err := a.sm.Return(a.st,isVoid); err != nil {
+			if err := a.sm.Return(a.st, isVoid); err != nil {
 				panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
 			}
 			a.debugMessagePassTwo("Return")

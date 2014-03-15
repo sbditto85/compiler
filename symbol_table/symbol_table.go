@@ -35,7 +35,7 @@ func (s *SymbolTable) GetFunctionType() string {
 
 func (s *SymbolTable) GenSymId(kind string) string {
 	s.symIdNum++
-	symId := string(([]rune)(kind)[0]) + strconv.Itoa(s.symIdNum)
+	symId := string(([]rune)(kind)[0:1]) + strconv.Itoa(s.symIdNum)
 	s.symIds = append(s.symIds, symId)
 	return symId
 }
