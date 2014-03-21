@@ -2,6 +2,7 @@ package analyzer
 
 import (
 	"fmt"
+	ic "github.com/sbditto85/compiler/analyzer/icode"
 	sem "github.com/sbditto85/compiler/analyzer/semantics"
 	lex "github.com/sbditto85/compiler/lexer"
 	sym "github.com/sbditto85/compiler/symbol_table"
@@ -101,12 +102,14 @@ type Analyzer struct {
 	debug bool
 	st    *sym.SymbolTable
 	sm    *sem.SemanticManager
+	gen   *ic.Generator
 }
 
 func NewAnalyzer(l *lex.Lexer, debug bool) *Analyzer {
 	st := sym.NewSymbolTable()
 	sm := sem.NewSemanticManager(st, debug)
-	a := &Analyzer{lex: l, debug: debug, st: st, sm: sm, pass: 1}
+	gen := ic.NewGenerator(st, l)
+	a := &Analyzer{lex: l, debug: debug, st: st, sm: sm, pass: 1, gen: gen}
 	return a
 }
 

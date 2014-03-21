@@ -15,7 +15,7 @@ func (s *SemanticManager) LPush(value, scope, typ string) {
 	//symbol table action
 	data := make(map[string]interface{})
 	data["type"] = typ
-	symId := s.st.AddElement(value,"LitVar",data,true)
+	symId := s.st.AddElement(value, "LitVar", data, true)
 
 	s.sas.push(&Lit_Sar{value: value, scope: scope, typ: typ, symId: symId})
 }
@@ -44,9 +44,12 @@ func (s *SemanticManager) TPush(value, scope string) {
 
 	//symbol table action
 	//check if its in the symbol table
-	data := make(map[string]interface{})
-	data["type"] = value
-	symId := s.st.AddElement(value,"Type",data,true)
+	symId, err := s.st.GetTypeSymId(value)
+	if err != nil {
+		data := make(map[string]interface{})
+		data["type"] = value
+		symId = s.st.AddElement(value, "Type", data, true)
+	}
 
 	s.sas.push(&Type_Sar{value: value, scope: scope, symId: symId})
 }
@@ -57,6 +60,14 @@ func (s *SemanticManager) IExist(st *sym.SymbolTable) error {
 		return fmt.Errorf("No sar on the stack")
 	}
 	if sar.Exists(st) {
+
+		//Should be already set in Exists function! Left as reminder
+		//symbol table action
+		//data := make(map[string]interface{})
+		//data["type"] = sar.GetValue()
+		//symId := s.st.AddElement(sar.GetValue(), sar.GetType(), data, true)
+		//sar.SetSymId(symId)
+
 		s.sas.push(sar)
 		return nil
 	}
@@ -64,7 +75,25 @@ func (s *SemanticManager) IExist(st *sym.SymbolTable) error {
 }
 
 func (s *SemanticManager) VPush(value, scope, typ string) {
-	s.sas.push(&Id_Sar{value: value, scope: scope, exists: true, typ: typ})
+
+	//Should already be in symbol table ... lets get the symId
+	//symbol table action
+	//data := make(map[string]interface{})
+	//data["type"] = value
+	//symId := s.st.AddElement(value, typ, data, true)
+
+	var symId string
+	elems := s.st.GetScopeElements(scope)
+
+	for _, elem := range elems {
+		if value == elem.Value {
+			if t, ok := elem.Data["type"]; ok && t == typ {
+				symId = elem.SymId
+			}
+		}
+	}
+
+	s.sas.push(&Id_Sar{value: value, scope: scope, exists: true, typ: typ, symId: symId})
 	return
 }
 
@@ -80,6 +109,7 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 	if !class_sar.Exists(st) {
 		return fmt.Errorf("%s doesn't exist", class_sar.GetValue())
 	}
+	//class_sar now has symId set to the appropriate one
 	scopeToTest := st.ScopeAbove("g", class_sar.GetType())
 
 	value := class_sar.GetValue() + "." + var_sar.GetValue()
@@ -87,12 +117,15 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 
 	if ref_sar.InstExists(st, var_sar) {
 
-		//TODO: add temp in symbol table for ref
 		//symbol table action
-		//data := make(map[string]interface{})
-		//data["type"] = op1Typ
-		//value := fmt.Sprintf("%s %s %s",op2.GetValue(),op,op1.GetValue())
-		//symId := s.st.AddElement(value,"Tvar",data,true)
+		data := make(map[string]interface{})
+		data["type"] = var_sar.GetType()
+		data["class_symId"] = class_sar.GetSymId()
+		data["var_symId"] = var_sar.GetSymId()
+		value := fmt.Sprintf("%s.%s", class_sar.GetValue(), var_sar.GetValue())
+		symId := s.st.AddElement(value, "Tvar", data, true)
+
+		ref_sar.SetSymId(symId)
 
 		s.sas.push(ref_sar)
 		return nil
@@ -277,9 +310,14 @@ func (s *SemanticManager) Atoi(scope string) (err error) {
 		err = fmt.Errorf("not a char for atoi")
 	}
 
-	//TODO: add new element to symbol table
 	value := "atoi(" + sar.GetValue() + ")"
-	s.sas.push(&Tvar_Sar{value: value, typ: "int", scope: scope})
+
+	//symbol table action
+	data := make(map[string]interface{})
+	data["type"] = sar.GetType()
+	symId := s.st.AddElement(value, "Tvar", data, true)
+
+	s.sas.push(&Tvar_Sar{value: value, typ: "int", scope: scope, symId: symId})
 	return
 }
 
@@ -289,9 +327,14 @@ func (s *SemanticManager) Itoa(scope string) (err error) {
 		err = fmt.Errorf("not a int for itoa")
 	}
 
-	//TODO: add new element to symbol table
 	value := "itoa(" + sar.GetValue() + ")"
-	s.sas.push(&Tvar_Sar{value: value, typ: "char", scope: scope})
+
+	//symbol table action
+	data := make(map[string]interface{})
+	data["type"] = sar.GetType()
+	symId := s.st.AddElement(value, "Tvar", data, true)
+
+	s.sas.push(&Tvar_Sar{value: value, typ: "char", scope: scope, symId: symId})
 	return
 }
 
@@ -327,7 +370,13 @@ func (s *SemanticManager) NewObj(st *sym.SymbolTable) (err error) {
 	}
 	value += ")"
 
-	new_sar := &New_Sar{value: value, typ: type_sar.GetValue(), scope: "g." + type_sar.GetValue(), type_sar: type_sar, al_sar: al_sar}
+	//symbol table action
+	data := make(map[string]interface{})
+	data["type"] = type_sar.GetType()
+	data["type_symId"] = type_sar.GetSymId()
+	symId := s.st.AddElement(value, "Tvar", data, true)
+
+	new_sar := &New_Sar{value: value, typ: type_sar.GetValue(), scope: "g." + type_sar.GetValue(), type_sar: type_sar, al_sar: al_sar, symId: symId}
 
 	if !new_sar.ConstructorExists(st) {
 		return fmt.Errorf("Constructor with %d arguments doens't exist", len(al_sar.GetArgs()))

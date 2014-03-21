@@ -1,16 +1,16 @@
 package icode
 
-type Quad struct {
+type quad struct {
 	rows    []quadRow
 	curRow  int
 	numRows int
 	labels  map[string][]int
 }
 
-func NewQuad() *Quad {
+func NewQuad() *quad {
 	r := make([]quadRow, 0)
 	l := make(map[string][]int)
-	return &Quad{rows: r, labels: l}
+	return &quad{rows: r, labels: l}
 }
 
 type quadRow struct {

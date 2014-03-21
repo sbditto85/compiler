@@ -35,7 +35,8 @@ func (s *SymbolTable) GetFunctionType() string {
 
 func (s *SymbolTable) GenSymId(kind string) string {
 	s.symIdNum++
-	symId := string(([]rune)(kind)[0:1]) + strconv.Itoa(s.symIdNum)
+	rs := ([]rune)(kind)
+	symId := string(rs[0:2]) + strconv.Itoa(s.symIdNum)
 	s.symIds = append(s.symIds, symId)
 	return symId
 }
@@ -87,7 +88,7 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 
 	s.elems[symId] = SymbolTableElement{
 		Scope: curScope,
-		Symid: symId,
+		SymId: symId,
 		Value: value,
 		Kind:  kind,
 		Data:  data,
@@ -131,11 +132,22 @@ func (s *SymbolTable) GetScope() string {
 	return s.scope
 }
 
-func (s *SymbolTable) GetElement(symid string) (SymbolTableElement, error) {
-	if elem, ok := s.elems[symid]; ok {
+func (s *SymbolTable) GetElement(symId string) (SymbolTableElement, error) {
+	if elem, ok := s.elems[symId]; ok {
 		return elem, nil
 	}
 	return SymbolTableElement{}, fmt.Errorf("Element doesn't exists")
+}
+
+func (s *SymbolTable) GetTypeSymId(typ string) (symId string, err error) {
+	for sId, symTabElem := range s.elems {
+		if symTabElem.Kind == "Type" && symTabElem.Value == typ {
+			symId = sId
+			return
+		}
+	}
+	err = fmt.Errorf("Type does not exist")
+	return
 }
 
 func (s *SymbolTable) GetScopeElements(scope string) []SymbolTableElement {
@@ -178,14 +190,14 @@ func (s *SymbolTable) PrintTableInAddOrder() {
 
 type SymbolTableElement struct {
 	Scope string
-	Symid string
+	SymId string
 	Value string
 	Kind  string
 	Data  map[string]interface{}
 }
 
 func (s *SymbolTableElement) PrintElement() {
-	fmt.Printf("Scope: %s, SymId: %s, Value: %s, Kind: %s\n", s.Scope, s.Symid, s.Value, s.Kind)
+	fmt.Printf("Scope: %s, SymId: %s, Value: %s, Kind: %s\n", s.Scope, s.SymId, s.Value, s.Kind)
 	fmt.Println("Extra Data:")
 	for k, v := range s.Data {
 		fmt.Printf("Key: %s, Value: %v\n", k, v)

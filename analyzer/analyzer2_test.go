@@ -954,3 +954,145 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	//Return
 
 }
+
+func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "passtwo/ifWhileReturnCoutCinAtoiItoaCdBoolops.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	a.PrintTableInAddOrder()
+	//TODO: put the output here
+
+	//Output:
+	//Current Scope: g
+	//=================
+	//Elements:
+	//Scope: g, SymId: Cl1, Value: Baz, Kind: Class
+	//Extra Data:
+	//--------------
+	//Scope: g.Baz, SymId: Iv2, Value: notused, Kind: Ivar
+	//Extra Data:
+	//Key: accessMod, Value: private
+	//Key: type, Value: int
+	//Key: isArray, Value: false
+	//--------------
+	//Scope: g.Baz, SymId: Co3, Value: Baz, Kind: Constructor
+	//Extra Data:
+	//Key: class, Value: Baz
+	//Key: type, Value: Baz
+	//Key: parameters, Value: []
+	//Key: accessMod, Value: public
+	//Key: paramSymIds, Value: []
+	//--------------
+	//Scope: g.Baz, SymId: Me4, Value: FUNC, Kind: Method
+	//Extra Data:
+	//Key: accessMod, Value: public
+	//Key: type, Value: int
+	//Key: parameters, Value: []
+	//Key: paramSymIds, Value: []
+	//--------------
+	//Scope: g, SymId: Ma5, Value: main, Kind: Main
+	//Extra Data:
+	//Key: type, Value: void
+	//--------------
+	//Scope: g.main, SymId: Lv6, Value: i, Kind: Lvar
+	//Extra Data:
+	//Key: isArray, Value: false
+	//Key: type, Value: int
+	//--------------
+	//Scope: g.main, SymId: Lv7, Value: j, Kind: Lvar
+	//Extra Data:
+	//Key: isArray, Value: false
+	//Key: type, Value: int
+	//--------------
+	//Scope: g.main, SymId: Lv8, Value: c, Kind: Lvar
+	//Extra Data:
+	//Key: isArray, Value: false
+	//Key: type, Value: char
+	//--------------
+	//Scope: g.main, SymId: Lv9, Value: b, Kind: Lvar
+	//Extra Data:
+	//Key: isArray, Value: false
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Lv10, Value: b2, Kind: Lvar
+	//Extra Data:
+	//Key: isArray, Value: false
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.Baz, SymId: Ty11, Value: int, Kind: Type
+	//Extra Data:
+	//Key: type, Value: int
+	//--------------
+	//Scope: g.Baz.FUNC, SymId: Li12, Value: 1, Kind: LitVar
+	//Extra Data:
+	//Key: type, Value: int
+	//--------------
+	//Scope: g.main, SymId: Ty13, Value: char, Kind: Type
+	//Extra Data:
+	//Key: type, Value: char
+	//--------------
+	//Scope: g.main, SymId: Ty14, Value: bool, Kind: Type
+	//Extra Data:
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Tv15, Value: i < j, Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Tv16, Value: b && b2, Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Tv17, Value: b && b2 || b, Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Tv18, Value: atoi(c), Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: char
+	//--------------
+	//Scope: g.main, SymId: Tv19, Value: itoa(i), Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: int
+	//--------------
+
+}
