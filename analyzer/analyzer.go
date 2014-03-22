@@ -107,8 +107,8 @@ type Analyzer struct {
 
 func NewAnalyzer(l *lex.Lexer, debug bool) *Analyzer {
 	st := sym.NewSymbolTable()
-	sm := sem.NewSemanticManager(st, debug)
 	gen := ic.NewGenerator(st, l)
+	sm := sem.NewSemanticManager(st, l, gen, debug)
 	a := &Analyzer{lex: l, debug: debug, st: st, sm: sm, pass: 1, gen: gen}
 	return a
 }

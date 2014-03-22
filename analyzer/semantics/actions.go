@@ -551,6 +551,9 @@ func (s *SemanticManager) AssignmentOperator() error {
 	if op1Typ != op2Typ {
 		return fmt.Errorf("Cann't assign operand %s(%s) to %s(%s) types mismatch", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
 	}
+
+	//iCode
+
 	return nil
 }
 

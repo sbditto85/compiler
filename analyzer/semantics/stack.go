@@ -2,6 +2,8 @@ package semantics
 
 import (
 	"fmt"
+	ic "github.com/sbditto85/compiler/analyzer/icode"
+	lex "github.com/sbditto85/compiler/lexer"
 	sym "github.com/sbditto85/compiler/symbol_table"
 )
 
@@ -12,13 +14,15 @@ type SemanticManager struct {
 	ops   *OperatorStack
 	sas   *SemanticActionStack
 	st    *sym.SymbolTable
+	lx    *lex.Lexer
+	gen   *ic.Generator
 	debug bool
 }
 
-func NewSemanticManager(st *sym.SymbolTable, debug bool) *SemanticManager {
+func NewSemanticManager(st *sym.SymbolTable, lx *lex.Lexer, gen *ic.Generator, debug bool) *SemanticManager {
 	ops := NewOperatorStack()
 	sas := NewSemanticActionStack()
-	return &SemanticManager{ops: ops, sas: sas, st: st, debug: debug}
+	return &SemanticManager{ops: ops, sas: sas, st: st, lx: lx, gen: gen, debug: debug}
 }
 func (s *SemanticManager) debugMessage(msg string) {
 	if s.debug {

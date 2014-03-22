@@ -22,16 +22,21 @@ var Comment = regexp.MustCompile(`^//.*$`)
 var emptyString = []byte("")
 
 type Lexer struct {
-	file       []string
-	cur        *token.Token
-	peek       *token.Token
-	curline    []byte
-	curlinenum int
+	file        []string
+	cur         *token.Token
+	peek        *token.Token
+	curline     []byte
+	curFullLine string
+	curlinenum  int
 }
 
 func NewLexer() *Lexer {
 	l := Lexer{}
 	return &l
+}
+
+func (l *Lexer) GetCurFullLine() string {
+	return l.curFullLine
 }
 
 //Puts the contents of file in to the file string slice
@@ -209,6 +214,7 @@ func (l *Lexer) loadNextLine() bool {
 	l.curlinenum++
 	if len(l.file) > l.curlinenum {
 		l.curline = []byte(l.file[l.curlinenum])
+		l.curFullLine = l.file[l.curlinenum]
 		return true
 	}
 	return false
