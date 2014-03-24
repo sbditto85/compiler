@@ -107,14 +107,19 @@ type Analyzer struct {
 
 func NewAnalyzer(l *lex.Lexer, debug bool) *Analyzer {
 	st := sym.NewSymbolTable()
-	gen := ic.NewGenerator(st, l)
+	gen := ic.NewGenerator(st)
 	sm := sem.NewSemanticManager(st, l, gen, debug)
 	a := &Analyzer{lex: l, debug: debug, st: st, sm: sm, pass: 1, gen: gen}
 	return a
 }
 
+func (a *Analyzer) PrintQuadTable() {
+	a.gen.PrintQuadTable()
+}
+
 func (a *Analyzer) SetLexer(l *lex.Lexer) {
 	a.lex = l
+	a.sm.SetLexer(l)
 }
 
 func (a *Analyzer) debugMessagePassOne(s string) {

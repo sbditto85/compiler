@@ -999,7 +999,6 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	}
 
 	a.PrintTableInAddOrder()
-	//TODO: put the output here
 
 	//Output:
 	//Current Scope: g

@@ -530,6 +530,19 @@ func (s *SemanticManager) ArithmeticOperator(op string) error {
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
 	s.sas.push(&Tvar_Sar{value: value, typ: op1Typ, scope: s.st.GetScope(), symId: symId})
+
+	//icode
+	switch op {
+	case "+":
+		s.gen.AddRow("", "ADD", symId, op1.GetSymId(), op2.GetSymId(), s.lx.GetCurFullLine())
+	case "-":
+		s.gen.AddRow("", "SUB", symId, op1.GetSymId(), op2.GetSymId(), s.lx.GetCurFullLine())
+	case "*":
+		s.gen.AddRow("", "MUL", symId, op1.GetSymId(), op2.GetSymId(), s.lx.GetCurFullLine())
+	case "/":
+		s.gen.AddRow("", "DIV", symId, op1.GetSymId(), op2.GetSymId(), s.lx.GetCurFullLine())
+	}
+
 	return nil
 }
 
@@ -553,6 +566,7 @@ func (s *SemanticManager) AssignmentOperator() error {
 	}
 
 	//iCode
+	s.gen.AddRow("", "MOV", op2.GetSymId(), op1.GetSymId(), "", s.lx.GetCurFullLine())
 
 	return nil
 }

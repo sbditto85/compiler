@@ -1,5 +1,9 @@
 package icode
 
+import (
+	"fmt"
+)
+
 type quad struct {
 	rows    []*quadRow
 	curRow  int
@@ -10,7 +14,19 @@ type quad struct {
 func NewQuad() *quad {
 	r := make([]*quadRow, 0)
 	l := make(map[string][]int)
-	return &quad{rows: r, labels: l}
+	return &quad{rows: r, labels: l, curRow: -1} //start at -1 to be idx of slice
+}
+
+func (q *quad) Print() {
+	fmt.Printf("Num Rows: %d curRow: %d\n", q.numRows, q.curRow)
+	fmt.Println("Lables:")
+	for k, v := range q.labels {
+		fmt.Printf("%s: %#v\n", k, v)
+	}
+	fmt.Println("Rows:")
+	for _, row := range q.rows {
+		row.Print()
+	}
 }
 
 func (q *quad) AddQuadRow(label, command, op1, op2, op3, comment string) error {
@@ -32,4 +48,15 @@ type quadRow struct {
 	op2     string
 	op3     string
 	comment string
+}
+
+func (q *quadRow) Print() {
+	if q.label != "" {
+		fmt.Printf("%s: ", q.label)
+	}
+	fmt.Printf("%s %s, %s", q.command, q.op1, q.op2)
+	if q.op3 != "" {
+		fmt.Printf(", %s", q.op3)
+	}
+	fmt.Printf(" ;%s\n", q.comment)
 }

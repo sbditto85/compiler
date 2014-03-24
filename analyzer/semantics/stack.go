@@ -24,6 +24,9 @@ func NewSemanticManager(st *sym.SymbolTable, lx *lex.Lexer, gen *ic.Generator, d
 	sas := NewSemanticActionStack()
 	return &SemanticManager{ops: ops, sas: sas, st: st, lx: lx, gen: gen, debug: debug}
 }
+func (s *SemanticManager) SetLexer(l *lex.Lexer) {
+	s.lx = l
+}
 func (s *SemanticManager) debugMessage(msg string) {
 	if s.debug {
 		fmt.Printf("SM: %s\n", msg)

@@ -1,0 +1,5 @@
+void main() {
+     int r = 7;
+     int s = 8;
+     r = r / s;
+}
