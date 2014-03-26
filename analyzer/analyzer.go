@@ -351,6 +351,11 @@ func (a *Analyzer) IsClassDeclaration() (error, ErrorType) {
 		panic(BuildErrMessFromTok(curTok, "}"))
 	}
 
+	//Semantic Action (icode)
+	if a.pass == 2 {
+		a.sm.StaticInit(className, a.st)
+	}
+
 	//symbol table opperation
 	//fmt.Println("in class declaration")
 	a.DropScope()
@@ -466,8 +471,10 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			}
 
 			//Semantic Action (icode)
-			//add the assignment thinger to class
-			//TODO: WORK HERE
+			if a.pass == 2 {
+				a.sm.AddStaticInit(a.st)
+			}
+			
 		}
 
 		curTok, _ = a.GetCurr()

@@ -36,6 +36,11 @@ func (s *SemanticManager) SetDebug(debug bool) {
 	s.debug = debug
 }
 
+type IdentifierAssignment struct {
+	identSymId string
+	assignSymId string
+}
+
 //////////////////////////////////
 // OpS
 //////////////////////////////////

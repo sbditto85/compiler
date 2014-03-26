@@ -231,9 +231,57 @@ LOOP:
 	switch e.Kind {
 	case "Constructor":
 		class := st.GetElementInScope("g", e.Value) //Later figure out scope class
-		fmt.Printf("e: %#v\nclass: %#v\n", e, class)
-		//TODO: WORK HERE
+		
+		//symbol table action
+		data := make(map[string]interface{})
+		data["type"] = class.Value
+		data["accessMod"] = "private"
+		data["scope"] = "g." + class.Value
+		symId := s.st.AddElement(class.Value + "StaticInit", "Method", data, true)
+
+		class.Data["StaticInit"] = symId
+
+		s.gen.AddRow("", "FRAME", "this", symId, "", s.lx.GetCurFullLine())
+		s.gen.AddRow("", "CALL", symId, "", "", s.lx.GetCurFullLine())
 	}
+}
+
+func (s *SemanticManager) AddStaticInit(st *sym.SymbolTable) {
+	assignSar := s.sas.pop()
+	identSar := s.sas.pop()
+
+	assignSymId := assignSar.GetSymId()
+	identSymId := identSar.GetSymId()
+
+	identElem, _ := st.GetElement(identSymId)
+
+	if cN, ok := identElem.Data["this_class"]; ok {
+		switch className := cN.(type) {
+		case string:
+			classElem := st.GetElementInScope("g",className)
+			i, ok := classElem.Data["inits"]
+			var inits []*IdentifierAssignment
+			if !ok {
+				inits = make([]*IdentifierAssignment,0)
+			} else {
+				switch ini := i.(type) {
+				case []*IdentifierAssignment:
+					inits = ini
+				}
+			}
+			inits = append(inits,&IdentifierAssignment{identSymId: identSymId, assignSymId: assignSymId})
+			classElem.Data["inits"] = inits
+		}
+	}
+
+	s.sas.push(identSar)
+	s.sas.push(assignSar)
+}
+
+func (s *SemanticManager) StaticInit(className string, st *sym.SymbolTable) {
+	s.gen.AddRow("", "CMD", "", "", "", s.lx.GetCurFullLine())
+
+	//s.gen.AddRow("", "FUNC", symId, "", "", s.lx.GetCurFullLine())
 }
 
 func (s *SemanticManager) ReturnFunc(st *sym.SymbolTable) {

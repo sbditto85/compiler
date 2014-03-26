@@ -50,6 +50,9 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 		tmp := str.Split(s.scope, ".")
 		data["this_class"] = tmp[len(tmp)-1]
 	case "Method", "Main", "Constructor":
+		if _, ok := data["scope"]; ok {
+			break
+		}
 		if typ, ok := data["type"]; ok {
 			switch t := typ.(type) {
 			case string:
