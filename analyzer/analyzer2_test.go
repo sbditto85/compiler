@@ -208,9 +208,11 @@ func ExampleAssignClassRef() {
 	//Type int pushed
 	//TExists!
 	//vPush x (int)
+	//EOE
 	//Type int pushed
 	//TExists!
 	//vPush y (int)
+	//EOE
 	//Type Cat pushed
 	//TExists!
 	//vPush a (Cat)
@@ -281,6 +283,7 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 	//Type char pushed
 	//TExists!
 	//vPush f (char)
+	//EOE
 	//Type int pushed
 	//TExists!
 	//Type bool pushed
@@ -407,6 +410,7 @@ func ExampleAssignMemberElemntReturnByFunc() {
 	//Type char pushed
 	//TExists!
 	//vPush f (char)
+	//EOE
 	//Type Bar pushed
 	//TExists!
 	//Type Baz pushed
@@ -414,6 +418,7 @@ func ExampleAssignMemberElemntReturnByFunc() {
 	//Type int pushed
 	//TExists!
 	//vPush y (int)
+	//EOE
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -510,6 +515,7 @@ func ExampleCreateInstanceOfClass() {
 	//Type int pushed
 	//TExists!
 	//vPush y (int)
+	//EOE
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -586,6 +592,7 @@ func ExampleCreateInstanceOfArray() {
 	//Type int pushed
 	//TExists!
 	//vPush y (int)
+	//EOE
 	//Type int pushed
 	//TExists!
 	//Type int pushed
@@ -864,6 +871,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	//Type int pushed
 	//TExists!
 	//vPush notused (int)
+	//EOE
 	//Cd Baz
 	//Type int pushed
 	//TExists!
@@ -1006,12 +1014,15 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Elements:
 	//Scope: g, SymId: Cl1, Value: Baz, Kind: Class
 	//Extra Data:
+	//Key: size, Value: 4
+	//Key: StaticInit, Value: St12
 	//--------------
 	//Scope: g.Baz, SymId: Iv2, Value: notused, Kind: Ivar
 	//Extra Data:
 	//Key: accessMod, Value: private
 	//Key: type, Value: int
 	//Key: isArray, Value: false
+	//Key: this_class, Value: Baz
 	//--------------
 	//Scope: g.Baz, SymId: Co3, Value: Baz, Kind: Constructor
 	//Extra Data:
@@ -1057,39 +1068,48 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Key: isArray, Value: false
 	//Key: type, Value: bool
 	//--------------
-	//Scope: g.Baz, SymId: Ty11, Value: int, Kind: Type
+	//Scope: g, SymId: Ty11, Value: int, Kind: Type
+	//Extra Data:
+	//Key: type, Value: int
+	//Key: scope, Value: g
+	//--------------
+	//Scope: g.Baz, SymId: St12, Value: BazStaticInit, Kind: StaticInit
+	//Extra Data:
+	//Key: type, Value: Baz
+	//Key: accessMod, Value: private
+	//Key: scope, Value: g.Baz
+	//--------------
+	//Scope: g.Baz.FUNC, SymId: Li13, Value: 1, Kind: LitVar
 	//Extra Data:
 	//Key: type, Value: int
 	//--------------
-	//Scope: g.Baz.FUNC, SymId: Li12, Value: 1, Kind: LitVar
+	//Scope: g, SymId: Ty14, Value: char, Kind: Type
 	//Extra Data:
-	//Key: type, Value: int
+	//Key: type, Value: char
+	//Key: scope, Value: g
 	//--------------
-	//Scope: g.main, SymId: Ty13, Value: char, Kind: Type
+	//Scope: g, SymId: Ty15, Value: bool, Kind: Type
+	//Extra Data:
+	//Key: type, Value: bool
+	//Key: scope, Value: g
+	//--------------
+	//Scope: g.main, SymId: Tv16, Value: i < j, Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Tv17, Value: b && b2, Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Tv18, Value: b && b2 || b, Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: bool
+	//--------------
+	//Scope: g.main, SymId: Tv19, Value: atoi(c), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: char
 	//--------------
-	//Scope: g.main, SymId: Ty14, Value: bool, Kind: Type
-	//Extra Data:
-	//Key: type, Value: bool
-	//--------------
-	//Scope: g.main, SymId: Tv15, Value: i < j, Kind: Tvar
-	//Extra Data:
-	//Key: type, Value: bool
-	//--------------
-	//Scope: g.main, SymId: Tv16, Value: b && b2, Kind: Tvar
-	//Extra Data:
-	//Key: type, Value: bool
-	//--------------
-	//Scope: g.main, SymId: Tv17, Value: b && b2 || b, Kind: Tvar
-	//Extra Data:
-	//Key: type, Value: bool
-	//--------------
-	//Scope: g.main, SymId: Tv18, Value: atoi(c), Kind: Tvar
-	//Extra Data:
-	//Key: type, Value: char
-	//--------------
-	//Scope: g.main, SymId: Tv19, Value: itoa(i), Kind: Tvar
+	//Scope: g.main, SymId: Tv20, Value: itoa(i), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: int
 	//--------------

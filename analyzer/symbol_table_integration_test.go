@@ -31,24 +31,28 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Elements:
 	//Scope: g, SymId: Cl1, Value: Cat, Kind: Class
 	//Extra Data:
+	//Key: size, Value: 7
 	//--------------
 	//Scope: g.Cat, SymId: Iv2, Value: paw, Kind: Ivar
 	//Extra Data:
 	//Key: accessMod, Value: private
 	//Key: type, Value: char
 	//Key: isArray, Value: false
+	//Key: this_class, Value: Cat
 	//--------------
 	//Scope: g.Cat, SymId: Iv3, Value: legsNum, Kind: Ivar
 	//Extra Data:
 	//Key: accessMod, Value: public
 	//Key: type, Value: int
 	//Key: isArray, Value: false
+	//Key: this_class, Value: Cat
 	//--------------
 	//Scope: g.Cat, SymId: Iv4, Value: myArr, Kind: Ivar
 	//Extra Data:
 	//Key: accessMod, Value: private
 	//Key: type, Value: bool
 	//Key: isArray, Value: true
+	//Key: this_class, Value: Cat
 	//--------------
 	//Scope: g.Cat.Cat, SymId: Pa5, Value: legsNum, Kind: Parameter
 	//Extra Data:
@@ -68,6 +72,7 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: accessMod, Value: private
 	//Key: type, Value: char
 	//Key: isArray, Value: true
+	//Key: this_class, Value: Cat
 	//--------------
 	//Scope: g.Cat.Run, SymId: Pa8, Value: i, Kind: Parameter
 	//Extra Data:
