@@ -23,11 +23,33 @@ type Generator struct {
 
 func NewGenerator(st *sym.SymbolTable) *Generator {
 	table := NewQuad()
-	return &Generator{table: table, st: st}
+	static := NewQuad()
+	return &Generator{table: table, static: static, st: st, quadSwitch: STATIC}
 }
 
-func (g *Generator) SetQuadSwitch(to QuadSwitch) {
-	g.quadSwitch = to
+func (g *Generator) SwitchToMain() {
+	g.quadSwitch = MAIN
+}
+
+func (g *Generator) SwitchToStatic() {
+	g.quadSwitch = STATIC
+}
+
+func (g *Generator) AddAndResetStatic() {
+	for _, qr := range(g.static.rows) {
+		g.AddRow(qr.label,qr.command,qr.op1,qr.op2,qr.op3,qr.comment)
+	}
+
+	g.static = NewQuad()
+}
+
+func (g *Generator) PrintSwitch() {
+	switch g.quadSwitch {
+	case MAIN:
+		fmt.Print("MAIN")
+	case STATIC:
+		fmt.Print("STATIC")
+	}
 }
 
 func (g *Generator) AddRow(label, command, op1, op2, op3, comment string) error {
@@ -42,4 +64,8 @@ func (g *Generator) AddRow(label, command, op1, op2, op3, comment string) error 
 
 func (g *Generator) PrintQuadTable() {
 	g.table.Print()
+}
+
+func (g *Generator) PrintQuadStatic() {
+	g.static.Print()
 }

@@ -94,23 +94,35 @@ func (s *SemanticManager) IExist(st *sym.SymbolTable) error {
 func (s *SemanticManager) VPush(value, scope, typ string) {
 
 	//Should already be in symbol table ... lets get the symId
-	//symbol table action
-	//data := make(map[string]interface{})
-	//data["type"] = value
-	//symId := s.st.AddElement(value, typ, data, true)
-
-	var symId string
 	elems := s.st.GetScopeElements(scope)
 
 	for _, elem := range elems {
 		if value == elem.Value {
 			if t, ok := elem.Data["type"]; ok && t == typ {
-				symId = elem.SymId
+				if elem.Kind == "Ivar" {
+					//fmt.Printf("ELEM: %#v\n",elem)
+					if cls, ok := elem.Data["this_class"]; ok {
+						//push a class sar
+						switch class := cls.(type) {
+						case string:
+							s.sas.push(&Id_Sar{value: "this", typ: class, symId: "this", exists: true, scope: "g" + class})
+						default:
+							panic("Ivar is messed up compiler error")
+						}
+
+						//push the var sar
+						s.sas.push(&Id_Sar{value: value, scope: scope, exists: true, typ: typ, symId: elem.SymId})
+						//call RExist()
+						s.RExist(s.st)
+
+					}
+				} else {
+					s.sas.push(&Id_Sar{value: value, scope: scope, exists: true, typ: typ, symId: elem.SymId})
+				}
+				break
 			}
 		}
 	}
-
-	s.sas.push(&Id_Sar{value: value, scope: scope, exists: true, typ: typ, symId: symId})
 	return
 }
 
@@ -227,6 +239,7 @@ LOOP:
 			}
 		}
 	}
+	s.gen.SwitchToMain()
 	s.gen.AddRow("", "FUNC", symId, "", "", s.lx.GetCurFullLine())
 	switch e.Kind {
 	case "Constructor":
@@ -237,7 +250,7 @@ LOOP:
 		data["type"] = class.Value
 		data["accessMod"] = "private"
 		data["scope"] = "g." + class.Value
-		symId := s.st.AddElement(class.Value + "StaticInit", "Method", data, true)
+		symId := s.st.AddElement(class.Value + "StaticInit", "StaticInit", data, true)
 
 		class.Data["StaticInit"] = symId
 
@@ -246,47 +259,21 @@ LOOP:
 	}
 }
 
-func (s *SemanticManager) AddStaticInit(st *sym.SymbolTable) {
-	assignSar := s.sas.pop()
-	identSar := s.sas.pop()
-
-	assignSymId := assignSar.GetSymId()
-	identSymId := identSar.GetSymId()
-
-	identElem, _ := st.GetElement(identSymId)
-
-	if cN, ok := identElem.Data["this_class"]; ok {
-		switch className := cN.(type) {
-		case string:
-			classElem := st.GetElementInScope("g",className)
-			i, ok := classElem.Data["inits"]
-			var inits []*IdentifierAssignment
-			if !ok {
-				inits = make([]*IdentifierAssignment,0)
-			} else {
-				switch ini := i.(type) {
-				case []*IdentifierAssignment:
-					inits = ini
-				}
-			}
-			inits = append(inits,&IdentifierAssignment{identSymId: identSymId, assignSymId: assignSymId})
-			classElem.Data["inits"] = inits
-		}
-	}
-
-	s.sas.push(identSar)
-	s.sas.push(assignSar)
-}
-
 func (s *SemanticManager) StaticInit(className string, st *sym.SymbolTable) {
-	s.gen.AddRow("", "CMD", "", "", "", s.lx.GetCurFullLine())
+	s.gen.SwitchToMain()
 
-	//s.gen.AddRow("", "FUNC", symId, "", "", s.lx.GetCurFullLine())
+	fElem := st.GetElementInScope("g."+className,className+"StaticInit")
+	s.gen.AddRow("", "FUNC", fElem.SymId, "", "", s.lx.GetCurFullLine())
+	s.gen.AddAndResetStatic()
+	s.gen.AddRow("", "RTN", "", "", "", s.lx.GetCurFullLine())
+
+	s.gen.SwitchToStatic()
 }
 
 func (s *SemanticManager) ReturnFunc(st *sym.SymbolTable) {
 	//icode
 	s.gen.AddRow("", "RTN", "", "", "", s.lx.GetCurFullLine())
+	s.gen.SwitchToStatic()
 }
 
 func (s *SemanticManager) Func(scope string) (err error) {

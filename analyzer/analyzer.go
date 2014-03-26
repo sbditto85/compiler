@@ -462,6 +462,15 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 		a.AddSymbol(identifier, "Ivar", symdata, a.pass == 1)
 
 		if curTok.Lexeme == "=" {
+
+			//Semantic Action OPush
+			if a.pass == 2 {
+				if err := a.sm.OPush(curTok.Lexeme); err != nil {
+					panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
+				}
+				a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
+			}
+
 			curTok, err = a.GetNext()
 			if err != nil {
 				panic(BuildErrFromTokErrType(curTok, COMPILER))
@@ -469,18 +478,21 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			if e, _ := a.IsAssignmentExpression(); e != nil {
 				panic(BuildErrFromTokErrType(curTok, ASSIGNMENT_EXPRESSION))
 			}
-
-			//Semantic Action (icode)
-			if a.pass == 2 {
-				a.sm.AddStaticInit(a.st)
-			}
-			
 		}
 
 		curTok, _ = a.GetCurr()
 		if curTok.Lexeme != ";" {
 			panic(BuildErrMessFromTok(curTok, ";"))
 		}
+
+		//Semantic Action
+		if a.pass == 2 {
+			if err := a.sm.EoE(); err != nil {
+				panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
+			}
+			a.debugMessagePassTwo("EOE")
+		}
+
 		curTok, err = a.GetNext()
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
