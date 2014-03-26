@@ -244,13 +244,13 @@ LOOP:
 	switch e.Kind {
 	case "Constructor":
 		class := st.GetElementInScope("g", e.Value) //Later figure out scope class
-		
+
 		//symbol table action
 		data := make(map[string]interface{})
 		data["type"] = class.Value
 		data["accessMod"] = "private"
 		data["scope"] = "g." + class.Value
-		symId := s.st.AddElement(class.Value + "StaticInit", "StaticInit", data, true)
+		symId := s.st.AddElement(class.Value+"StaticInit", "StaticInit", data, true)
 
 		class.Data["StaticInit"] = symId
 
@@ -262,7 +262,7 @@ LOOP:
 func (s *SemanticManager) StaticInit(className string, st *sym.SymbolTable) {
 	s.gen.SwitchToMain()
 
-	fElem := st.GetElementInScope("g."+className,className+"StaticInit")
+	fElem := st.GetElementInScope("g."+className, className+"StaticInit")
 	s.gen.AddRow("", "FUNC", fElem.SymId, "", "", s.lx.GetCurFullLine())
 	s.gen.AddAndResetStatic()
 	s.gen.AddRow("", "RTN", "", "", "", s.lx.GetCurFullLine())

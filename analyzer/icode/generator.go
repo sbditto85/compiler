@@ -13,9 +13,9 @@ const (
 )
 
 type Generator struct {
-	table *quad
-	static *quad
-	st    *sym.SymbolTable
+	table      *quad
+	static     *quad
+	st         *sym.SymbolTable
 	quadSwitch QuadSwitch
 	//stack for if/while labels
 	//stack for else labels
@@ -36,8 +36,8 @@ func (g *Generator) SwitchToStatic() {
 }
 
 func (g *Generator) AddAndResetStatic() {
-	for _, qr := range(g.static.rows) {
-		g.AddRow(qr.label,qr.command,qr.op1,qr.op2,qr.op3,qr.comment)
+	for _, qr := range g.static.rows {
+		g.AddRow(qr.label, qr.command, qr.op1, qr.op2, qr.op3, qr.comment)
 	}
 
 	g.static = NewQuad()
