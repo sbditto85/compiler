@@ -53,12 +53,14 @@ func ExampleICodeAssignment() {
 	a.PrintQuadTable()
 
 	//Output:
-	//Num Rows: 3 curRow: 2
+	//Num Rows: 5 curRow: 4
 	//Lables:
 	//Rows:
+	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
 	//MOV Lv3, Li6 ;     int s = 8;
 	//MOV Lv2, Lv3 ;     r = s;
+	//RTN  ;}
 
 }
 
@@ -108,13 +110,15 @@ func ExampleICodeAddition() {
 	a.PrintQuadTable()
 
 	//Output:
-	//Num Rows: 4 curRow: 3
+	//Num Rows: 6 curRow: 5
 	//Lables:
 	//Rows:
+	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
 	//MOV Lv3, Li6 ;     int s = 8;
 	//ADD Tv7, Lv3, Lv2 ;     r = r + s;
 	//MOV Lv2, Tv7 ;     r = r + s;
+	//RTN  ;}
 
 }
 
@@ -164,13 +168,15 @@ func ExampleICodeSubtraction() {
 	a.PrintQuadTable()
 
 	//Output:
-	//Num Rows: 4 curRow: 3
+	//Num Rows: 6 curRow: 5
 	//Lables:
 	//Rows:
+	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
 	//MOV Lv3, Li6 ;     int s = 8;
 	//SUB Tv7, Lv3, Lv2 ;     r = r - s;
 	//MOV Lv2, Tv7 ;     r = r - s;
+	//RTN  ;}
 
 }
 
@@ -220,13 +226,15 @@ func ExampleICodeMultiply() {
 	a.PrintQuadTable()
 
 	//Output:
-	//Num Rows: 4 curRow: 3
+	//Num Rows: 6 curRow: 5
 	//Lables:
 	//Rows:
+	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
 	//MOV Lv3, Li6 ;     int s = 8;
 	//MUL Tv7, Lv3, Lv2 ;     r = r * s;
 	//MOV Lv2, Tv7 ;     r = r * s;
+	//RTN  ;}
 }
 
 func ExampleICodeDivide() {
@@ -275,13 +283,15 @@ func ExampleICodeDivide() {
 	a.PrintQuadTable()
 
 	//Output:
-	//Num Rows: 4 curRow: 3
+	//Num Rows: 6 curRow: 5
 	//Lables:
 	//Rows:
+	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
 	//MOV Lv3, Li6 ;     int s = 8;
 	//DIV Tv7, Lv3, Lv2 ;     r = r / s;
 	//MOV Lv2, Tv7 ;     r = r / s;
+	//RTN  ;}
 }
 
 func ExampleICodeArithmetic() {
@@ -330,9 +340,10 @@ func ExampleICodeArithmetic() {
 	a.PrintQuadTable()
 
 	//Output:
-	//Num Rows: 10 curRow: 9
+	//Num Rows: 12 curRow: 11
 	//Lables:
 	//Rows:
+	//FUNC Ma1 ;
 	//MOV Lv2, Li7 ;     int r = -1;
 	//MOV Lv3, Li8 ;     int s = 2;
 	//MOV Lv4, Li9 ;     int t = 0;
@@ -343,6 +354,7 @@ func ExampleICodeArithmetic() {
 	//ADD Tv13, Tv12, Lv2 ;     r = r + t / z - 1;
 	//SUB Tv15, Li14, Tv13 ;     r = r + t / z - 1;
 	//MOV Lv2, Tv15 ;     r = r + t / z - 1;
+	//RTN  ;}
 
 }
 
@@ -392,6 +404,34 @@ func ExampleICodeReference() {
 	a.PrintQuadTable()
 
 	//Output:
-	//
+	//Num Rows: 26 curRow: 25
+	//Lables:
+	//Rows:
+	//FUNC Co3 ;      Dog(){}
+	//FRAME this, St11 ;      Dog(){}
+	//CALL St11 ;      Dog(){}
+	//RTN  ;      Dog(){}
+	//FUNC Me5 ;      public void AddX(Dog d) {
+	//REF Tv14, Iv2, this ;             x = x + d.x;
+	//REF Tv15, Iv2, this ;             x = x + d.x;
+	//REF Tv16, Iv2, Pa4 ;             x = x + d.x;
+	//ADD Tv17, Tv16, Tv15 ;             x = x + d.x;
+	//MOV Tv14, Tv17 ;             x = x + d.x;
+	//RTN  ;      }
+	//FUNC St11 ;}
+	//REF Tv9, Iv2, this ;      public int x = 7;
+	//MOV Tv9, Li10 ;      public int x = 7;
+	//RTN  ;}
+	//FUNC Ma6 ;void main() {
+	//NEWI Cl1, Tv18 ;     Dog d = new Dog();
+	//FRAME Tv18, Co3 ;     Dog d = new Dog();
+	//CALL Co3 ;     Dog d = new Dog();
+	//PEEK Tv18 ;     Dog d = new Dog();
+	//MOV Lv7, Tv18 ;     Dog d = new Dog();
+	//FRAME Lv7, Me5 ;     d.AddX(d);
+	//PUSH Lv7 ;     d.AddX(d);
+	//CALL Me5 ;     d.AddX(d);
+	//PEEK Tv19 ;     d.AddX(d);
+	//RTN  ;}
 
 }
