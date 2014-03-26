@@ -220,6 +220,9 @@ func (i *Id_Sar) IsSameType(other SemanticActionRecord) bool {
 	return i.typ == other.GetType()
 }
 func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
+	if i.value == "this" {
+		return true
+	}
 	scopeChecking := st.GetScope()
 	var err error
 	for scopeChecking != "" {
@@ -315,9 +318,10 @@ func (r *Ref_Sar) Exists(st *sym.SymbolTable) bool {
 func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) bool {
 	elems := st.GetScopeElements(r.scope)
 
+	//fmt.Printf("CLASS_SAR: %#v\n",r.class_sar)
 	//fmt.Printf("INSIDE: %#v\n",inside)
 
-	if !r.class_sar.Exists(st) {
+	if r.class_sar.GetValue() != "this" && !r.class_sar.Exists(st) {
 		return false
 	}
 
@@ -336,6 +340,9 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 					switch params := p.(type) {
 					case []sym.Parameter:
 						al := sar.GetAlSar().GetArgs()
+						if len(params) != len(al) {
+							return false
+						}
 						for i, a := range al {
 							if params[i].Typ != a.GetType() {
 								return false
@@ -503,6 +510,9 @@ func (f *Func_Sar) Exists(st *sym.SymbolTable) bool {
 				switch params := p.(type) {
 				case []sym.Parameter:
 					al := f.al_sar.GetArgs()
+					if len(params) != len(al) {
+						return false
+					}
 					for i, a := range al {
 						if params[i].Typ != a.GetType() {
 							if i < len(pSymIds) {
@@ -567,12 +577,13 @@ func (t *Type_Sar) IsSameType(other SemanticActionRecord) bool {
 }
 func (t *Type_Sar) Exists(st *sym.SymbolTable) bool {
 	switch t.value {
-	case "int", "char", "bool":
+	case "int", "char", "bool", "void":
 
 		_, err := st.GetTypeSymId(t.value)
 		if err != nil {
 			data := make(map[string]interface{})
 			data["type"] = t.value
+			data["scope"] = "g"
 			st.AddElement(t.value, "Type", data, true)
 		}
 		return true
@@ -644,6 +655,9 @@ func (n *New_Sar) ConstructorExists(st *sym.SymbolTable) bool {
 				switch params := p.(type) {
 				case []sym.Parameter:
 					al := n.al_sar.GetArgs()
+					if len(params) != len(al) {
+						return false
+					}
 					for i, a := range al {
 						if params[i].Typ != a.GetType() {
 							if i < len(pSymIds) {
@@ -665,7 +679,7 @@ func (n *New_Sar) ConstructorExists(st *sym.SymbolTable) bool {
 			} else {
 				return false //NEED TYPE, break? check other scopes?
 			}
-			n.symId = elem.SymId
+			n.type_sar.SetSymId(elem.SymId)
 			n.exists = true
 			return true
 		}

@@ -484,6 +484,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
 		_, _, paramList := a.IsParameterList()
+		
 		curTok, _ = a.GetCurr()
 		if curTok.Lexeme != ")" {
 			panic(BuildErrMessFromTok(curTok, ")"))
@@ -574,9 +575,23 @@ func (a *Analyzer) IsMethodBody() (error, ErrorType) {
 	if curTok.Lexeme != "{" {
 		return BuildErrFromTok(curTok, "{"), METHOD_BODY
 	}
+
+	//Semantic Action (icode)
+	if a.pass == 2 {
+		a.sm.SetupFunc(a.st)
+	}
+	
+
 	curTok, err = a.GetNext()
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
+	}
+
+	//Semantic Action (icode)
+	endFunc := false
+	if curTok.Lexeme == "}" && a.pass == 2 {
+		a.sm.ReturnFunc(a.st)
+		endFunc = true
 	}
 
 	for err == nil {
@@ -598,6 +613,11 @@ func (a *Analyzer) IsMethodBody() (error, ErrorType) {
 
 	if curTok.Lexeme != "}" {
 		panic(BuildErrMessFromTok(curTok, "}"))
+	}
+
+	//Semantic Action (icode)
+	if a.pass == 2 && !endFunc {
+		a.sm.ReturnFunc(a.st)
 	}
 
 	//symbol table opperation
@@ -733,7 +753,9 @@ func (a *Analyzer) IsParameterList() (error, ErrorType, []sym.Parameter) {
 	if e != nil {
 		return BuildErrFromTokErrType(curTok, PARAMETER_LIST), PARAMETER_LIST, params
 	}
+
 	params = append(params, param)
+
 	for err == nil {
 		curTok, err = a.GetCurr()
 		if err != nil {

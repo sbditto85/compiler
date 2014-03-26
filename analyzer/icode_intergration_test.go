@@ -345,3 +345,53 @@ func ExampleICodeArithmetic() {
 	//MOV Lv2, Tv15 ;     r = r + t / z - 1;
 
 }
+
+func ExampleICodeReference() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "icode/tests/reference.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	a.PrintQuadTable()
+
+	//Output:
+	//
+
+}

@@ -54,7 +54,10 @@ func (q *quadRow) Print() {
 	if q.label != "" {
 		fmt.Printf("%s: ", q.label)
 	}
-	fmt.Printf("%s %s, %s", q.command, q.op1, q.op2)
+	fmt.Printf("%s %s", q.command, q.op1)
+	if q.op2 != "" {
+		fmt.Printf(", %s", q.op2)
+	}
 	if q.op3 != "" {
 		fmt.Printf(", %s", q.op3)
 	}

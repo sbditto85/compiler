@@ -1,0 +1,18 @@
+
+
+class Dog {
+
+      public int x = 7;
+
+      Dog(){}
+
+      public void AddX(Dog d) {
+             x = x + d.x;
+      }
+
+}
+
+void main() {
+     Dog d = new Dog();
+     d.AddX(d);
+}

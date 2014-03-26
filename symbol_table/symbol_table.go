@@ -46,6 +46,9 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	curScope := s.scope
 
 	switch kind {
+	case "Ivar":
+		tmp := str.Split(s.scope, ".")
+		data["this_class"] = tmp[len(tmp) - 1]
 	case "Method", "Main", "Constructor":
 		if typ, ok := data["type"]; ok {
 			switch t := typ.(type) {
@@ -84,6 +87,14 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 
 	//fmt.Printf("scope %s for value %s for kind %s\n",curScope,value,kind)
 
+	//check to see if we want to override the scope (used for types)
+	if scp, ok := data["scope"]; ok {
+		switch useScope := scp.(type) {
+		case string:
+			curScope = useScope
+		}
+	}
+
 	s.scopeElements[curScope] = append(s.scopeElements[curScope], symId)
 
 	s.elems[symId] = SymbolTableElement{
@@ -92,6 +103,36 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 		Value: value,
 		Kind:  kind,
 		Data:  data,
+	}
+
+	if kind == "Ivar" {
+		class_scope, _ := s.ScopeBelow(curScope)
+		elems := s.GetScopeElements(class_scope)
+		for _, elem := range(elems) {
+			if elem.Kind == "Class" && s.ScopeAbove(class_scope,elem.Value) == curScope {
+				toAdd := 0
+				if t, ok := data["type"]; ok {
+					switch typ := t.(type){
+					case string:
+						switch typ {
+						case "bool","char":
+							toAdd = 1
+						default:
+							toAdd = 4
+						}
+					}
+				}
+				classSize := 0
+				if s, ok := elem.Data["size"]; ok {
+					switch size := s.(type) {
+					case int:
+						classSize = size
+					}
+				}
+				elem.Data["size"] = classSize + toAdd
+				break
+			}
+		}
 	}
 
 	return symId

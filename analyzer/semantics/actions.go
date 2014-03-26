@@ -48,6 +48,7 @@ func (s *SemanticManager) TPush(value, scope string) {
 	if err != nil {
 		data := make(map[string]interface{})
 		data["type"] = value
+		data["scope"] = "g" 
 		symId = s.st.AddElement(value, "Type", data, true)
 	}
 
@@ -61,12 +62,28 @@ func (s *SemanticManager) IExist(st *sym.SymbolTable) error {
 	}
 	if sar.Exists(st) {
 
-		//Should be already set in Exists function! Left as reminder
-		//symbol table action
-		//data := make(map[string]interface{})
-		//data["type"] = sar.GetValue()
-		//symId := s.st.AddElement(sar.GetValue(), sar.GetType(), data, true)
-		//sar.SetSymId(symId)
+		//SymId should be already set in Exists function!
+
+		//icode
+		elem, _ := st.GetElement(sar.GetSymId())
+		if elem.Kind == "Ivar" {
+			//fmt.Printf("ELEM: %#v\n",elem)
+			if cls, ok := elem.Data["this_class"]; ok {	
+				//push a class sar 
+				switch class := cls.(type) {
+				case string:
+					s.sas.push(&Id_Sar{value:"this",typ:class,symId:"this",exists:true,scope:"g"+class})
+				default:
+					panic("Ivar is messed up compiler error")
+				}
+				
+				//push the var sar
+				s.sas.push(sar)
+				//call RExist()
+				return s.RExist(st)
+				
+			}
+		}
 
 		s.sas.push(sar)
 		return nil
@@ -122,12 +139,27 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 		data["type"] = var_sar.GetType()
 		data["class_symId"] = class_sar.GetSymId()
 		data["var_symId"] = var_sar.GetSymId()
+		data["indirect"] = true
 		value := fmt.Sprintf("%s.%s", class_sar.GetValue(), var_sar.GetValue())
 		symId := s.st.AddElement(value, "Tvar", data, true)
 
 		ref_sar.SetSymId(symId)
 
 		s.sas.push(ref_sar)
+
+		//icode
+		switch my_sar := var_sar.(type) {
+		case *Func_Sar:
+			s.gen.AddRow("","FRAME",class_sar.GetSymId(),my_sar.GetSymId(),"",s.lx.GetCurFullLine())
+			for _, param := range(my_sar.GetAlSar().GetArgs()) {
+				s.gen.AddRow("","PUSH",param.GetSymId(),"","",s.lx.GetCurFullLine())
+			}
+			s.gen.AddRow("","CALL",my_sar.GetSymId(),"","",s.lx.GetCurFullLine())
+			s.gen.AddRow("","PEEK",symId,"","",s.lx.GetCurFullLine())
+		default:
+			s.gen.AddRow("", "REF", symId, var_sar.GetSymId(), class_sar.GetSymId(), s.lx.GetCurFullLine())
+		}
+
 		return nil
 	}
 
@@ -168,6 +200,38 @@ LOOP:
 	}
 	len++
 	s.sas.push(&Al_Sar{scope: scope, args: args[len:]})
+}
+
+func (s *SemanticManager) SetupFunc(st *sym.SymbolTable) {
+	//icode
+	curScope := st.GetScope()
+	tmp := str.Split(curScope, ".")
+	if len(tmp) < 1 {
+		return
+	}
+	f := tmp[len(tmp)-1]
+	tmp = tmp[:len(tmp)-1]
+	searchScope := str.Join(tmp, ".")
+
+	elems := st.GetScopeElements(searchScope)
+	symId := ""
+LOOP:	for _, elem := range(elems) {
+		switch elem.Kind {
+		case "Constructor","Method", "Main":
+			if elem.Value == f {
+				fmt.Printf("elem: %#v\n",elem)
+				symId = elem.SymId
+				break LOOP
+			}
+		}
+	}
+	s.gen.AddRow("","FUNC",symId,"","",s.lx.GetCurFullLine())
+	
+}
+
+func (s *SemanticManager) ReturnFunc(st *sym.SymbolTable) {
+	//icode
+	s.gen.AddRow("","RTN","","","",s.lx.GetCurFullLine())
 }
 
 func (s *SemanticManager) Func(scope string) (err error) {
@@ -361,6 +425,9 @@ func (s *SemanticManager) NewObj(st *sym.SymbolTable) (err error) {
 		return fmt.Errorf("Type %s doesn't exist", type_sar.GetValue())
 	}
 
+	//icode (will get overwrote with constructor symId later)
+	classSymId := type_sar.GetSymId()
+
 	value := type_sar.GetValue() + "("
 	for i, arg := range al_sar.GetArgs() {
 		if i > 0 {
@@ -381,6 +448,15 @@ func (s *SemanticManager) NewObj(st *sym.SymbolTable) (err error) {
 	if !new_sar.ConstructorExists(st) {
 		return fmt.Errorf("Constructor with %d arguments doens't exist", len(al_sar.GetArgs()))
 	}
+
+	//icode
+	s.gen.AddRow("","NEWI",classSymId,symId,"",s.lx.GetCurFullLine())
+	s.gen.AddRow("","FRAME",symId,type_sar.GetSymId(),"",s.lx.GetCurFullLine())
+	for _, param := range(al_sar.GetArgs()) {
+		s.gen.AddRow("","PUSH",param.GetSymId(),"","",s.lx.GetCurFullLine())
+	}
+	s.gen.AddRow("","CALL",type_sar.GetSymId(),"","",s.lx.GetCurFullLine())
+	s.gen.AddRow("","PEEK",symId,"","",s.lx.GetCurFullLine())
 
 	s.sas.push(new_sar)
 
