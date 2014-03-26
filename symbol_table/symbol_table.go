@@ -48,7 +48,7 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	switch kind {
 	case "Ivar":
 		tmp := str.Split(s.scope, ".")
-		data["this_class"] = tmp[len(tmp) - 1]
+		data["this_class"] = tmp[len(tmp)-1]
 	case "Method", "Main", "Constructor":
 		if typ, ok := data["type"]; ok {
 			switch t := typ.(type) {
@@ -108,14 +108,14 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	if kind == "Ivar" {
 		class_scope, _ := s.ScopeBelow(curScope)
 		elems := s.GetScopeElements(class_scope)
-		for _, elem := range(elems) {
-			if elem.Kind == "Class" && s.ScopeAbove(class_scope,elem.Value) == curScope {
+		for _, elem := range elems {
+			if elem.Kind == "Class" && s.ScopeAbove(class_scope, elem.Value) == curScope {
 				toAdd := 0
 				if t, ok := data["type"]; ok {
-					switch typ := t.(type){
+					switch typ := t.(type) {
 					case string:
 						switch typ {
-						case "bool","char":
+						case "bool", "char":
 							toAdd = 1
 						default:
 							toAdd = 4
@@ -200,6 +200,18 @@ func (s *SymbolTable) GetScopeElements(scope string) []SymbolTableElement {
 		return elems
 	}
 	return make([]SymbolTableElement, 0) //if we aint got nut'n for the scope they get nut'n
+}
+
+func (s *SymbolTable) GetElementInScope(scope, value string) SymbolTableElement {
+	if elemsSymIds, ok := s.scopeElements[scope]; ok {
+		for _, symId := range elemsSymIds {
+			if s.elems[symId].Value == value {
+				return s.elems[symId]
+			}
+
+		}
+	}
+	return SymbolTableElement{}
 }
 
 func (s *SymbolTable) PrintTable() {

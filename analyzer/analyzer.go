@@ -464,6 +464,10 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			if e, _ := a.IsAssignmentExpression(); e != nil {
 				panic(BuildErrFromTokErrType(curTok, ASSIGNMENT_EXPRESSION))
 			}
+
+			//Semantic Action (icode)
+			//add the assignment thinger to class
+			//TODO: WORK HERE
 		}
 
 		curTok, _ = a.GetCurr()
@@ -484,7 +488,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
 		_, _, paramList := a.IsParameterList()
-		
+
 		curTok, _ = a.GetCurr()
 		if curTok.Lexeme != ")" {
 			panic(BuildErrMessFromTok(curTok, ")"))
@@ -580,7 +584,6 @@ func (a *Analyzer) IsMethodBody() (error, ErrorType) {
 	if a.pass == 2 {
 		a.sm.SetupFunc(a.st)
 	}
-	
 
 	curTok, err = a.GetNext()
 	if err != nil {

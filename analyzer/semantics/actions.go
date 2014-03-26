@@ -48,7 +48,7 @@ func (s *SemanticManager) TPush(value, scope string) {
 	if err != nil {
 		data := make(map[string]interface{})
 		data["type"] = value
-		data["scope"] = "g" 
+		data["scope"] = "g"
 		symId = s.st.AddElement(value, "Type", data, true)
 	}
 
@@ -68,20 +68,20 @@ func (s *SemanticManager) IExist(st *sym.SymbolTable) error {
 		elem, _ := st.GetElement(sar.GetSymId())
 		if elem.Kind == "Ivar" {
 			//fmt.Printf("ELEM: %#v\n",elem)
-			if cls, ok := elem.Data["this_class"]; ok {	
-				//push a class sar 
+			if cls, ok := elem.Data["this_class"]; ok {
+				//push a class sar
 				switch class := cls.(type) {
 				case string:
-					s.sas.push(&Id_Sar{value:"this",typ:class,symId:"this",exists:true,scope:"g"+class})
+					s.sas.push(&Id_Sar{value: "this", typ: class, symId: "this", exists: true, scope: "g" + class})
 				default:
 					panic("Ivar is messed up compiler error")
 				}
-				
+
 				//push the var sar
 				s.sas.push(sar)
 				//call RExist()
 				return s.RExist(st)
-				
+
 			}
 		}
 
@@ -150,12 +150,12 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 		//icode
 		switch my_sar := var_sar.(type) {
 		case *Func_Sar:
-			s.gen.AddRow("","FRAME",class_sar.GetSymId(),my_sar.GetSymId(),"",s.lx.GetCurFullLine())
-			for _, param := range(my_sar.GetAlSar().GetArgs()) {
-				s.gen.AddRow("","PUSH",param.GetSymId(),"","",s.lx.GetCurFullLine())
+			s.gen.AddRow("", "FRAME", class_sar.GetSymId(), my_sar.GetSymId(), "", s.lx.GetCurFullLine())
+			for _, param := range my_sar.GetAlSar().GetArgs() {
+				s.gen.AddRow("", "PUSH", param.GetSymId(), "", "", s.lx.GetCurFullLine())
 			}
-			s.gen.AddRow("","CALL",my_sar.GetSymId(),"","",s.lx.GetCurFullLine())
-			s.gen.AddRow("","PEEK",symId,"","",s.lx.GetCurFullLine())
+			s.gen.AddRow("", "CALL", my_sar.GetSymId(), "", "", s.lx.GetCurFullLine())
+			s.gen.AddRow("", "PEEK", symId, "", "", s.lx.GetCurFullLine())
 		default:
 			s.gen.AddRow("", "REF", symId, var_sar.GetSymId(), class_sar.GetSymId(), s.lx.GetCurFullLine())
 		}
@@ -215,23 +215,30 @@ func (s *SemanticManager) SetupFunc(st *sym.SymbolTable) {
 
 	elems := st.GetScopeElements(searchScope)
 	symId := ""
-LOOP:	for _, elem := range(elems) {
+	var e sym.SymbolTableElement
+LOOP:
+	for _, elem := range elems {
 		switch elem.Kind {
-		case "Constructor","Method", "Main":
+		case "Constructor", "Method", "Main":
 			if elem.Value == f {
-				fmt.Printf("elem: %#v\n",elem)
 				symId = elem.SymId
+				e = elem
 				break LOOP
 			}
 		}
 	}
-	s.gen.AddRow("","FUNC",symId,"","",s.lx.GetCurFullLine())
-	
+	s.gen.AddRow("", "FUNC", symId, "", "", s.lx.GetCurFullLine())
+	switch e.Kind {
+	case "Constructor":
+		class := st.GetElementInScope("g", e.Value) //Later figure out scope class
+		fmt.Printf("e: %#v\nclass: %#v\n", e, class)
+		//TODO: WORK HERE
+	}
 }
 
 func (s *SemanticManager) ReturnFunc(st *sym.SymbolTable) {
 	//icode
-	s.gen.AddRow("","RTN","","","",s.lx.GetCurFullLine())
+	s.gen.AddRow("", "RTN", "", "", "", s.lx.GetCurFullLine())
 }
 
 func (s *SemanticManager) Func(scope string) (err error) {
@@ -450,13 +457,13 @@ func (s *SemanticManager) NewObj(st *sym.SymbolTable) (err error) {
 	}
 
 	//icode
-	s.gen.AddRow("","NEWI",classSymId,symId,"",s.lx.GetCurFullLine())
-	s.gen.AddRow("","FRAME",symId,type_sar.GetSymId(),"",s.lx.GetCurFullLine())
-	for _, param := range(al_sar.GetArgs()) {
-		s.gen.AddRow("","PUSH",param.GetSymId(),"","",s.lx.GetCurFullLine())
+	s.gen.AddRow("", "NEWI", classSymId, symId, "", s.lx.GetCurFullLine())
+	s.gen.AddRow("", "FRAME", symId, type_sar.GetSymId(), "", s.lx.GetCurFullLine())
+	for _, param := range al_sar.GetArgs() {
+		s.gen.AddRow("", "PUSH", param.GetSymId(), "", "", s.lx.GetCurFullLine())
 	}
-	s.gen.AddRow("","CALL",type_sar.GetSymId(),"","",s.lx.GetCurFullLine())
-	s.gen.AddRow("","PEEK",symId,"","",s.lx.GetCurFullLine())
+	s.gen.AddRow("", "CALL", type_sar.GetSymId(), "", "", s.lx.GetCurFullLine())
+	s.gen.AddRow("", "PEEK", symId, "", "", s.lx.GetCurFullLine())
 
 	s.sas.push(new_sar)
 
