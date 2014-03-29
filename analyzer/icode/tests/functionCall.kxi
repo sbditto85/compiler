@@ -1,0 +1,19 @@
+
+class Apple {
+
+      Apple() {
+
+      }
+
+      public void MyFunc(int i, bool j) {
+      
+      }
+
+}
+
+void main() {
+
+     Apple a;
+
+     a.MyFunc(1 + 3, 4 < 7);
+}

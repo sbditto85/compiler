@@ -732,3 +732,89 @@ func ExampleICodeFunctionChain() {
 	//Rows:
 
 }
+
+func ExampleICodeFunctionCall() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "icode/tests/functionCall.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	a.PrintQuadTable()
+	a.PrintQuadStatic()
+
+	//Output:
+	//Num Rows: 17 curRow: 16
+	//Lables:
+	//Co2: []int{0}
+	//Li13: []int{9}
+	//Li14: []int{9}
+	//Li16: []int{10}
+	//Li17: []int{10}
+	//Lv7: []int{11}
+	//Ma6: []int{8}
+	//Me5: []int{4, 11, 14}
+	//St8: []int{1, 2, 6}
+	//Tv15: []int{9, 12}
+	//Tv18: []int{10, 13}
+	//Tv19: []int{15}
+	//this: []int{1}
+	//Rows:
+	//FUNC Co2 ;      Apple() {
+	//FRAME this, St8 ;      Apple() {
+	//CALL St8 ;      Apple() {
+	//RTN  ;      }
+	//FUNC Me5 ;      public void MyFunc(int i, bool j) {
+	//RTN  ;      }
+	//FUNC St8 ;}
+	//RTN  ;}
+	//FUNC Ma6 ;void main() {
+	//ADD Tv15, Li14, Li13 ;     a.MyFunc(1 + 3, 4 < 7);
+	//LT Tv18, Li16, Li17 ;     a.MyFunc(1 + 3, 4 < 7);
+	//FRAME Lv7, Me5 ;     a.MyFunc(1 + 3, 4 < 7);
+	//PUSH Tv15 ;     a.MyFunc(1 + 3, 4 < 7);
+	//PUSH Tv18 ;     a.MyFunc(1 + 3, 4 < 7);
+	//CALL Me5 ;     a.MyFunc(1 + 3, 4 < 7);
+	//PEEK Tv19 ;     a.MyFunc(1 + 3, 4 < 7);
+	//RTN  ;}
+	//Num Rows: 0 curRow: -1
+	//Lables:
+	//Rows:
+
+}
