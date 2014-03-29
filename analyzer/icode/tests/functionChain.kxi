@@ -1,0 +1,33 @@
+
+class Dog {
+
+      public int bites = 0;
+
+      Dog() {
+
+      }
+
+      public Dog GetDog() {
+             //return null;
+             return this;
+      }
+
+      public void Bite() {
+             bites = bites + 1;
+      }
+
+      public int GetBites() {
+             return bites;
+      }
+}
+
+void main() {
+     Dog d = new Dog();
+     int b;
+
+     d.GetDog().bites = 1;
+
+     b = d.GetDog().GetDog().bites;
+
+     b = d.GetBites() + 7 * 3;
+}

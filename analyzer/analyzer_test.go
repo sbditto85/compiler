@@ -772,7 +772,6 @@ func ExampleReturnPass() {
 	//Token: return
 	//Testing is statement with token return...
 	//Token: ;
-	//Testing is expression with token ;...
 	//Token: ''
 	//is a statement!
 }

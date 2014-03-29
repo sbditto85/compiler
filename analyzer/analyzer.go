@@ -995,10 +995,10 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 		curTok, err = a.GetCurr()
 		if curTok.Lexeme == ";" {
 			isVoid = true
-		}
-
-		if err, _ := a.IsExpression(); err != nil {
-			//TODO: do anything about this?
+		} else {
+			if err, _ := a.IsExpression(); err != nil {
+				panic(err)
+			}
 		}
 		curTok, err = a.GetCurr()
 		if curTok.Lexeme != ";" {
@@ -1165,6 +1165,8 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 		if e, t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
+	case curTok.Lexeme == "this":
+		fallthrough
 	case curTok.Type == tok.Identifier:
 		//Semantic Action
 		if a.pass == 2 {

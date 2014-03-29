@@ -600,3 +600,135 @@ func ExampleICodeFlowControlBasic() {
 	//Rows:
 
 }
+
+func ExampleICodeFunctionChain() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "icode/tests/functionChain.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	a.PrintQuadTable()
+	a.PrintQuadStatic()
+
+	//Output:
+	//Num Rows: 47 curRow: 46
+	//Lables:
+	//Cl1: []int{22}
+	//Co3: []int{0, 23, 24}
+	//Iv2: []int{8, 9, 14, 18, 30, 38}
+	//Li12: []int{19}
+	//Li18: []int{10, 31}
+	//Li28: []int{43}
+	//Li29: []int{43}
+	//Lv8: []int{26, 27, 32, 40}
+	//Lv9: []int{39, 45}
+	//Ma7: []int{21}
+	//Me4: []int{4, 27, 28, 32, 33, 35, 36}
+	//Me5: []int{7}
+	//Me6: []int{13, 40, 41}
+	//St13: []int{1, 2, 17}
+	//Tv11: []int{18, 19}
+	//Tv16: []int{8, 11}
+	//Tv17: []int{9, 10}
+	//Tv19: []int{10, 11}
+	//Tv20: []int{14, 15}
+	//Tv21: []int{22, 23, 25, 26}
+	//Tv22: []int{29, 30}
+	//Tv23: []int{30, 31}
+	//Tv24: []int{34, 35}
+	//Tv25: []int{37, 38}
+	//Tv26: []int{38, 39}
+	//Tv27: []int{42, 44}
+	//Tv30: []int{43, 44}
+	//Tv31: []int{44, 45}
+	//this: []int{1, 5, 8, 9, 14, 18}
+	//Rows:
+	//FUNC Co3 ;      Dog() {
+	//FRAME this, St13 ;      Dog() {
+	//CALL St13 ;      Dog() {
+	//RTN  ;      }
+	//FUNC Me4 ;      public Dog GetDog() {
+	//RETURN this ;             return this;
+	//RTN  ;      }
+	//FUNC Me5 ;      public void Bite() {
+	//REF Tv16, Iv2, this ;             bites = bites + 1;
+	//REF Tv17, Iv2, this ;             bites = bites + 1;
+	//ADD Tv19, Li18, Tv17 ;             bites = bites + 1;
+	//MOV Tv16, Tv19 ;             bites = bites + 1;
+	//RTN  ;      }
+	//FUNC Me6 ;      public int GetBites() {
+	//REF Tv20, Iv2, this ;             return bites;
+	//RETURN Tv20 ;             return bites;
+	//RTN  ;      }
+	//FUNC St13 ;}
+	//REF Tv11, Iv2, this ;      public int bites = 0;
+	//MOV Tv11, Li12 ;      public int bites = 0;
+	//RTN  ;}
+	//FUNC Ma7 ;void main() {
+	//NEWI Cl1, Tv21 ;     Dog d = new Dog();
+	//FRAME Tv21, Co3 ;     Dog d = new Dog();
+	//CALL Co3 ;     Dog d = new Dog();
+	//PEEK Tv21 ;     Dog d = new Dog();
+	//MOV Lv8, Tv21 ;     Dog d = new Dog();
+	//FRAME Lv8, Me4 ;     d.GetDog().bites = 1;
+	//CALL Me4 ;     d.GetDog().bites = 1;
+	//PEEK Tv22 ;     d.GetDog().bites = 1;
+	//REF Tv23, Iv2, Tv22 ;     d.GetDog().bites = 1;
+	//MOV Tv23, Li18 ;     d.GetDog().bites = 1;
+	//FRAME Lv8, Me4 ;     b = d.GetDog().GetDog().bites;
+	//CALL Me4 ;     b = d.GetDog().GetDog().bites;
+	//PEEK Tv24 ;     b = d.GetDog().GetDog().bites;
+	//FRAME Tv24, Me4 ;     b = d.GetDog().GetDog().bites;
+	//CALL Me4 ;     b = d.GetDog().GetDog().bites;
+	//PEEK Tv25 ;     b = d.GetDog().GetDog().bites;
+	//REF Tv26, Iv2, Tv25 ;     b = d.GetDog().GetDog().bites;
+	//MOV Lv9, Tv26 ;     b = d.GetDog().GetDog().bites;
+	//FRAME Lv8, Me6 ;     b = d.GetBites() + 7 * 3;
+	//CALL Me6 ;     b = d.GetBites() + 7 * 3;
+	//PEEK Tv27 ;     b = d.GetBites() + 7 * 3;
+	//MUL Tv30, Li29, Li28 ;     b = d.GetBites() + 7 * 3;
+	//ADD Tv31, Tv30, Tv27 ;     b = d.GetBites() + 7 * 3;
+	//MOV Lv9, Tv31 ;     b = d.GetBites() + 7 * 3;
+	//RTN  ;}
+	//Num Rows: 0 curRow: -1
+	//Lables:
+	//Rows:
+
+}

@@ -422,9 +422,16 @@ func (s *SemanticManager) Return(st *sym.SymbolTable, isVoid bool) (err error) {
 			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)", sar.GetType(), funType)
 		}
 	default:
-		if sar.GetType() != funType && sar.GetValue() != "null" {
+		if sar.GetType() != funType && sar.GetValue() != "null" && sar.GetValue() != "this" {
 			err = fmt.Errorf("Return type (%s) does not match declared return type (%s)", sar.GetType(), funType)
 		}
+	}
+
+	//icode
+	if sar.GetValue() == "this" {
+		s.gen.AddRow("", "RETURN", "this", "", "", s.lx.GetCurFullLine())
+	} else {
+		s.gen.AddRow("", "RETURN", sar.GetSymId(), "", "", s.lx.GetCurFullLine())
 	}
 	return
 }
