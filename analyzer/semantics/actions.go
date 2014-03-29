@@ -13,9 +13,16 @@ func (s *SemanticManager) IPush(value, scope string) {
 func (s *SemanticManager) LPush(value, scope, typ string) {
 
 	//symbol table action
-	data := make(map[string]interface{})
-	data["type"] = typ
-	symId := s.st.AddElement(value, "LitVar", data, true)
+	//check if there
+	elem := s.st.GetElementInScope("g", value)
+	symId := elem.SymId
+	if symId == "" {
+		//add it
+		data := make(map[string]interface{})
+		data["type"] = typ
+		data["scope"] = "g"
+		symId = s.st.AddElement(value, "LitVar", data, true)
+	}
 
 	s.sas.push(&Lit_Sar{value: value, scope: scope, typ: typ, symId: symId})
 }
@@ -344,7 +351,27 @@ func (s *SemanticManager) If() (err error) {
 	if sar.GetType() != "bool" {
 		err = fmt.Errorf("not a bool for if statement")
 	}
+	//icode
+	ifLabel := s.st.GenSymId("If")
+	s.gen.AddRow("", "BF", sar.GetSymId(), ifLabel, "", s.lx.GetCurFullLine())
+	s.gen.AddLabel(ifLabel)
 	return
+}
+
+func (s *SemanticManager) EndIf() {
+	s.gen.LabelNextRow()
+}
+
+func (s *SemanticManager) Else() {
+	//icode
+	elseLabel := s.st.GenSymId("Else")
+	s.gen.AddRow("", "JMP", elseLabel, "", "", s.lx.GetCurFullLine())
+	s.gen.AddElseLabel(elseLabel)
+	s.EndIf()
+}
+
+func (s *SemanticManager) EndElse() {
+	s.gen.ElseLblNextRow()
 }
 
 func (s *SemanticManager) While() (err error) {
@@ -724,6 +751,18 @@ func (s *SemanticManager) GreaterLesser(op string) error {
 
 	s.sas.push(&Tvar_Sar{value: value, typ: "bool", scope: s.st.GetScope(), symId: symId})
 
+	//icode
+	switch op {
+	case "<":
+		s.gen.AddRow("", "LT", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	case "<=":
+		s.gen.AddRow("", "LTE", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	case ">":
+		s.gen.AddRow("", "GT", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	case ">=":
+		s.gen.AddRow("", "GTE", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	}
+
 	return nil
 }
 
@@ -761,7 +800,14 @@ func (s *SemanticManager) EqualNot(op string) error {
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
 	s.sas.push(&Tvar_Sar{value: value, typ: "bool", scope: s.st.GetScope(), symId: symId})
-
+	
+	//icode
+	switch op {
+	case "==":
+		s.gen.AddRow("", "EQ", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	case "!=":
+		s.gen.AddRow("", "EQ", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	}
 	return nil
 }
 
@@ -785,6 +831,13 @@ func (s *SemanticManager) IsBoolean(op string) error {
 	s.debugMessage(fmt.Sprintf("Comparing %s and %s as bool for op %s", op1.GetValue(), op2.GetValue(), op))
 
 	s.sas.push(&Tvar_Sar{value: value, typ: "bool", scope: "", symId: symId})
-
+	
+	//icode
+	switch op {
+	case "&&":
+		s.gen.AddRow("", "AND", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	case "||":
+		s.gen.AddRow("", "OR", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+	}
 	return nil
 }

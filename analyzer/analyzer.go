@@ -117,6 +117,10 @@ func (a *Analyzer) PrintQuadTable() {
 	a.gen.PrintQuadTable()
 }
 
+func (a *Analyzer) PrintQuadStatic() {
+	a.gen.PrintQuadStatic()
+}
+
 func (a *Analyzer) SetLexer(l *lex.Lexer) {
 	a.lex = l
 	a.sm.SetLexer(l)
@@ -906,9 +910,25 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			}
 			curTok, err = a.GetCurr()
 			if curTok.Lexeme == "else" {
+
+				//iCode
+				if a.pass == 2 {
+					a.sm.Else()
+				}
+
 				a.GetNext()
 				if err, _ := a.IsStatement(); err != nil {
 					panic(BuildErrFromTokErrType(curTok, STATEMENT))
+				}
+				
+				//iCode
+				if a.pass == 2 {
+					a.sm.EndElse()
+				}
+			} else {
+				//iCode
+				if a.pass == 2 {
+					a.sm.EndIf()
 				}
 			}
 		} else {

@@ -338,6 +338,7 @@ func ExampleICodeArithmetic() {
 	}
 
 	a.PrintQuadTable()
+	a.PrintQuadStatic()
 
 	//Output:
 	//Num Rows: 12 curRow: 11
@@ -355,6 +356,9 @@ func ExampleICodeArithmetic() {
 	//SUB Tv15, Li14, Tv13 ;     r = r + t / z - 1;
 	//MOV Lv2, Tv15 ;     r = r + t / z - 1;
 	//RTN  ;}
+	//Num Rows: 0 curRow: -1
+	//Lables:
+	//Rows:
 
 }
 
@@ -433,5 +437,56 @@ func ExampleICodeReference() {
 	//CALL Me5 ;     d.AddX(d);
 	//PEEK Tv19 ;     d.AddX(d);
 	//RTN  ;}
+
+}
+
+
+func ExampleICodeFlowControlBasic() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "icode/tests/flowControlBasic.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	a.PrintQuadTable()
+	a.PrintQuadStatic()
+
+	//Output:
 
 }

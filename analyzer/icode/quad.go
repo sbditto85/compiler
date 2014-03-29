@@ -30,14 +30,26 @@ func (q *quad) Print() {
 }
 
 func (q *quad) AddQuadRow(label, command, op1, op2, op3, comment string) error {
+	q.numRows++
+	q.curRow++
 	if label != "" {
 		lines := q.labels[label]
 		q.labels[label] = append(lines, q.curRow)
 	}
+	if op1 != "" {
+		lines := q.labels[op1]
+		q.labels[op1] = append(lines, q.curRow)
+	}
+	if op2 != "" {
+		lines := q.labels[op2]
+		q.labels[op2] = append(lines, q.curRow)
+	}
+	if op3 != "" {
+		lines := q.labels[op3]
+		q.labels[op3] = append(lines, q.curRow)
+	}
 	r := &quadRow{label: label, command: command, op1: op1, op2: op2, op3: op3, comment: comment}
 	q.rows = append(q.rows, r)
-	q.numRows++
-	q.curRow++
 	return nil
 }
 
