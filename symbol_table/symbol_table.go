@@ -238,9 +238,10 @@ func (s *SymbolTable) PrintTableInAddOrder() {
 	fmt.Println("=================")
 	fmt.Println("Elements:")
 	for _, key := range s.symIds {
-		e := s.elems[key]
-		e.PrintElement()
-		fmt.Println("--------------")
+		if e, ok := s.elems[key]; ok {
+			e.PrintElement()
+			fmt.Println("--------------")
+		}
 	}
 }
 

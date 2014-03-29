@@ -22,9 +22,9 @@ func (q *quad) Print() {
 	fmt.Printf("Num Rows: %d curRow: %d\n", q.numRows, q.curRow)
 	fmt.Println("Lables:")
 
-	keys := make([]string,0,len(q.labels))
+	keys := make([]string, 0, len(q.labels))
 	for k, _ := range q.labels {
-		keys = append(keys,k)
+		keys = append(keys, k)
 	}
 
 	sort.Strings(keys)
@@ -39,7 +39,7 @@ func (q *quad) Print() {
 }
 
 func (q *quad) ReplaceLabel(from, to string) {
-	for _, v := range(q.labels[from]) {
+	for _, v := range q.labels[from] {
 		row := q.rows[v]
 		var replaced bool
 		if row.label == from {

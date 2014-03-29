@@ -920,7 +920,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 				if err, _ := a.IsStatement(); err != nil {
 					panic(BuildErrFromTokErrType(curTok, STATEMENT))
 				}
-				
+
 				//iCode
 				if a.pass == 2 {
 					a.sm.EndElse()
@@ -968,7 +968,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 					panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
 				}
 				a.debugMessagePassTwo("Close Paren")
-				
+
 				if err := a.sm.While(); err != nil {
 					panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
 				}

@@ -816,7 +816,7 @@ func (s *SemanticManager) EqualNot(op string) error {
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
 	s.sas.push(&Tvar_Sar{value: value, typ: "bool", scope: s.st.GetScope(), symId: symId})
-	
+
 	//icode
 	switch op {
 	case "==":
@@ -847,7 +847,7 @@ func (s *SemanticManager) IsBoolean(op string) error {
 	s.debugMessage(fmt.Sprintf("Comparing %s and %s as bool for op %s", op1.GetValue(), op2.GetValue(), op))
 
 	s.sas.push(&Tvar_Sar{value: value, typ: "bool", scope: "", symId: symId})
-	
+
 	//icode
 	switch op {
 	case "&&":

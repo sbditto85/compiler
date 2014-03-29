@@ -13,22 +13,22 @@ const (
 )
 
 type Generator struct {
-	table      *quad
-	static     *quad
-	st         *sym.SymbolTable
-	quadSwitch QuadSwitch
-	labelStk   []string
-	elseLblStk []string
-	lblNext    int
+	table       *quad
+	static      *quad
+	st          *sym.SymbolTable
+	quadSwitch  QuadSwitch
+	labelStk    []string
+	elseLblStk  []string
+	lblNext     int
 	elseLblNext int
 }
 
 func NewGenerator(st *sym.SymbolTable) *Generator {
 	table := NewQuad()
 	static := NewQuad()
-	labelStk := make([]string,0)
-	elseLblStk := make([]string,0)
-	return &Generator{table: table, static: static, st: st, quadSwitch: STATIC,labelStk: labelStk, elseLblStk: elseLblStk}
+	labelStk := make([]string, 0)
+	elseLblStk := make([]string, 0)
+	return &Generator{table: table, static: static, st: st, quadSwitch: STATIC, labelStk: labelStk, elseLblStk: elseLblStk}
 }
 
 func (g *Generator) SwitchToMain() {
@@ -57,11 +57,11 @@ func (g *Generator) PrintSwitch() {
 }
 
 func (g *Generator) AddLabel(lbl string) {
-	g.labelStk = append(g.labelStk,lbl)
+	g.labelStk = append(g.labelStk, lbl)
 }
 
 func (g *Generator) AddElseLabel(lbl string) {
-	g.elseLblStk = append(g.elseLblStk,lbl)
+	g.elseLblStk = append(g.elseLblStk, lbl)
 }
 
 func (g *Generator) LabelNextRow() {
@@ -79,34 +79,34 @@ func (g *Generator) AddRow(label, command, op1, op2, op3, comment string) error 
 		fmt.Printf("elseLblStk: %#v\n",g.elseLblStk)
 		panic("ICODE: Trying to double label a row")
 	}*/
-	for ;g.lblNext > 0; g.lblNext-- {
+	for ; g.lblNext > 0; g.lblNext-- {
 		if label == "" {
-			label = g.labelStk[len(g.labelStk) - 1]
-			g.labelStk = g.labelStk[:len(g.labelStk) - 1]
+			label = g.labelStk[len(g.labelStk)-1]
+			g.labelStk = g.labelStk[:len(g.labelStk)-1]
 		} else {
 			//handle back patching
-			replaceLabel := g.labelStk[len(g.labelStk) - 1]
-			g.labelStk = g.labelStk[:len(g.labelStk) - 1]
+			replaceLabel := g.labelStk[len(g.labelStk)-1]
+			g.labelStk = g.labelStk[:len(g.labelStk)-1]
 
 			//fmt.Printf("REPLACE: %s WITH %s\n",replaceLabel,label)
 
-			g.table.ReplaceLabel(replaceLabel,label)
-			g.static.ReplaceLabel(replaceLabel,label)
+			g.table.ReplaceLabel(replaceLabel, label)
+			g.static.ReplaceLabel(replaceLabel, label)
 		}
 	}
-	for ;g.elseLblNext > 0; g.elseLblNext-- {
+	for ; g.elseLblNext > 0; g.elseLblNext-- {
 		if label == "" {
-			label = g.elseLblStk[len(g.elseLblStk) - 1]
-			g.elseLblStk = g.elseLblStk[:len(g.elseLblStk) - 1]
+			label = g.elseLblStk[len(g.elseLblStk)-1]
+			g.elseLblStk = g.elseLblStk[:len(g.elseLblStk)-1]
 		} else {
 			//handle back patching
-			replaceLabel := g.elseLblStk[len(g.elseLblStk) - 1]
-			g.elseLblStk = g.elseLblStk[:len(g.elseLblStk) - 1]
+			replaceLabel := g.elseLblStk[len(g.elseLblStk)-1]
+			g.elseLblStk = g.elseLblStk[:len(g.elseLblStk)-1]
 
 			//fmt.Printf("REPLACE: %s WITH %s\n",replaceLabel,label)
 
-			g.table.ReplaceLabel(replaceLabel,label)
-			g.static.ReplaceLabel(replaceLabel,label)
+			g.table.ReplaceLabel(replaceLabel, label)
+			g.static.ReplaceLabel(replaceLabel, label)
 		}
 	}
 	switch g.quadSwitch {

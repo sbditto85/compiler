@@ -1079,9 +1079,10 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Key: accessMod, Value: private
 	//Key: scope, Value: g.Baz
 	//--------------
-	//Scope: g.Baz.FUNC, SymId: Li13, Value: 1, Kind: LitVar
+	//Scope: g, SymId: Li13, Value: 1, Kind: LitVar
 	//Extra Data:
 	//Key: type, Value: int
+	//Key: scope, Value: g
 	//--------------
 	//Scope: g, SymId: Ty14, Value: char, Kind: Type
 	//Extra Data:
@@ -1097,19 +1098,19 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Extra Data:
 	//Key: type, Value: bool
 	//--------------
-	//Scope: g.main, SymId: Tv17, Value: b && b2, Kind: Tvar
+	//Scope: g.main, SymId: Tv19, Value: b && b2, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//--------------
-	//Scope: g.main, SymId: Tv18, Value: b && b2 || b, Kind: Tvar
+	//Scope: g.main, SymId: Tv20, Value: b && b2 || b, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//--------------
-	//Scope: g.main, SymId: Tv19, Value: atoi(c), Kind: Tvar
+	//Scope: g.main, SymId: Tv22, Value: atoi(c), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: char
 	//--------------
-	//Scope: g.main, SymId: Tv20, Value: itoa(i), Kind: Tvar
+	//Scope: g.main, SymId: Tv23, Value: itoa(i), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: int
 	//--------------

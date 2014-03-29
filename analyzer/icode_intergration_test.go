@@ -500,7 +500,6 @@ func ExampleICodeReference() {
 
 }
 
-
 func ExampleICodeFlowControlBasic() {
 	defer func() {
 		if r := recover(); r != nil {
