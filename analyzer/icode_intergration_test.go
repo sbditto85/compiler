@@ -55,6 +55,11 @@ func ExampleICodeAssignment() {
 	//Output:
 	//Num Rows: 5 curRow: 4
 	//Lables:
+	//Li5: []int{1}
+	//Li6: []int{2}
+	//Lv2: []int{1, 3}
+	//Lv3: []int{2, 3}
+	//Ma1: []int{0}
 	//Rows:
 	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
@@ -112,6 +117,12 @@ func ExampleICodeAddition() {
 	//Output:
 	//Num Rows: 6 curRow: 5
 	//Lables:
+	//Li5: []int{1}
+	//Li6: []int{2}
+	//Lv2: []int{1, 3, 4}
+	//Lv3: []int{2, 3}
+	//Ma1: []int{0}
+	//Tv7: []int{3, 4}
 	//Rows:
 	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
@@ -170,6 +181,12 @@ func ExampleICodeSubtraction() {
 	//Output:
 	//Num Rows: 6 curRow: 5
 	//Lables:
+	//Li5: []int{1}
+	//Li6: []int{2}
+	//Lv2: []int{1, 3, 4}
+	//Lv3: []int{2, 3}
+	//Ma1: []int{0}
+	//Tv7: []int{3, 4}
 	//Rows:
 	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
@@ -228,6 +245,12 @@ func ExampleICodeMultiply() {
 	//Output:
 	//Num Rows: 6 curRow: 5
 	//Lables:
+	//Li5: []int{1}
+	//Li6: []int{2}
+	//Lv2: []int{1, 3, 4}
+	//Lv3: []int{2, 3}
+	//Ma1: []int{0}
+	//Tv7: []int{3, 4}
 	//Rows:
 	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
@@ -285,6 +308,12 @@ func ExampleICodeDivide() {
 	//Output:
 	//Num Rows: 6 curRow: 5
 	//Lables:
+	//Li5: []int{1}
+	//Li6: []int{2}
+	//Lv2: []int{1, 3, 4}
+	//Lv3: []int{2, 3}
+	//Ma1: []int{0}
+	//Tv7: []int{3, 4}
 	//Rows:
 	//FUNC Ma1 ;
 	//MOV Lv2, Li5 ;     int r = 7;
@@ -343,6 +372,20 @@ func ExampleICodeArithmetic() {
 	//Output:
 	//Num Rows: 12 curRow: 11
 	//Lables:
+	//Li14: []int{9}
+	//Li7: []int{1}
+	//Li8: []int{2}
+	//Li9: []int{3}
+	//Lv2: []int{1, 4, 8, 10}
+	//Lv3: []int{2, 4}
+	//Lv4: []int{3, 5, 7}
+	//Lv5: []int{6, 7}
+	//Ma1: []int{0}
+	//Tv10: []int{4, 5}
+	//Tv11: []int{5, 6}
+	//Tv12: []int{7, 8}
+	//Tv13: []int{8, 9}
+	//Tv15: []int{9, 10}
 	//Rows:
 	//FUNC Ma1 ;
 	//MOV Lv2, Li7 ;     int r = -1;
@@ -410,6 +453,23 @@ func ExampleICodeReference() {
 	//Output:
 	//Num Rows: 26 curRow: 25
 	//Lables:
+	//Cl1: []int{16}
+	//Co3: []int{0, 17, 18}
+	//Iv2: []int{5, 6, 7, 12}
+	//Li10: []int{13}
+	//Lv7: []int{20, 21, 22}
+	//Ma6: []int{15}
+	//Me5: []int{4, 21, 23}
+	//Pa4: []int{7}
+	//St11: []int{1, 2, 11}
+	//Tv14: []int{5, 9}
+	//Tv15: []int{6, 8}
+	//Tv16: []int{7, 8}
+	//Tv17: []int{8, 9}
+	//Tv18: []int{16, 17, 19, 20}
+	//Tv19: []int{24}
+	//Tv9: []int{12, 13}
+	//this: []int{1, 5, 6, 12}
 	//Rows:
 	//FUNC Co3 ;      Dog(){}
 	//FRAME this, St11 ;      Dog(){}
@@ -488,5 +548,56 @@ func ExampleICodeFlowControlBasic() {
 	a.PrintQuadStatic()
 
 	//Output:
+	//Num Rows: 22 curRow: 21
+	//Lables:
+	//El18: []int{13}
+	//El9: []int{5}
+	//En23: []int{17, 21}
+	//If16: []int{11, 14}
+	//If7: []int{3, 6}
+	//Li10: []int{6, 7, 8, 16}
+	//Li17: []int{12}
+	//Li19: []int{14, 18}
+	//Li4: []int{1}
+	//Li5: []int{2}
+	//Li8: []int{4}
+	//Lv2: []int{1, 2, 4, 6, 7, 8, 12, 14, 15, 16, 18, 19}
+	//Ma1: []int{0}
+	//Tv11: []int{6, 10}
+	//Tv12: []int{7, 9}
+	//Tv13: []int{8, 9}
+	//Tv14: []int{9, 10}
+	//Tv15: []int{10, 11}
+	//Tv20: []int{14, 15}
+	//Tv22: []int{16, 17}
+	//Tv24: []int{18, 19}
+	//Tv6: []int{2, 3}
+	//Wh21: []int{13, 5, 16, 20}
+	//Rows:
+	//FUNC Ma1 ;void main() {
+	//MOV Lv2, Li4 ;    int x = 7;
+	//LT Tv6, Lv2, Li5 ;    if ( x < 4) {
+	//BF Tv6, If7 ;    if ( x < 4) {
+	//MOV Lv2, Li8 ;	x = 8;
+	//JMP Wh21 ;    } else if ( x <= 3 || x >= 3 && x != 3) {
+	//If7: LTE Tv11, Lv2, Li10 ;    } else if ( x <= 3 || x >= 3 && x != 3) {
+	//GTE Tv12, Lv2, Li10 ;    } else if ( x <= 3 || x >= 3 && x != 3) {
+	//NEQ Tv13, Lv2, Li10 ;    } else if ( x <= 3 || x >= 3 && x != 3) {
+	//AND Tv14, Tv12, Tv13 ;    } else if ( x <= 3 || x >= 3 && x != 3) {
+	//OR Tv15, Tv11, Tv14 ;    } else if ( x <= 3 || x >= 3 && x != 3) {
+	//BF Tv15, If16 ;    } else if ( x <= 3 || x >= 3 && x != 3) {
+	//MOV Lv2, Li17 ;	x = 2;
+	//JMP Wh21 ;    } else {
+	//If16: ADD Tv20, Li19, Lv2 ;	x = x + 1;
+	//MOV Lv2, Tv20 ;	x = x + 1;
+	//Wh21: GT Tv22, Lv2, Li10 ;    while(x > 3) {
+	//BF Tv22, En23 ;    while(x > 3) {
+	//SUB Tv24, Li19, Lv2 ;	x = x - 1;
+	//MOV Lv2, Tv24 ;	x = x - 1;
+	//JMP Wh21 ;}
+	//En23: RTN  ;}
+	//Num Rows: 0 curRow: -1
+	//Lables:
+	//Rows:
 
 }

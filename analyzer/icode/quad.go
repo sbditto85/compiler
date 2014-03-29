@@ -2,6 +2,7 @@ package icode
 
 import (
 	"fmt"
+	"sort"
 )
 
 type quad struct {
@@ -20,12 +21,48 @@ func NewQuad() *quad {
 func (q *quad) Print() {
 	fmt.Printf("Num Rows: %d curRow: %d\n", q.numRows, q.curRow)
 	fmt.Println("Lables:")
-	for k, v := range q.labels {
-		fmt.Printf("%s: %#v\n", k, v)
+
+	keys := make([]string,0,len(q.labels))
+	for k, _ := range q.labels {
+		keys = append(keys,k)
+	}
+
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		fmt.Printf("%s: %#v\n", k, q.labels[k])
 	}
 	fmt.Println("Rows:")
 	for _, row := range q.rows {
 		row.Print()
+	}
+}
+
+func (q *quad) ReplaceLabel(from, to string) {
+	for _, v := range(q.labels[from]) {
+		row := q.rows[v]
+		var replaced bool
+		if row.label == from {
+			row.label = to
+			replaced = true
+		}
+		if row.op1 == from {
+			row.op1 = to
+			replaced = true
+		}
+		if row.op2 == from {
+			row.op2 = to
+			replaced = true
+		}
+		if row.op3 == from {
+			row.op3 = to
+			replaced = true
+		}
+		if replaced {
+			lines := q.labels[to]
+			q.labels[to] = append(lines, v)
+		}
+		q.rows[v] = row
 	}
 }
 

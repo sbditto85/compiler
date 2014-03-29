@@ -19,8 +19,8 @@ type Generator struct {
 	quadSwitch QuadSwitch
 	labelStk   []string
 	elseLblStk []string
-	lblNext    bool
-	elseLblNext bool
+	lblNext    int
+	elseLblNext int
 }
 
 func NewGenerator(st *sym.SymbolTable) *Generator {
@@ -65,35 +65,49 @@ func (g *Generator) AddElseLabel(lbl string) {
 }
 
 func (g *Generator) LabelNextRow() {
-	g.lblNext = true
+	g.lblNext += 1
 }
 
 func (g *Generator) ElseLblNextRow() {
-	g.elseLblNext = true
+	g.elseLblNext += 1
+	//fmt.Printf("LABELING NEXT ROW: %d %#v\n",g.elseLblNext, g.elseLblStk)
 }
 
 func (g *Generator) AddRow(label, command, op1, op2, op3, comment string) error {
-	if g.lblNext && g.elseLblNext {
+	/*if g.lblNext > 0  && g.elseLblNext > 0 {
+		fmt.Printf("labelStk: %#v\n",g.labelStk)
+		fmt.Printf("elseLblStk: %#v\n",g.elseLblStk)
 		panic("ICODE: Trying to double label a row")
-	}
-	if g.lblNext {
+	}*/
+	for ;g.lblNext > 0; g.lblNext-- {
 		if label == "" {
-			//fmt.Printf("labelStk: %#v\n",g.labelStk)
 			label = g.labelStk[len(g.labelStk) - 1]
 			g.labelStk = g.labelStk[:len(g.labelStk) - 1]
 		} else {
 			//handle back patching
+			replaceLabel := g.labelStk[len(g.labelStk) - 1]
+			g.labelStk = g.labelStk[:len(g.labelStk) - 1]
+
+			//fmt.Printf("REPLACE: %s WITH %s\n",replaceLabel,label)
+
+			g.table.ReplaceLabel(replaceLabel,label)
+			g.static.ReplaceLabel(replaceLabel,label)
 		}
-		g.lblNext = false
 	}
-	if g.elseLblNext {
+	for ;g.elseLblNext > 0; g.elseLblNext-- {
 		if label == "" {
 			label = g.elseLblStk[len(g.elseLblStk) - 1]
-			g.labelStk = g.elseLblStk[:len(g.elseLblStk) - 1]
+			g.elseLblStk = g.elseLblStk[:len(g.elseLblStk) - 1]
 		} else {
 			//handle back patching
+			replaceLabel := g.elseLblStk[len(g.elseLblStk) - 1]
+			g.elseLblStk = g.elseLblStk[:len(g.elseLblStk) - 1]
+
+			//fmt.Printf("REPLACE: %s WITH %s\n",replaceLabel,label)
+
+			g.table.ReplaceLabel(replaceLabel,label)
+			g.static.ReplaceLabel(replaceLabel,label)
 		}
-		g.elseLblNext = false
 	}
 	switch g.quadSwitch {
 	case MAIN:

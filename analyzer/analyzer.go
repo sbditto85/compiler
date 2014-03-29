@@ -935,6 +935,12 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
 		}
 	case curTok.Lexeme == "while":
+		//Semantic Action Push (iCode)
+		var initLabel string
+		if a.pass == 2 {
+			initLabel = a.sm.InitWhile()
+		}
+
 		a.GetNext()
 		curTok, err = a.GetCurr() //now at next token after expression
 		if curTok.Lexeme != "(" {
@@ -962,7 +968,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 					panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
 				}
 				a.debugMessagePassTwo("Close Paren")
-
+				
 				if err := a.sm.While(); err != nil {
 					panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
 				}
@@ -972,6 +978,11 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			a.GetNext()
 			if err, _ := a.IsStatement(); err != nil {
 				panic(BuildErrFromTokErrType(curTok, STATEMENT))
+			}
+
+			//Semantic Action (ICode)
+			if a.pass == 2 {
+				a.sm.EndWhile(initLabel)
 			}
 		} else {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT

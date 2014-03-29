@@ -379,7 +379,23 @@ func (s *SemanticManager) While() (err error) {
 	if sar.GetType() != "bool" {
 		err = fmt.Errorf("not a bool for while statement")
 	}
+	//icode
+	endLabel := s.st.GenSymId("End")
+	s.gen.AddRow("", "BF", sar.GetSymId(), endLabel, "", s.lx.GetCurFullLine())
+	s.gen.AddLabel(endLabel)
 	return
+}
+
+func (s *SemanticManager) InitWhile() (initLabel string) {
+	initLabel = s.st.GenSymId("While")
+	s.gen.AddLabel(initLabel)
+	s.gen.LabelNextRow()
+	return
+}
+
+func (s *SemanticManager) EndWhile(initLabel string) {
+	s.gen.AddRow("", "JMP", initLabel, "", "", s.lx.GetCurFullLine())
+	s.gen.LabelNextRow()
 }
 
 func (s *SemanticManager) Return(st *sym.SymbolTable, isVoid bool) (err error) {
@@ -806,7 +822,7 @@ func (s *SemanticManager) EqualNot(op string) error {
 	case "==":
 		s.gen.AddRow("", "EQ", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
 	case "!=":
-		s.gen.AddRow("", "EQ", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
+		s.gen.AddRow("", "NEQ", symId, op2.GetSymId(), op1.GetSymId(), s.lx.GetCurFullLine())
 	}
 	return nil
 }
