@@ -1,0 +1,18 @@
+
+class Frog {
+
+    private int f;
+
+    Frog(int i) {
+	f = i;
+    }
+
+}
+
+void main() {
+    Frog frogs[] = new Frog[10];
+
+    frogs[0] = new Frog(1);
+    frogs[1] = frogs[0];
+
+}

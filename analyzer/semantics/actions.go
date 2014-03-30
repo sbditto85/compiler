@@ -333,7 +333,13 @@ func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
 
 	value := id_sar.GetValue() + "[" + exp.GetValue() + "]"
 
-	arr_sar := &Arr_Sar{value: value, typ: id_sar.GetType(), scope: st.GetScope(), id_sar: id_sar, exp: exp}
+	//symbol table
+	data := make(map[string]interface{})
+	data["arr_symId"] = id_sar.GetSymId()
+	data["exp_symId"] = exp.GetSymId()
+	symId := s.st.AddElement(value, "Tvar", data, true)
+
+	arr_sar := &Arr_Sar{value: value, typ: id_sar.GetType(), scope: st.GetScope(), id_sar: id_sar, exp: exp, symId: symId}
 
 	if !arr_sar.Exists(st) {
 		return fmt.Errorf("%s does not exists", value)
@@ -342,6 +348,9 @@ func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
 	s.sas.push(arr_sar)
 
 	s.debugMessage(fmt.Sprintf("Type: %s, with array size %s", id_sar.GetValue(), exp.GetValue()))
+
+	//icode
+	s.gen.AddRow("", "AEF", symId, exp.GetSymId(), id_sar.GetSymId(), s.lx.GetCurFullLine())
 
 	return
 }
@@ -578,7 +587,13 @@ func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
 
 	value := type_sar.GetValue() + "[" + sar.GetValue() + "]"
 
-	new_sar := &New_Sar{value: value, typ: type_sar.GetValue(), scope: "g." + type_sar.GetValue(), type_sar: type_sar, al_sar: nil}
+	//symbol table
+	data := make(map[string]interface{})
+	data["type_symId"] = type_sar.GetSymId()
+	data["exp_symId"] = sar.GetSymId()
+	symId := s.st.AddElement(value, "Tvar", data, true)
+
+	new_sar := &New_Sar{value: value, typ: type_sar.GetValue(), scope: "g." + type_sar.GetValue(), type_sar: type_sar, al_sar: nil, symId: symId}
 
 	if type_sar.GetType() == "void" {
 		return fmt.Errorf("Array cannot be of type void")
@@ -587,6 +602,14 @@ func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
 	s.sas.push(new_sar)
 
 	s.debugMessage(fmt.Sprintf("Type: %s, with array size %s", type_sar.GetValue(), sar.GetValue()))
+
+	//icode
+	data = make(map[string]interface{})
+	data["type_symId"] = type_sar.GetSymId()
+	symId = s.st.AddElement(value, "Tvar", data, true)
+
+	s.gen.AddRow("", "MUL", symId, s.GetTypeSize(type_sar.GetValue()), sar.GetSymId(), s.lx.GetCurFullLine())
+	s.gen.AddRow("", "NEW", new_sar.GetSymId(), symId, "", s.lx.GetCurFullLine())
 
 	return
 }

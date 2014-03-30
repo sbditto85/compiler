@@ -5,6 +5,7 @@ import (
 	ic "github.com/sbditto85/compiler/analyzer/icode"
 	lex "github.com/sbditto85/compiler/lexer"
 	sym "github.com/sbditto85/compiler/symbol_table"
+	"strings"
 )
 
 //////////////////////////////////
@@ -34,6 +35,16 @@ func (s *SemanticManager) debugMessage(msg string) {
 }
 func (s *SemanticManager) SetDebug(debug bool) {
 	s.debug = debug
+}
+func (s *SemanticManager) GetTypeSize(typ string) string {
+	switch typ {
+	case "void":
+		return "0"
+	case "char", "bool":
+		return "1"
+	default:
+		return "4"
+	}
 }
 
 type IdentifierAssignment struct {
@@ -330,6 +341,8 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 		return false
 	}
 
+	curScope := st.GetScope()
+
 	switch sar := inside.(type) {
 	case *Func_Sar:
 		method_sar := sar.GetIdSar()
@@ -338,7 +351,14 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 		for _, elem := range elems {
 			if elem.Kind == "Method" && elem.Value == method_sar.GetValue() {
 				//check modifier
-				if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
+				elemScope := elem.Scope
+				if cls, ok := elem.Data["this_class"]; ok {
+					switch class := cls.(type) {
+					case string:
+						elemScope = "g." + class
+					}
+				}
+				if mod, ok := elem.Data["accessMod"]; !ok || (mod != "public" && !strings.HasPrefix(curScope, elemScope)) {
 					continue
 				}
 				if p, ok := elem.Data["parameters"]; ok {
@@ -377,7 +397,14 @@ func (r *Ref_Sar) InstExists(st *sym.SymbolTable, inside SemanticActionRecord) b
 			case "Ivar":
 				if elem.Value == inside.GetValue() {
 					//check modifier
-					if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
+					elemScope := elem.Scope
+					if cls, ok := elem.Data["this_class"]; ok {
+						switch class := cls.(type) {
+						case string:
+							elemScope = "g." + class
+						}
+					}
+					if mod, ok := elem.Data["accessMod"]; !ok || (mod != "public" && !strings.HasPrefix(curScope, elemScope)) {
 						continue
 					}
 
@@ -643,10 +670,19 @@ func (n *New_Sar) Exists(st *sym.SymbolTable) bool {
 func (n *New_Sar) ConstructorExists(st *sym.SymbolTable) bool {
 	elems := st.GetScopeElements("g." + n.type_sar.GetValue())
 
+	curScope := st.GetScope()
+
 	for _, elem := range elems {
 		if elem.Kind == "Constructor" && elem.Value == n.type_sar.GetValue() {
 			//check modifier
-			if mod, ok := elem.Data["accessMod"]; !ok || mod != "public" {
+			elemScope := elem.Scope
+			if cls, ok := elem.Data["this_class"]; ok {
+				switch class := cls.(type) {
+				case string:
+					elemScope = "g." + class
+				}
+			}
+			if mod, ok := elem.Data["accessMod"]; !ok || (mod != "public" && !strings.HasPrefix(curScope, elemScope)) {
 				continue
 			}
 			if p, ok := elem.Data["parameters"]; ok {
@@ -767,7 +803,7 @@ func (a *Arr_Sar) Exists(st *sym.SymbolTable) bool {
 		if val, ok := elem.Data["isArray"]; ok {
 			switch v := val.(type) {
 			case bool:
-				a.symId = elem.SymId
+				//a.symId = elem.SymId
 				return v
 			}
 		}
