@@ -866,5 +866,55 @@ func ExampleICodeArraysEverywhere() {
 	a.PrintQuadStatic()
 
 	//Output:
+	//Num Rows: 24 curRow: 23
+	//Lables:
+	//4: []int{10}
+	//Cl1: []int{14}
+	//Co4: []int{0, 15, 17}
+	//Iv2: []int{3, 7}
+	//Li12: []int{10}
+	//Li15: []int{13, 21}
+	//Li17: []int{16, 20}
+	//Lv6: []int{12, 13, 20, 21}
+	//Ma5: []int{9}
+	//Pa3: []int{4}
+	//St9: []int{1, 2, 6}
+	//Tv10: []int{3, 4}
+	//Tv13: []int{11, 12}
+	//Tv14: []int{10, 11}
+	//Tv16: []int{13, 19}
+	//Tv18: []int{14, 15, 18, 19}
+	//Tv19: []int{20, 22}
+	//Tv20: []int{21, 22}
+	//Tv8: []int{7}
+	//this: []int{1, 3, 7}
+	//Rows:
+	//FUNC Co4 ;    Frog(int i) {
+	//FRAME this, St9 ;    Frog(int i) {
+	//CALL St9 ;    Frog(int i) {
+	//REF Tv10, Iv2, this ;	f = i;
+	//MOV Tv10, Pa3 ;	f = i;
+	//RTN  ;    }
+	//FUNC St9 ;}
+	//REF Tv8, Iv2, this ;    private int f;
+	//RTN  ;}
+	//FUNC Ma5 ;void main() {
+	//MUL Tv14, 4, Li12 ;    Frog frogs[] = new Frog[10];
+	//NEW Tv13, Tv14 ;    Frog frogs[] = new Frog[10];
+	//MOV Lv6, Tv13 ;    Frog frogs[] = new Frog[10];
+	//AEF Tv16, Li15, Lv6 ;    frogs[0] = new Frog(1);
+	//NEWI Cl1, Tv18 ;    frogs[0] = new Frog(1);
+	//FRAME Tv18, Co4 ;    frogs[0] = new Frog(1);
+	//PUSH Li17 ;    frogs[0] = new Frog(1);
+	//CALL Co4 ;    frogs[0] = new Frog(1);
+	//PEEK Tv18 ;    frogs[0] = new Frog(1);
+	//MOV Tv16, Tv18 ;    frogs[0] = new Frog(1);
+	//AEF Tv19, Li17, Lv6 ;    frogs[1] = frogs[0];
+	//AEF Tv20, Li15, Lv6 ;    frogs[1] = frogs[0];
+	//MOV Tv19, Tv20 ;    frogs[1] = frogs[0];
+	//RTN  ;}
+	//Num Rows: 0 curRow: -1
+	//Lables:
+	//Rows:
 
 }

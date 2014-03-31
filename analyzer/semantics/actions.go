@@ -454,6 +454,10 @@ func (s *SemanticManager) Cout() (err error) {
 	if sar.GetType() != "char" && sar.GetType() != "int" {
 		err = fmt.Errorf("not a char or int for cout")
 	}
+
+	//icode
+	s.gen.AddRow("", "WRITE", sar.GetSymId(), "", "", s.lx.GetCurFullLine())
+
 	return
 }
 
@@ -466,6 +470,10 @@ func (s *SemanticManager) Cin() (err error) {
 	if sar.GetType() != "char" && sar.GetType() != "int" {
 		err = fmt.Errorf("not a char or int for cin")
 	}
+
+	//icode
+	s.gen.AddRow("", "READ", sar.GetSymId(), "", "", s.lx.GetCurFullLine())
+
 	return
 }
 

@@ -1015,7 +1015,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Scope: g, SymId: Cl1, Value: Baz, Kind: Class
 	//Extra Data:
 	//Key: size, Value: 4
-	//Key: StaticInit, Value: St12
+	//Key: StaticInit, Value: St13
 	//--------------
 	//Scope: g.Baz, SymId: Iv2, Value: notused, Kind: Ivar
 	//Extra Data:
@@ -1073,44 +1073,51 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Key: type, Value: int
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g.Baz, SymId: St12, Value: BazStaticInit, Kind: StaticInit
+	//Scope: g.Baz, SymId: Tv12, Value: this.notused, Kind: Tvar
+	//Extra Data:
+	//Key: type, Value: int
+	//Key: class_symId, Value: this
+	//Key: var_symId, Value: Iv2
+	//Key: indirect, Value: true
+	//--------------
+	//Scope: g.Baz, SymId: St13, Value: BazStaticInit, Kind: StaticInit
 	//Extra Data:
 	//Key: type, Value: Baz
 	//Key: accessMod, Value: private
 	//Key: scope, Value: g.Baz
 	//--------------
-	//Scope: g, SymId: Li13, Value: 1, Kind: LitVar
+	//Scope: g, SymId: Li14, Value: 1, Kind: LitVar
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g, SymId: Ty14, Value: char, Kind: Type
+	//Scope: g, SymId: Ty15, Value: char, Kind: Type
 	//Extra Data:
 	//Key: type, Value: char
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g, SymId: Ty15, Value: bool, Kind: Type
+	//Scope: g, SymId: Ty16, Value: bool, Kind: Type
 	//Extra Data:
 	//Key: type, Value: bool
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g.main, SymId: Tv16, Value: i < j, Kind: Tvar
+	//Scope: g.main, SymId: Tv17, Value: i < j, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//--------------
-	//Scope: g.main, SymId: Tv19, Value: b && b2, Kind: Tvar
+	//Scope: g.main, SymId: Tv20, Value: b && b2, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//--------------
-	//Scope: g.main, SymId: Tv20, Value: b && b2 || b, Kind: Tvar
+	//Scope: g.main, SymId: Tv21, Value: b && b2 || b, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//--------------
-	//Scope: g.main, SymId: Tv22, Value: atoi(c), Kind: Tvar
+	//Scope: g.main, SymId: Tv23, Value: atoi(c), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: char
 	//--------------
-	//Scope: g.main, SymId: Tv23, Value: itoa(i), Kind: Tvar
+	//Scope: g.main, SymId: Tv24, Value: itoa(i), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: int
 	//--------------
