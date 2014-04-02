@@ -112,51 +112,39 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	switch kind {
 	case "Method", "Main", "Constructor":
 		elem := s.elems[symId]
-		fmt.Printf("scope: %s \nelemnt: %#v\n",curScope,elem)
-		if p, ok := elem.Data["paramSymIds"]; ok {
-			switch params := p.(type) {
-			case []string:
-				for _, paramSymId := range(params) {
-					fmt.Printf("PARAMSymId: %s\n",paramSymId)
-					param,_ := s.GetElement(paramSymId)
-					fmt.Printf("PARAMETER: %#v\n",param)
-				}
+		offset, _ := IntFromData(data, "size")
+		if params, err := StringSliceFromData(elem.Data, "paramSymIds"); err == nil {
+			for _, paramSymId := range params {
+				param, _ := s.GetElement(paramSymId)
+				typ, _ := StringFromData(param.Data, "type")
+				isArr, _ := BoolFromData(param.Data, "isArray")
+				param.Data["offset"] = offset
+				offset += SizeOfType(typ, isArr)
 			}
 		}
-	case "Lvar","Tvar":
-		fmt.Printf("scope: %s elemnt: %#v\n",curScope,s.elems[symId])
+		data["size"] = offset
+	case "Lvar", "Tvar":
 		scopeCheck, method, _ := s.ScopeBelowWithCurr(curScope)
-		fmt.Printf("scopeCheck: %s, method: %s\n",scopeCheck,method)
-		elem := s.GetElementInScope(scopeCheck,method)
-		fmt.Printf("Element: %#v\n",elem)
+		methodElem := s.GetElementInScope(scopeCheck, method)
+		offset, _ := IntFromData(methodElem.Data, "size")
+
+		data["offset"] = offset
+
+		typ, _ := StringFromData(data, "type")
+		isArr, _ := BoolFromData(data, "isArray")
+		if methodElem.Data != nil {
+			methodElem.Data["size"] = offset + SizeOfType(typ, isArr)
+		}
 	case "Ivar":
 		class_scope, _ := s.ScopeBelow(curScope)
 		elems := s.GetScopeElements(class_scope)
 		for _, elem := range elems {
 			if elem.Kind == "Class" && s.ScopeAbove(class_scope, elem.Value) == curScope {
 				toAdd := 0
-				if t, ok := data["type"]; ok {
-					switch typ := t.(type) {
-					case string:
-						switch typ {
-						case "bool", "char":
-							if arr, ok := data["isArray"]; ok {
-								switch ar := arr.(type) {
-								case bool:
-									if ar {
-										toAdd = 4
-									} else {
-										toAdd = 1
-									}
-								}
-							} else {
-								toAdd = 1
-							}
-						default:
-							toAdd = 4
-						}
-					}
-				}
+				typ, _ := StringFromData(data, "type")
+				isArr, _ := BoolFromData(data, "isArray")
+				toAdd = SizeOfType(typ, isArr)
+
 				classSize := 0
 				if s, ok := elem.Data["size"]; ok {
 					switch size := s.(type) {
@@ -302,4 +290,65 @@ func (s *SymbolTableElement) PrintElement() {
 	for k, v := range s.Data {
 		fmt.Printf("Key: %s, Value: %v\n", k, v)
 	}
+}
+
+//Helper functions
+func SizeOfType(typ string, isArr bool) (size int) {
+	if isArr {
+		return 4
+	}
+	size = 4
+	switch typ {
+	case "char", "bool":
+		size = 1
+	}
+	return
+}
+
+func StringFromData(m map[string]interface{}, s string) (ret string, err error) {
+	if e, ok := m[s]; ok {
+		switch elem := e.(type) {
+		case string:
+			ret = elem
+			return
+		}
+	}
+	err = fmt.Errorf("Problem getting string (%s) from map", s)
+	return
+}
+
+func StringSliceFromData(m map[string]interface{}, s string) (ret []string, err error) {
+	if e, ok := m[s]; ok {
+		switch elem := e.(type) {
+		case []string:
+			ret = elem
+			return
+		}
+	}
+	err = fmt.Errorf("Problem getting []string (%s) from map", s)
+	return
+}
+
+func BoolFromData(m map[string]interface{}, s string) (ret bool, err error) {
+	if e, ok := m[s]; ok {
+		switch elem := e.(type) {
+		case bool:
+			ret = elem
+			return
+		}
+	}
+	err = fmt.Errorf("Problem getting bool (%s) from map", s)
+	return
+}
+
+func IntFromData(m map[string]interface{}, s string) (ret int, err error) {
+	if e, ok := m[s]; ok {
+		switch elem := e.(type) {
+		case int:
+			ret = elem
+			return
+		}
+	}
+	err = fmt.Errorf("Problem getting int (%s) from map", s)
+	return
 }

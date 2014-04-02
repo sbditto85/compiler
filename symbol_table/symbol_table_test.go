@@ -70,6 +70,7 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	//Scope: g.myclass, SymId: Me2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//Key: size, Value: 0
 	//--------------
 	//
 	//Current Scope: g.myclass
@@ -81,6 +82,7 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	//Scope: g.myclass, SymId: Me2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//Key: size, Value: 0
 	//--------------
 	//
 	//Current Scope: g
@@ -92,6 +94,7 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	//Scope: g.myclass, SymId: Me2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//Key: size, Value: 0
 	//--------------
 	//
 	//Current Scope: g.othermethod
@@ -103,10 +106,12 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	//Scope: g.myclass, SymId: Me2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//Key: size, Value: 0
 	//--------------
 	//Scope: g, SymId: Me3, Value: othermethod, Kind: Method
 	//Extra Data:
 	//Key: testing, Value: testing
+	//Key: size, Value: 0
 	//--------------
 	//
 	//Current Scope: g
@@ -118,9 +123,11 @@ func ExampleAddSymbolClassFuncThenRemove() {
 	//Scope: g.myclass, SymId: Me2, Value: myfun, Kind: Method
 	//Extra Data:
 	//Key: additional, Value: more
+	//Key: size, Value: 0
 	//--------------
 	//Scope: g, SymId: Me3, Value: othermethod, Kind: Method
 	//Extra Data:
 	//Key: testing, Value: testing
+	//Key: size, Value: 0
 	//--------------
 }
