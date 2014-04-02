@@ -113,6 +113,10 @@ func NewAnalyzer(l *lex.Lexer, debug bool) *Analyzer {
 	return a
 }
 
+func (a *Analyzer) GetICodeInfo() (*ic.Quad, *sym.SymbolTable) {
+	return a.gen.GetQuad(), a.st
+}
+
 func (a *Analyzer) PrintQuadTable() {
 	a.gen.PrintQuadTable()
 }

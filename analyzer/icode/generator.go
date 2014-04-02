@@ -13,8 +13,8 @@ const (
 )
 
 type Generator struct {
-	table       *quad
-	static      *quad
+	table       *Quad
+	static      *Quad
 	st          *sym.SymbolTable
 	quadSwitch  QuadSwitch
 	labelStk    []string
@@ -29,6 +29,10 @@ func NewGenerator(st *sym.SymbolTable) *Generator {
 	labelStk := make([]string, 0)
 	elseLblStk := make([]string, 0)
 	return &Generator{table: table, static: static, st: st, quadSwitch: STATIC, labelStk: labelStk, elseLblStk: elseLblStk}
+}
+
+func (g *Generator) GetQuad() *Quad {
+	return g.table
 }
 
 func (g *Generator) SwitchToMain() {

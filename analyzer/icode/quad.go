@@ -5,20 +5,24 @@ import (
 	"sort"
 )
 
-type quad struct {
-	rows    []*quadRow
+type Quad struct {
+	rows    []*QuadRow
 	curRow  int
 	numRows int
 	labels  map[string][]int
 }
 
-func NewQuad() *quad {
-	r := make([]*quadRow, 0)
+func NewQuad() *Quad {
+	r := make([]*QuadRow, 0)
 	l := make(map[string][]int)
-	return &quad{rows: r, labels: l, curRow: -1} //start at -1 to be idx of slice
+	return &Quad{rows: r, labels: l, curRow: -1} //start at -1 to be idx of slice
 }
 
-func (q *quad) Print() {
+func (q *Quad) Size() int {
+	return q.numRows
+}
+
+func (q *Quad) Print() {
 	fmt.Printf("Num Rows: %d curRow: %d\n", q.numRows, q.curRow)
 	fmt.Println("Lables:")
 
@@ -38,7 +42,7 @@ func (q *quad) Print() {
 	}
 }
 
-func (q *quad) ReplaceLabel(from, to string) {
+func (q *Quad) ReplaceLabel(from, to string) {
 	for _, v := range q.labels[from] {
 		row := q.rows[v]
 		var replaced bool
@@ -66,7 +70,7 @@ func (q *quad) ReplaceLabel(from, to string) {
 	}
 }
 
-func (q *quad) AddQuadRow(label, command, op1, op2, op3, comment string) error {
+func (q *Quad) AddQuadRow(label, command, op1, op2, op3, comment string) error {
 	q.numRows++
 	q.curRow++
 	if label != "" {
@@ -85,12 +89,12 @@ func (q *quad) AddQuadRow(label, command, op1, op2, op3, comment string) error {
 		lines := q.labels[op3]
 		q.labels[op3] = append(lines, q.curRow)
 	}
-	r := &quadRow{label: label, command: command, op1: op1, op2: op2, op3: op3, comment: comment}
+	r := &QuadRow{label: label, command: command, op1: op1, op2: op2, op3: op3, comment: comment}
 	q.rows = append(q.rows, r)
 	return nil
 }
 
-type quadRow struct {
+type QuadRow struct {
 	label   string
 	command string
 	op1     string
@@ -99,7 +103,7 @@ type quadRow struct {
 	comment string
 }
 
-func (q *quadRow) Print() {
+func (q *QuadRow) Print() {
 	if q.label != "" {
 		fmt.Printf("%s: ", q.label)
 	}
