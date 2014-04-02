@@ -108,7 +108,28 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 		Data:  data,
 	}
 
-	if kind == "Ivar" {
+	//TODO: calculate the offsets for parameters and L/T(vars)
+	switch kind {
+	case "Method", "Main", "Constructor":
+		elem := s.elems[symId]
+		fmt.Printf("scope: %s \nelemnt: %#v\n",curScope,elem)
+		if p, ok := elem.Data["paramSymIds"]; ok {
+			switch params := p.(type) {
+			case []string:
+				for _, paramSymId := range(params) {
+					fmt.Printf("PARAMSymId: %s\n",paramSymId)
+					param,_ := s.GetElement(paramSymId)
+					fmt.Printf("PARAMETER: %#v\n",param)
+				}
+			}
+		}
+	case "Lvar","Tvar":
+		fmt.Printf("scope: %s elemnt: %#v\n",curScope,s.elems[symId])
+		scopeCheck, method, _ := s.ScopeBelowWithCurr(curScope)
+		fmt.Printf("scopeCheck: %s, method: %s\n",scopeCheck,method)
+		elem := s.GetElementInScope(scopeCheck,method)
+		fmt.Printf("Element: %#v\n",elem)
+	case "Ivar":
 		class_scope, _ := s.ScopeBelow(curScope)
 		elems := s.GetScopeElements(class_scope)
 		for _, elem := range elems {
@@ -119,7 +140,18 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 					case string:
 						switch typ {
 						case "bool", "char":
-							toAdd = 1
+							if arr, ok := data["isArray"]; ok {
+								switch ar := arr.(type) {
+								case bool:
+									if ar {
+										toAdd = 4
+									} else {
+										toAdd = 1
+									}
+								}
+							} else {
+								toAdd = 1
+							}
 						default:
 							toAdd = 4
 						}
@@ -133,6 +165,7 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 					}
 				}
 				elem.Data["size"] = classSize + toAdd
+				data["offset"] = classSize
 				break
 			}
 		}
@@ -170,6 +203,16 @@ func (s *SymbolTable) ScopeBelow(scope string) (string, error) {
 	tmp = tmp[:len(tmp)-1]
 	newscope := str.Join(tmp, ".")
 	return newscope, nil
+}
+func (s *SymbolTable) ScopeBelowWithCurr(scope string) (string, string, error) {
+	tmp := str.Split(scope, ".")
+	if len(tmp) < 1 {
+		return "", "", fmt.Errorf("Can't drop scope, current scope is %s", s.scope)
+	}
+	head := tmp[len(tmp)-1]
+	tmp = tmp[:len(tmp)-1]
+	newscope := str.Join(tmp, ".")
+	return newscope, head, nil
 }
 
 func (s *SymbolTable) GetScope() string {
