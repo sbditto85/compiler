@@ -107,6 +107,10 @@ type QuadRow struct {
 	comment string
 }
 
+func NewQuadRow(lbl, cmd, op1, op2, op3, comment string) *QuadRow {
+	return &QuadRow{label: lbl, command: cmd, op1: op1, op2: op2, op3: op3, comment: comment}
+}
+
 func (q *QuadRow) GetLabel() (string) {
 	return q.label
 }

@@ -2,6 +2,7 @@ package tcode
 
 import (
 	"fmt"
+	"strconv"
 	ic "github.com/sbditto85/compiler/analyzer/icode"
 	sym "github.com/sbditto85/compiler/symbol_table"
 )
@@ -100,8 +101,50 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 		case "MOV":
 		case "WRITE":
 		case "GT":
-		case "BF":
+			label := row.GetLabel()
+			for i, r := range(loadToRegister(st, &asm, row.GetOp2(), "R3")) {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s",beg,r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s",beg,r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s",beg,r.GetCommand(), r.GetComment()))
+				}
+		
+			}
 			
+			for _, r := range(loadToRegister(st, &asm, row.GetOp3(), "R4")) {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s",r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s",r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s",r.GetCommand(), r.GetComment()))
+				}
+			}
+		case "BF":
+			label := row.GetLabel()
+			for i, r := range(loadToRegister(st, &asm, row.GetOp1(), "R3")) {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s",beg,r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s",beg,r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s",beg,r.GetCommand(), r.GetComment()))
+				}
+				
+			}
 		case "JMP":
 			if label := row.GetLabel(); label != "" {
 				asm = append(asm, fmt.Sprintf("%s:\tJMP\t%s:\t;%s",label, row.GetOp1(),row.GetComment()))
@@ -111,7 +154,12 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 		case "RTN":
 			asm = append(asm, `;; return from function`)
 			asm = append(asm, `;; test for underflow`)
-			asm = append(asm, `MOV     RSP RFP`)
+
+			if label := row.GetLabel(); label != "" {
+				asm = append(asm, fmt.Sprintf("%s:\tMOV\tRSP RFP\t; %s",label, row.GetComment()))
+			} else {
+				asm = append(asm, `MOV     RSP RFP`)
+			}
 			asm = append(asm, `MOV     R10 RSP`)
 			asm = append(asm, `CMP     R10 RSB`)
 			asm = append(asm, `BGT     R10 UDRFLW:     ; oopsy underflow problem`)
@@ -122,11 +170,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			asm = append(asm, `LDR     RFP (R11)       ; make FP = PFP`)
 			asm = append(asm, `;; store the return value`)
 			//asm = append(asm, `STR     R0 (RSP)        ; R0 is wherever the value is for return`)
-			if label := row.GetLabel(); label != "" {
-				asm = append(asm, fmt.Sprintf(`%s:    JMR     R10             ; go back "%s"`,label, row.GetComment()))
-			} else {
-				asm = append(asm, fmt.Sprintf(`JMR     R10             ; go back "%s"`,row.GetComment()))
-			}
+			asm = append(asm, fmt.Sprintf(`JMR     R10             ; go back "%s"`,row.GetComment()))
 		}
 	}
 
@@ -134,6 +178,46 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; Heap starts here`)
 	asm = append(asm, `FREE:    .INT 0`)
 
+	return
+}
+
+func getLocation(st *sym.SymbolTable, symId string) (loc string, offset int) {
+	if symId == "this" {
+		return "stack", -8
+	}
+	elem, err := st.GetElement(symId)
+	if err != nil {
+		panic("trying to access non element in symbol table")
+	}
+
+	switch elem.Kind {
+	case "LitVar":
+		loc = "memory"
+	default:
+		loc = "stack"
+		offset, err = sym.IntFromData(elem.Data,"offset")
+		if err != nil {
+			panic(fmt.Sprintf("no offset for symId",symId))
+		}
+		offset += 12 //for pfp,ret,this
+		offset *= -1
+	}
+	return
+}
+
+func loadToRegister(st *sym.SymbolTable, asm *[]string, symId, reg string) (rows []*ic.QuadRow) {
+	loc, offset := getLocation(st, symId)
+	rows = make([]*ic.QuadRow,0)
+	switch loc {
+	case "memory":
+		rows = append(rows, ic.NewQuadRow("","LDR", reg, symId+":", "", ""))
+	case "stack":
+		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
+		rows = append(rows, ic.NewQuadRow("","MOV", "R10", "RFP", "", ""))
+		rows = append(rows, ic.NewQuadRow("","ADI", "R10", "#"+strconv.Itoa(offset), "", ""))
+		rows = append(rows, ic.NewQuadRow("","LDR", reg, "(R10)", "", ""))
+		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
+	}
 	return
 }
 
