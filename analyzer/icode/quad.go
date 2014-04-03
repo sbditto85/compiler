@@ -22,6 +22,10 @@ func (q *Quad) Size() int {
 	return q.numRows
 }
 
+func (q *Quad) GetRows() ([]*QuadRow) {
+	return q.rows
+}
+
 func (q *Quad) Print() {
 	fmt.Printf("Num Rows: %d curRow: %d\n", q.numRows, q.curRow)
 	fmt.Println("Lables:")
@@ -101,6 +105,30 @@ type QuadRow struct {
 	op2     string
 	op3     string
 	comment string
+}
+
+func (q *QuadRow) GetLabel() (string) {
+	return q.label
+}
+
+func (q *QuadRow) GetCommand() (string) {
+	return q.command
+}
+
+func (q *QuadRow) GetOp1() (string) {
+	return q.op1
+}
+
+func (q *QuadRow) GetOp2() (string) {
+	return q.op2
+}
+
+func (q *QuadRow) GetOp3() (string) {
+	return q.op3
+}
+
+func (q *QuadRow) GetComment() (string) {
+	return q.comment
 }
 
 func (q *QuadRow) Print() {

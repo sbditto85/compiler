@@ -34,6 +34,9 @@ func (s *SymbolTable) GetFunctionType() string {
 }
 
 func (s *SymbolTable) GenSymId(kind string) string {
+	if kind == "Main" {
+		return "MAIN"
+	}
 	s.symIdNum++
 	rs := ([]rune)(kind)
 	symId := string(rs[0:2]) + strconv.Itoa(s.symIdNum)
@@ -222,6 +225,16 @@ func (s *SymbolTable) GetTypeSymId(typ string) (symId string, err error) {
 		}
 	}
 	err = fmt.Errorf("Type does not exist")
+	return
+}
+
+func (s *SymbolTable) GetAllOfKind(kind string) (elems []SymbolTableElement) {
+	elems = make([]SymbolTableElement,0)
+	for _, symTabElem := range s.elems {
+		if symTabElem.Kind == kind {
+			elems = append(elems, symTabElem)
+		}
+	}
 	return
 }
 
