@@ -229,7 +229,7 @@ func (s *SymbolTable) GetTypeSymId(typ string) (symId string, err error) {
 }
 
 func (s *SymbolTable) GetAllOfKind(kind string) (elems []SymbolTableElement) {
-	elems = make([]SymbolTableElement,0)
+	elems = make([]SymbolTableElement, 0)
 	for _, symTabElem := range s.elems {
 		if symTabElem.Kind == kind {
 			elems = append(elems, symTabElem)

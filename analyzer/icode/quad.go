@@ -22,7 +22,7 @@ func (q *Quad) Size() int {
 	return q.numRows
 }
 
-func (q *Quad) GetRows() ([]*QuadRow) {
+func (q *Quad) GetRows() []*QuadRow {
 	return q.rows
 }
 
@@ -111,27 +111,27 @@ func NewQuadRow(lbl, cmd, op1, op2, op3, comment string) *QuadRow {
 	return &QuadRow{label: lbl, command: cmd, op1: op1, op2: op2, op3: op3, comment: comment}
 }
 
-func (q *QuadRow) GetLabel() (string) {
+func (q *QuadRow) GetLabel() string {
 	return q.label
 }
 
-func (q *QuadRow) GetCommand() (string) {
+func (q *QuadRow) GetCommand() string {
 	return q.command
 }
 
-func (q *QuadRow) GetOp1() (string) {
+func (q *QuadRow) GetOp1() string {
 	return q.op1
 }
 
-func (q *QuadRow) GetOp2() (string) {
+func (q *QuadRow) GetOp2() string {
 	return q.op2
 }
 
-func (q *QuadRow) GetOp3() (string) {
+func (q *QuadRow) GetOp3() string {
 	return q.op3
 }
 
-func (q *QuadRow) GetComment() (string) {
+func (q *QuadRow) GetComment() string {
 	return q.comment
 }
 

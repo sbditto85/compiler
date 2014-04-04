@@ -3,11 +3,11 @@ package tcode
 import (
 	//"testing"
 	"fmt"
-	amb "github.com/sbditto85/virtualmachine/assembler"
-	vm "github.com/sbditto85/virtualmachine/virtualmachine"
 	an "github.com/sbditto85/compiler/analyzer"
 	lex "github.com/sbditto85/compiler/lexer"
 	tok "github.com/sbditto85/compiler/token"
+	amb "github.com/sbditto85/virtualmachine/assembler"
+	vm "github.com/sbditto85/virtualmachine/virtualmachine"
 )
 
 func ExampleTCodeMain() {
@@ -59,7 +59,7 @@ func ExampleTCodeMain() {
 
 	fmt.Printf("ASM:\n")
 
-	for i, line := range(asm) {
+	for i, line := range asm {
 		fmt.Printf("%d : %s\n", i+1, line)
 	}
 
@@ -81,9 +81,8 @@ func ExampleTCodeMain() {
 	v := vm.NewVirtualMachine(assembler.GetBytes())
 	verr := v.Run()
 	if verr != nil {
-		fmt.Printf("%s\n",verr.Error())
+		fmt.Printf("%s\n", verr.Error())
 	}
-
 
 	//Output:
 	//
