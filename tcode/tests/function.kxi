@@ -1,0 +1,36 @@
+class Dog {
+    Dog() {
+    }
+
+    public int func(int i, char c) {	
+	return 10;
+    }
+
+    public void print() {
+	cout << 'v';
+	cout << 'o';
+	cout << 'i';
+	cout << 'd';
+	cout << '\n';
+    }
+}
+
+void main() {
+    Dog d = new Dog();
+    int i = d.func(1,'a');
+    char a = 'a';
+    
+    cout << i;
+    cout << '\n';    
+    
+    cout << a;
+    cout << '\n';
+    
+    if ( i < 1) {
+        cout << 'y';
+        cout << '\n';
+    } else {
+	cout << 'n';
+	cout << '\n';
+    }
+}

@@ -94,17 +94,49 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		fmt.Printf("row: %#v\n", row)
+		//fmt.Printf("row: %#v\n", row)
 		switch row.GetCommand() {
 		case "FUNC":
 			asm = append(asm, fmt.Sprintf("%s:   ADI   R0 #0 ;%s", row.GetOp1(), row.GetComment()))
 		case "MOV":
+			//get op2 into a register
+			label := row.GetLabel()
+			for i, r := range loadToRegister(st, row.GetOp2(), "R3") {
+				beg := ""
+				comment := r.GetComment()
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				if c := row.GetComment(); c != "" && i == 0 {
+					comment = c
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), comment))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), comment))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), comment))
+				}
+
+			}
+			
+			//store it into op1
+			for _, r := range saveFromRegister(st, row.GetOp1(), "R3") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
 		case "WRITE":
 			elem, err := st.GetElement(row.GetOp1())
 			if err != nil {
 				panic(fmt.Sprintf("Could not find the symbol table element to write %s", row.GetOp1()))
 			}
-			fmt.Printf("elem: %#v\n", elem)
 			//get the value to R0 for writing
 			label := row.GetLabel()
 			for i, r := range loadToRegister(st, row.GetOp1(), "R0") {
@@ -171,8 +203,10 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			}
 
 			//compare for greater then
+			//asm = append(asm, "TRP #99")
 			asm = append(asm, fmt.Sprintf("\tCMP\tR3 R4\t;%s", row.GetComment()))
 			asm = append(asm, fmt.Sprintf("\tADI\tR3 #-1\t;%s", row.GetComment()))
+			//asm = append(asm, "TRP #99")
 
 			//save it to where its supposed to go
 			for _, r := range saveFromRegister(st, row.GetOp1(), "R3") {
@@ -205,7 +239,9 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			}
 
 			//break if false
+			//asm = append(asm, "TRP #99")
 			asm = append(asm, fmt.Sprintf("\tBNZ\tR3 %s:\t;%s", row.GetOp2(), row.GetComment()))
+			//asm = append(asm, "TRP #99")
 
 		case "JMP":
 			if label := row.GetLabel(); label != "" {
@@ -233,6 +269,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			asm = append(asm, `;; store the return value`)
 			//asm = append(asm, `STR     R0 (RSP)        ; R0 is wherever the value is for return`)
 			asm = append(asm, fmt.Sprintf(`JMR     R10             ; go back "%s"`, row.GetComment()))
+			asm = append(asm, "\n")
 		}
 	}
 
