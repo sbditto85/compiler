@@ -94,38 +94,84 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		//fmt.Printf("row: %#v\n", row)
+		fmt.Printf("row: %#v\n", row)
 		switch row.GetCommand() {
+		case "NEWI":
+			//FREE: reg value moved for storage (tmp)
+			//FREE: updated by size of Op1
+			//Store tmp in Op2
 		case "FUNC":
 			asm = append(asm, fmt.Sprintf("%s:   ADI   R0 #0 ;%s", row.GetOp1(), row.GetComment()))
 		case "FRAME":
-			//TODO: frame function 
-			mainElem := st.GetElementInScope("g", "main")
-			mainSize, _ := sym.IntFromData(mainElem.Data, "size")
+			funcElem, err := st.GetElement(row.GetOp2())
+			if err != nil { panic(fmt.Sprintf("Could not find elem for symbol %s",row.GetOp2())) }
+			funcSize, _ := sym.IntFromData(funcElem.Data, "size")
 
 			//Go to main
-			asm = append(asm, `;; Call function "MAIN:"`)
+			asm = append(asm, fmt.Sprintf(`;; Call function "%s:    %s"`,row.GetOp2(), row.GetComment()))
 			asm = append(asm, `;; Test for overflow`)
-			asm = append(asm, `MOV     R10 RSP`)
-			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)`, -12+(mainSize*-1)))
+			asm = append(asm, fmt.Sprintf(`%s:   MOV     R10 RSP`,row.GetLabel()))
+			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)`, -12+(funcSize*-1)))
 			asm = append(asm, `CMP     R10 RSL`)
 			asm = append(asm, `BLT     R10 OVRFLW:`)
-			asm = append(asm, `;; Create Activation Record and invoke MAIN`)
+			asm = append(asm, fmt.Sprintf(`;; Create Activation Record and invoke %s`,row.GetOp2()))
 			asm = append(asm, `MOV     R10 RFP`)
 			asm = append(asm, `MOV     RFP RSP`)
 			asm = append(asm, `ADI     RSP #-4`)
 			asm = append(asm, `STR     R10 (RSP)`)
 			asm = append(asm, `ADI     RSP #-4`)
+
+			//get this and then store it in the frame
 			asm = append(asm, `;; this`)
-			asm = append(asm, `SUB     R1 R1           ; get this from where its at`)
+			for _, r := range loadToRegister(st, row.GetOp1(), "R1") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
 			asm = append(asm, `STR     R1 (RSP)`)
 			asm = append(asm, `ADI     RSP #-4`)
-			asm = append(asm, `;; parameters on the stack`)
-			//add the functions parameters to the stack
 
-			asm = append(asm, `;; local varibales on the stack`)
+			//parameters (PUSH)
+		case "PUSH":
+			asm = append(asm, fmt.Sprintf(`;; parameters on the stack (%s)  ; %s`,row.GetOp1(), row.GetComment()))
+			//add the functions parameters to the stack
+			e, err := st.GetElement(row.GetOp1())
+			if err != nil { panic(fmt.Sprintf("Could not find elem for symbol %s",row.GetOp1())) }
+
+			typ, _ := sym.StringFromData(e.Data, "type")
+			isArray, _ := sym.BoolFromData(e.Data, "isArray")
+			for _, r := range loadToRegister(st, e.SymId, "R1") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
+			eSize := sym.SizeOfType(typ, isArray) * -1
+			switch eSize {
+			case -1:
+				asm = append(asm, `STB     R1 (RSP)`)
+			case -4:
+				asm = append(asm, `STR     R1 (RSP)`)
+			}
+			asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, eSize))
+
+		case "CALL":
+			funSymId := row.GetOp1()
+			funcElem, err := st.GetElement(funSymId)
+			if err != nil { panic(fmt.Sprintf("Could not find elem for symbol %s",funSymId)) }
+
+			asm = append(asm, fmt.Sprintf(`;; local varibales on the stack    ; %s`,row.GetComment()))
 			//add main's local variables
-			for _, e := range getLocalVars(st, mainElem) {
+			for _, e := range getLocalVars(st, funcElem) {
 				typ, _ := sym.StringFromData(e.Data, "type")
 				isArray, _ := sym.BoolFromData(e.Data, "isArray")
 				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
@@ -133,7 +179,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			
 			asm = append(asm, `;; Temp variables on the stack`)
 			//add main's temp variables
-			for _, e := range getTempVars(st, mainElem) {
+			for _, e := range getTempVars(st, funcElem) {
 				typ, _ := sym.StringFromData(e.Data, "type")
 				isArray, _ := sym.BoolFromData(e.Data, "isArray")
 				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
@@ -143,7 +189,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			asm = append(asm, `MOV     R10 RPC         ; PC already at next instruction`)
 			asm = append(asm, `ADI     R10 #12`)
 			asm = append(asm, `STR     R10 (RFP)`)
-			asm = append(asm, `JMP     MAIN:`)
+			asm = append(asm, fmt.Sprintf(`JMP     %s:`,funSymId))
 			
 		case "MOV":
 			//get op2 into a register
@@ -429,7 +475,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			} else {
 				asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t;%s", row.GetOp1(), row.GetComment()))
 			}
-		case "RTN":
+		case "RTN", "RETURN":
 			asm = append(asm, `;; return from function`)
 			asm = append(asm, `;; test for underflow`)
 
@@ -446,8 +492,20 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			asm = append(asm, `MOV     R11 RFP`)
 			asm = append(asm, `ADI     R11 #-4         ; now pointing at PFP`)
 			asm = append(asm, `LDR     RFP (R11)       ; make FP = PFP`)
-			asm = append(asm, `;; store the return value`)
-			//asm = append(asm, `STR     R0 (RSP)        ; R0 is wherever the value is for return`)
+			if row.GetCommand() == "RETURN" {
+				asm = append(asm, `;; store the return value`)
+				for _, r := range loadToRegister(st, row.GetOp1(), "R0") {
+					switch {
+					case r.GetOp2() != "":
+						asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+					case r.GetOp1() != "":
+						asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+					default:
+						asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+					}
+				}
+				asm = append(asm, `STR     R0 (RSP)        ; R0 is whatever the value is for return`)
+			}
 			asm = append(asm, fmt.Sprintf(`JMR     R10             ; go back "%s"`, row.GetComment()))
 			asm = append(asm, "\n")
 		default:
@@ -544,6 +602,18 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
 	default:
 		panic(fmt.Sprintf("saving to location %s unknown", loc))
+	}
+	return
+}
+
+func getParamVars(st *sym.SymbolTable, fun sym.SymbolTableElement) (elems []sym.SymbolTableElement) {
+	elems = make([]sym.SymbolTableElement, 0)
+	es := st.GetScopeElements(fun.Scope + "." + fun.Value)
+	for _, e := range es {
+		switch e.Kind {
+		case "Parameter":
+			elems = append(elems, e)
+		}
 	}
 	return
 }

@@ -145,7 +145,7 @@ func ExampleTCodeFunction() {
 	for i, line := range asm {
 		fmt.Printf("%d : %s\n", i+1, line)
 	}
-
+panic("done")
 	assembler := amb.NewAssembler()
 	assembler.ReadStrings(asm)
 
