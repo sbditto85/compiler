@@ -1096,6 +1096,14 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 	}
 	switch {
 	case curTok.Lexeme == "(":
+		//Semantic Action OPush
+		if a.pass == 2 {
+			if err := a.sm.OPush(curTok.Lexeme); err != nil {
+				panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
+			}
+			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
+		}
+
 		a.GetNext()
 		if e, _ := a.IsExpression(); e != nil {
 			panic(e.Error())
@@ -1105,6 +1113,13 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.GetNext()
 		} else {
 			panic(BuildErrMessFromTok(curTok, ")"))
+		}
+		//Semantic Action EAL
+		if a.pass == 2 {
+			if err := a.sm.CloseParen(); err != nil {
+				panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
+			}
+			a.debugMessagePassTwo("Close Paren")
 		}
 		if e, t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())

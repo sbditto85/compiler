@@ -195,6 +195,7 @@ func (s *SemanticManager) TExists(st *sym.SymbolTable) (err error) {
 		err = fmt.Errorf("tExists expects Type_Sar, received something else")
 	}
 	if !type_sar.Exists(st) {
+		//fmt.Printf("%#v\n",type_sar)
 		err = fmt.Errorf("Type %s doesn't exist", type_sar.GetValue())
 	}
 	return
@@ -626,7 +627,7 @@ func (s *SemanticManager) Cd(st *sym.SymbolTable, className string) (err error) 
 	scope := st.GetScope()
 	tmp := str.Split(scope, ".")
 	if len(tmp) != 2 {
-		err = fmt.Errorf("Cannot get class name from scope", scope)
+		err = fmt.Errorf("Cannot get class name from scope %s", scope)
 	}
 
 	if tmp[1] != className {

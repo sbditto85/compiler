@@ -1,0 +1,60 @@
+
+void main() {
+
+    int i = 1;
+    int j = 2;
+    int k = 3;
+
+    cout << '-';
+    cout << '>';
+    cout << ' ';
+    cout << (1 / 2);
+    cout << '\n';
+
+    cout << '-';
+    cout << '>';
+    cout << ' ';
+    cout << (2 / 1);
+    cout << '\n';
+
+    cout << '-';
+    cout << '>';
+    cout << ' ';
+    cout << (2 - 1);
+    cout << '\n';
+
+    cout << '-';
+    cout << '>';
+    cout << ' ';
+    cout << (1 - 2);
+    cout << '\n';
+
+    if(i + j >= k) {
+	cout << k * 2;
+	cout << '\n';
+    } else {
+	cout << 'n';
+	cout << 'o';
+	cout << '\n';
+    }
+
+    //3 / 1 - 2
+    //3 - 2
+    //1
+    cout << k / i - j;
+    cout << '\n';
+
+    //3 / (1 - 2)
+    //3 / -1
+    //-3
+    cout << k / (i - j);
+    cout << '\n';
+
+    // (3 / 2) * (2 - 1) / (2 + 7)
+    // 1 * 1 / 9
+    // 1 / 9
+    // 0
+    cout << (k / j) * (j - i) / (j + 7);
+    cout << '\n';
+
+}

@@ -14,7 +14,9 @@ var Number = regexp.MustCompile(`^([-]?\d+)(\s)*(.*)`) // only supports integers
 var Character = regexp.MustCompile(`^('\\?.')(\s*)(.*)`)
 var Identifier = regexp.MustCompile(`^([A-Za-z][A-Za-z0-9_]{0,79})(\s*)(.*)`) // make sure the next 79 chars isn't something else
 var Punctuation = regexp.MustCompile(`^([;:,'"])(\s)*(.*)`)
-var Keyword = regexp.MustCompile(`^(atoi|bool|class|char|cin|cout|else|false|if|int|itoa|main|new|null|object|public|private|return|string|this|true|void|while)(\s)*(.*)`)
+var Keyword = regexp.MustCompile(`^(atoi|bool|class|char|cin|cout|else|false|if|int|itoa|main|new|null|object|public|private|return|string|this|true|void|while)(.*)`)
+var CantFollowKeyword = regexp.MustCompile(`^[A-Za-z0-9]`)
+var ClearWhiteSpace = regexp.MustCompile(`^(\s*)(.*)`)
 var Symbol = regexp.MustCompile(`^([-+*/]|[<>=!]{1,2}|[&|]{2}|[\[\]]|[{}()])(\s)*(.*)`)
 var Comment = regexp.MustCompile(`^//.*$`)
 
@@ -92,8 +94,26 @@ func testType(l *Lexer, r *regexp.Regexp, tokType token.TokenType, isPeek bool) 
 	return nil, false
 }
 
+func testKeyword(l *Lexer, r *regexp.Regexp, tokType token.TokenType, isPeek bool) (*token.Token, bool) {
+	if res := r.FindSubmatch(l.curline); len(res) == 3 && !CantFollowKeyword.Match(res[2]) {
+		if res2 := ClearWhiteSpace.FindSubmatch(res[2]); len(res2) == 3 {
+			tok := &token.Token{}
+			tok.Type = tokType
+			tok.Lexeme = string(res[1])
+			tok.Linenum = l.curlinenum
+			if isPeek {
+				l.peek = tok
+			} else {
+				l.cur = tok
+				l.curline = res2[2]
+			}
+			return tok, true
+		}
+	}
+	return nil, false
+}
+
 func testEOT(l *Lexer) (*token.Token, error) {
-	fmt.Printf("%s\n", l.curline)
 	if len(l.curline) == 0 {
 		l.curlinenum++
 		if len(l.file) > l.curlinenum {
@@ -122,7 +142,7 @@ func (l *Lexer) GetNextToken() (*token.Token, error) {
 		return tok, nil
 	}
 
-	if tok, found := testType(l, Keyword, token.Keyword, false); found {
+	if tok, found := testKeyword(l, Keyword, token.Keyword, false); found {
 		return tok, nil
 	}
 	if tok, found := testType(l, Identifier, token.Identifier, false); found {
@@ -176,7 +196,7 @@ func (l *Lexer) PeekNextToken() (*token.Token, error) {
 		return tok, nil
 	}
 
-	if tok, found := testType(l, Keyword, token.Keyword, true); found {
+	if tok, found := testKeyword(l, Keyword, token.Keyword, true); found {
 		return tok, nil
 	}
 	if tok, found := testType(l, Identifier, token.Identifier, true); found {

@@ -1,0 +1,34 @@
+
+class Boolean {
+
+    Boolean() {
+    }
+
+    public bool returnParam(bool b) {
+	return b;
+    }
+}
+
+
+void main() {
+
+    int i = 10;
+    int j = 5;
+
+    //should not happen
+    while(i < j) {
+	cout << 'n';
+	cout << '\n';
+	i = i + 1;
+    }
+
+    //should have 5 y's
+    while(i > j) {
+	cout << 'y';
+	cout << '\n';
+	i = i - 1;
+    }
+
+    
+
+}

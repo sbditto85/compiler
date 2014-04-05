@@ -69,6 +69,13 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `LDB     R0 NL:`)
 	asm = append(asm, `TRP     #3`)
 	asm = append(asm, `TRP     #0`)
+	asm = append(asm, `HOVRFLW: LDB     R0 LTRCH:`)
+	asm = append(asm, `TRP     #3`)
+	asm = append(asm, `LDB     R0 LTRCO:`)
+	asm = append(asm, `TRP     #3`)
+	asm = append(asm, `LDB     R0 NL:`)
+	asm = append(asm, `TRP     #3`)
+	asm = append(asm, `TRP     #0`)
 	asm = append(asm, `UDRFLW: LDB     R0 LTRCU:`)
 	asm = append(asm, `TRP     #3`)
 	asm = append(asm, `LDB     R0 NL:`)
@@ -80,13 +87,18 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `NL:     .BYT    '\n'`)
 	asm = append(asm, `LTRCU:  .BYT    'U'`)
 	asm = append(asm, `LTRCO:  .BYT    'O'`)
+	asm = append(asm, `LTRCH:  .BYT    'H'`)
 	for _, e := range st.GetAllOfKind("LitVar") {
 		typ, _ := sym.StringFromData(e.Data, "type")
 		switch typ {
 		case "int":
 			asm = append(asm, fmt.Sprintf("%s:\t.INT\t%s", e.SymId, e.Value))
 		case "char":
-			asm = append(asm, fmt.Sprintf("%s:\t.BYT\t%s", e.SymId, e.Value))
+			if e.Value == `' '` {
+				asm = append(asm, fmt.Sprintf("%s:\t.BYT\t32", e.SymId))
+			} else {
+				asm = append(asm, fmt.Sprintf("%s:\t.BYT\t%s", e.SymId, e.Value))
+			}
 		}
 	}
 
@@ -94,27 +106,108 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		fmt.Printf("row: %#v\n", row)
+		//fmt.Printf("row: %#v\n", row)
 		switch row.GetCommand() {
+		case "ADD", "SUB", "MUL", "DIV":
+			label := row.GetLabel()
+			for i, r := range loadToRegister(st, row.GetOp2(), "R4") {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
+				}
+
+			}
+
+			for _, r := range loadToRegister(st, row.GetOp3(), "R3") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
+
+			//compare for greater then
+			//asm = append(asm, "TRP #99")
+			switch row.GetCommand() {
+			case "ADD":
+				asm = append(asm, fmt.Sprintf("\tADD\tR3 R4\t;%s", row.GetComment()))
+			case "SUB":
+				asm = append(asm, fmt.Sprintf("\tSUB\tR3 R4\t;%s", row.GetComment()))
+			case "MUL":
+				asm = append(asm, fmt.Sprintf("\tMUL\tR3 R4\t;%s", row.GetComment()))
+			case "DIV":
+				asm = append(asm, fmt.Sprintf("\tDIV\tR3 R4\t;%s", row.GetComment()))
+			}
+			//asm = append(asm, "TRP #99")
+
+			//save it to where its supposed to go
+			for _, r := range saveFromRegister(st, row.GetOp1(), "R3") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
 		case "NEWI":
-			//FREE: reg value moved for storage (tmp)
-			//FREE: updated by size of Op1
+			//get size of obj
+			elem, err := st.GetElement(row.GetOp1())
+			if err != nil { panic(fmt.Sprintf("Could not get elem for symId %s",row.GetOp1())) }
+
+			objSize, err := sym.IntFromData(elem.Data,"size") //if err then assume 0
+
+			//check for overflow (RSL)
+			asm = append(asm, `;; Test for heap overflow`)
+			asm = append(asm, `MOV     R10 R9`) //copy free pointer to tmp
+			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d`, objSize * 1)) //add size of obj
+			asm = append(asm, `CMP     R10 RSL`) //comp with the stack limit
+			asm = append(asm, `BGT     R10 HOVRFLW:`) //if it would put it over the stack limit then branch to overflow
+
+			//FREE: (R9) reg value moved for storage (tmp)
+			asm = append(asm, `MOV     R10 R9`) //copy free pointer to tmp
+			//FREE: (R9) updated by size of Op1
+			asm = append(asm, fmt.Sprintf(`ADI     R9 #%d`, objSize * 1)) //add size of obj
 			//Store tmp in Op2
+			for _, r := range saveFromRegister(st, row.GetOp2(), "R9") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
 		case "FUNC":
 			asm = append(asm, fmt.Sprintf("%s:   ADI   R0 #0 ;%s", row.GetOp1(), row.GetComment()))
 		case "FRAME":
 			funcElem, err := st.GetElement(row.GetOp2())
-			if err != nil { panic(fmt.Sprintf("Could not find elem for symbol %s",row.GetOp2())) }
+			if err != nil {
+				panic(fmt.Sprintf("Could not find elem for symbol %s", row.GetOp2()))
+			}
 			funcSize, _ := sym.IntFromData(funcElem.Data, "size")
 
 			//Go to main
-			asm = append(asm, fmt.Sprintf(`;; Call function "%s:    %s"`,row.GetOp2(), row.GetComment()))
+			asm = append(asm, fmt.Sprintf(`;; Call function "%s:    %s"`, row.GetOp2(), row.GetComment()))
 			asm = append(asm, `;; Test for overflow`)
-			asm = append(asm, fmt.Sprintf(`%s:   MOV     R10 RSP`,row.GetLabel()))
+			asm = append(asm, fmt.Sprintf(`%s:   MOV     R10 RSP`, row.GetLabel()))
 			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)`, -12+(funcSize*-1)))
 			asm = append(asm, `CMP     R10 RSL`)
 			asm = append(asm, `BLT     R10 OVRFLW:`)
-			asm = append(asm, fmt.Sprintf(`;; Create Activation Record and invoke %s`,row.GetOp2()))
+			asm = append(asm, fmt.Sprintf(`;; Create Activation Record and invoke %s`, row.GetOp2()))
 			asm = append(asm, `MOV     R10 RFP`)
 			asm = append(asm, `MOV     RFP RSP`)
 			asm = append(asm, `ADI     RSP #-4`)
@@ -138,10 +231,12 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 
 			//parameters (PUSH)
 		case "PUSH":
-			asm = append(asm, fmt.Sprintf(`;; parameters on the stack (%s)  ; %s`,row.GetOp1(), row.GetComment()))
+			asm = append(asm, fmt.Sprintf(`;; parameters on the stack (%s)  ; %s`, row.GetOp1(), row.GetComment()))
 			//add the functions parameters to the stack
 			e, err := st.GetElement(row.GetOp1())
-			if err != nil { panic(fmt.Sprintf("Could not find elem for symbol %s",row.GetOp1())) }
+			if err != nil {
+				panic(fmt.Sprintf("Could not find elem for symbol %s", row.GetOp1()))
+			}
 
 			typ, _ := sym.StringFromData(e.Data, "type")
 			isArray, _ := sym.BoolFromData(e.Data, "isArray")
@@ -167,16 +262,18 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 		case "CALL":
 			funSymId := row.GetOp1()
 			funcElem, err := st.GetElement(funSymId)
-			if err != nil { panic(fmt.Sprintf("Could not find elem for symbol %s",funSymId)) }
+			if err != nil {
+				panic(fmt.Sprintf("Could not find elem for symbol %s", funSymId))
+			}
 
-			asm = append(asm, fmt.Sprintf(`;; local varibales on the stack    ; %s`,row.GetComment()))
+			asm = append(asm, fmt.Sprintf(`;; local varibales on the stack    ; %s`, row.GetComment()))
 			//add main's local variables
 			for _, e := range getLocalVars(st, funcElem) {
 				typ, _ := sym.StringFromData(e.Data, "type")
 				isArray, _ := sym.BoolFromData(e.Data, "isArray")
 				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
 			}
-			
+
 			asm = append(asm, `;; Temp variables on the stack`)
 			//add main's temp variables
 			for _, e := range getTempVars(st, funcElem) {
@@ -184,13 +281,13 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				isArray, _ := sym.BoolFromData(e.Data, "isArray")
 				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
 			}
-			
+
 			asm = append(asm, `;; set the return address and jump`)
 			asm = append(asm, `MOV     R10 RPC         ; PC already at next instruction`)
 			asm = append(asm, `ADI     R10 #12`)
 			asm = append(asm, `STR     R10 (RFP)`)
-			asm = append(asm, fmt.Sprintf(`JMP     %s:`,funSymId))
-			
+			asm = append(asm, fmt.Sprintf(`JMP     %s:`, funSymId))
+
 		case "MOV":
 			//get op2 into a register
 			label := row.GetLabel()
@@ -213,7 +310,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				}
 
 			}
-			
+
 			//store it into op1
 			for _, r := range saveFromRegister(st, row.GetOp1(), "R3") {
 				switch {
@@ -305,8 +402,8 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				asm = append(asm, fmt.Sprintf("\tBRZ\tR3 %s:\t", trueBranch))
 			}
 			asm = append(asm, fmt.Sprintf("\tSUB\tR3 R3\t; false branch"))
-			asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t",falseBranch))
-			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch",trueBranch))
+			asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t", falseBranch))
+			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch", trueBranch))
 			asm = append(asm, fmt.Sprintf("\tADI\tR3 #1\t;True Branch"))
 			//asm = append(asm, "TRP #99")
 
@@ -364,8 +461,8 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				asm = append(asm, fmt.Sprintf("\tBRZ\tR3 %s:\t", trueBranch))
 			}
 			asm = append(asm, fmt.Sprintf("\tSUB\tR3 R3\t; false branch"))
-			asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t",falseBranch))
-			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch",trueBranch))
+			asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t", falseBranch))
+			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch", trueBranch))
 			asm = append(asm, fmt.Sprintf("\tADI\tR3 #1\t;True Branch"))
 			//asm = append(asm, "TRP #99")
 
@@ -425,8 +522,8 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				asm = append(asm, fmt.Sprintf("\tBNZ\tR3 %s:\t", trueBranch))
 			}
 			asm = append(asm, fmt.Sprintf("\tSUB\tR3 R3\t; false branch"))
-			asm = append(asm, fmt.Sprintf("\tJMP\t%s\t",falseBranch))
-			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch",trueBranch))
+			asm = append(asm, fmt.Sprintf("\tJMP\t%s\t", falseBranch))
+			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch", trueBranch))
 			asm = append(asm, fmt.Sprintf("\tADI\tR3 #1\t;True Branch"))
 			//asm = append(asm, "TRP #99")
 
@@ -475,6 +572,42 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			} else {
 				asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t;%s", row.GetOp1(), row.GetComment()))
 			}
+		case "PEEK":
+			//get size of obj
+			elem, err := st.GetElement(row.GetOp1())
+			if err != nil { panic(fmt.Sprintf("Could not get elem for symId %s",row.GetOp1())) }
+
+			varSize, err := sym.IntFromData(elem.Data,"size") //if err then assume 0
+			if err != nil {
+				typ, err := sym.StringFromData(elem.Data,"type")
+				if err != nil { panic(fmt.Sprintf("Could not get type of elem with symId %s",elem.SymId)) }
+
+				isArray, _ := sym.BoolFromData(elem.Data,"isArray")
+
+				varSize = sym.SizeOfType(typ,isArray)
+			}
+			label := row.GetLabel()
+			if label != "" {
+				label += ":"
+			}
+			switch varSize {
+			case 1:
+				asm = append(asm, fmt.Sprintf("%s\tLDB\tR11 (RSP)\t;%s",label,row.GetComment()))
+			default:
+				asm = append(asm, fmt.Sprintf("%s\tLDR\tR11 (RSP)\t;%s",label,row.GetComment()))
+			}
+			
+			//save it to the desired location
+			for _, r := range saveFromRegister(st, row.GetOp1(), "R11") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
 		case "RTN", "RETURN":
 			asm = append(asm, `;; return from function`)
 			asm = append(asm, `;; test for underflow`)
@@ -504,12 +637,30 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 						asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
 					}
 				}
-				asm = append(asm, `STR     R0 (RSP)        ; R0 is whatever the value is for return`)
+				//get size of obj
+				elem, err := st.GetElement(row.GetOp1())
+				if err != nil { panic(fmt.Sprintf("Could not get elem for symId %s",row.GetOp1())) }
+
+				varSize, err := sym.IntFromData(elem.Data,"size") //if err then assume 0
+				if err != nil {
+					typ, err := sym.StringFromData(elem.Data,"type")
+					if err != nil { panic(fmt.Sprintf("Could not get type of elem with symId %s",elem.SymId)) }
+
+					isArray, _ := sym.BoolFromData(elem.Data,"isArray")
+
+					varSize = sym.SizeOfType(typ,isArray)
+				}
+				switch varSize {
+				case 1:
+					asm = append(asm, `STB     R0 (RSP)        ; R0 is whatever the value is for return`)
+				default:
+					asm = append(asm, `STR     R0 (RSP)        ; R0 is whatever the value is for return`)
+				}
 			}
 			asm = append(asm, fmt.Sprintf(`JMR     R10             ; go back "%s"`, row.GetComment()))
 			asm = append(asm, "\n")
 		default:
-			panic(fmt.Sprintf("Dont have translation for %#v\n",row))
+			panic(fmt.Sprintf("Dont have translation for %#v\n", row))
 		}
 	}
 
