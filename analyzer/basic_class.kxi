@@ -19,7 +19,7 @@ class Cat {
       }
 }
 
-void main () {
+void main() {
      Cat c = new Cat();
      
      c.Run(1,'d');

@@ -106,12 +106,12 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: type, Value: int
 	//Key: offset, Value: 5
 	//--------------
-	//Scope: g, SymId: Ma12, Value: main, Kind: Main
+	//Scope: g, SymId: MAIN, Value: main, Kind: Main
 	//Extra Data:
 	//Key: type, Value: void
 	//Key: size, Value: 4
 	//--------------
-	//Scope: g.main, SymId: Lv13, Value: c, Kind: Lvar
+	//Scope: g.main, SymId: Lv12, Value: c, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: Cat

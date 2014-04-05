@@ -35,6 +35,7 @@ func (s *SymbolTable) GetFunctionType() string {
 
 func (s *SymbolTable) GenSymId(kind string) string {
 	if kind == "Main" {
+		s.symIds = append(s.symIds, "MAIN")
 		return "MAIN"
 	}
 	s.symIdNum++
@@ -111,7 +112,6 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 		Data:  data,
 	}
 
-	//TODO: calculate the offsets for parameters and L/T(vars)
 	switch kind {
 	case "Method", "Main", "Constructor":
 		elem := s.elems[symId]
