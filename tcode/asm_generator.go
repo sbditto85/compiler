@@ -98,6 +98,53 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 		switch row.GetCommand() {
 		case "FUNC":
 			asm = append(asm, fmt.Sprintf("%s:   ADI   R0 #0 ;%s", row.GetOp1(), row.GetComment()))
+		case "FRAME":
+			//TODO: frame function 
+			mainElem := st.GetElementInScope("g", "main")
+			mainSize, _ := sym.IntFromData(mainElem.Data, "size")
+
+			//Go to main
+			asm = append(asm, `;; Call function "MAIN:"`)
+			asm = append(asm, `;; Test for overflow`)
+			asm = append(asm, `MOV     R10 RSP`)
+			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)`, -12+(mainSize*-1)))
+			asm = append(asm, `CMP     R10 RSL`)
+			asm = append(asm, `BLT     R10 OVRFLW:`)
+			asm = append(asm, `;; Create Activation Record and invoke MAIN`)
+			asm = append(asm, `MOV     R10 RFP`)
+			asm = append(asm, `MOV     RFP RSP`)
+			asm = append(asm, `ADI     RSP #-4`)
+			asm = append(asm, `STR     R10 (RSP)`)
+			asm = append(asm, `ADI     RSP #-4`)
+			asm = append(asm, `;; this`)
+			asm = append(asm, `SUB     R1 R1           ; get this from where its at`)
+			asm = append(asm, `STR     R1 (RSP)`)
+			asm = append(asm, `ADI     RSP #-4`)
+			asm = append(asm, `;; parameters on the stack`)
+			//add the functions parameters to the stack
+
+			asm = append(asm, `;; local varibales on the stack`)
+			//add main's local variables
+			for _, e := range getLocalVars(st, mainElem) {
+				typ, _ := sym.StringFromData(e.Data, "type")
+				isArray, _ := sym.BoolFromData(e.Data, "isArray")
+				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
+			}
+			
+			asm = append(asm, `;; Temp variables on the stack`)
+			//add main's temp variables
+			for _, e := range getTempVars(st, mainElem) {
+				typ, _ := sym.StringFromData(e.Data, "type")
+				isArray, _ := sym.BoolFromData(e.Data, "isArray")
+				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
+			}
+			
+			asm = append(asm, `;; set the return address and jump`)
+			asm = append(asm, `MOV     R10 RPC         ; PC already at next instruction`)
+			asm = append(asm, `ADI     R10 #12`)
+			asm = append(asm, `STR     R10 (RFP)`)
+			asm = append(asm, `JMP     MAIN:`)
+			
 		case "MOV":
 			//get op2 into a register
 			label := row.GetLabel()
@@ -173,7 +220,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				asm = append(asm, fmt.Sprintf("\tTRP\t#1\t;%s", row.GetComment()))
 			}
 
-		case "GT":
+		case "GT", "GTE":
 			label := row.GetLabel()
 			for i, r := range loadToRegister(st, row.GetOp2(), "R3") {
 				beg := ""
@@ -205,11 +252,52 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			//compare for greater then
 			//asm = append(asm, "TRP #99")
 			asm = append(asm, fmt.Sprintf("\tCMP\tR3 R4\t;%s", row.GetComment()))
-			asm = append(asm, fmt.Sprintf("\tADI\tR3 #-1\t;%s", row.GetComment()))
+			trueBranch := st.GenSymId("BTrue")
+			falseBranch := st.GenSymId("BFalse")
+			asm = append(asm, fmt.Sprintf("\tBGT\tR3 %s:\t", trueBranch))
+			if row.GetCommand() == "GTE" {
+				asm = append(asm, fmt.Sprintf("\tBRZ\tR3 %s:\t", trueBranch))
+			}
+			asm = append(asm, fmt.Sprintf("\tSUB\tR3 R3\t; false branch"))
+			asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t",falseBranch))
+			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch",trueBranch))
+			asm = append(asm, fmt.Sprintf("\tADI\tR3 #1\t;True Branch"))
 			//asm = append(asm, "TRP #99")
 
 			//save it to where its supposed to go
-			for _, r := range saveFromRegister(st, row.GetOp1(), "R3") {
+			for i, r := range saveFromRegister(st, row.GetOp1(), "R3") {
+				label := ""
+				if i == 0 {
+					label = falseBranch + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", label, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", label, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", label, r.GetCommand(), r.GetComment()))
+				}
+			}
+		case "LT", "LTE":
+			label := row.GetLabel()
+			for i, r := range loadToRegister(st, row.GetOp2(), "R3") {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
+				}
+
+			}
+
+			for _, r := range loadToRegister(st, row.GetOp3(), "R4") {
 				switch {
 				case r.GetOp2() != "":
 					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
@@ -217,6 +305,98 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
 				default:
 					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
+
+			//compare for less then
+			//asm = append(asm, "TRP #99")
+			asm = append(asm, fmt.Sprintf("\tCMP\tR3 R4\t;%s", row.GetComment()))
+			trueBranch := st.GenSymId("BTrue")
+			falseBranch := st.GenSymId("BFalse")
+			asm = append(asm, fmt.Sprintf("\tBLT\tR3 %s:\t", trueBranch))
+			if row.GetCommand() == "LTE" {
+				asm = append(asm, fmt.Sprintf("\tBRZ\tR3 %s:\t", trueBranch))
+			}
+			asm = append(asm, fmt.Sprintf("\tSUB\tR3 R3\t; false branch"))
+			asm = append(asm, fmt.Sprintf("\tJMP\t%s:\t",falseBranch))
+			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch",trueBranch))
+			asm = append(asm, fmt.Sprintf("\tADI\tR3 #1\t;True Branch"))
+			//asm = append(asm, "TRP #99")
+
+			//save it to where its supposed to go
+			for i, r := range saveFromRegister(st, row.GetOp1(), "R3") {
+				label := ""
+				if i == 0 {
+					label = falseBranch + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", label, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", label, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", label, r.GetCommand(), r.GetComment()))
+				}
+			}
+		case "EQ", "NEQ":
+			label := row.GetLabel()
+			for i, r := range loadToRegister(st, row.GetOp2(), "R3") {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
+				}
+
+			}
+
+			for _, r := range loadToRegister(st, row.GetOp3(), "R4") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
+
+			//compare for greater then
+			//asm = append(asm, "TRP #99")
+			asm = append(asm, fmt.Sprintf("\tCMP\tR3 R4\t;%s", row.GetComment()))
+			trueBranch := st.GenSymId("BTrue")
+			falseBranch := st.GenSymId("BFalse")
+			//asm = append(asm, fmt.Sprintf("\tCBGT\tR3 %s:\t", trueBranch))
+			if row.GetCommand() == "EQ" {
+				asm = append(asm, fmt.Sprintf("\tBRZ\tR3 %s:\t", trueBranch))
+			} else {
+				asm = append(asm, fmt.Sprintf("\tBNZ\tR3 %s:\t", trueBranch))
+			}
+			asm = append(asm, fmt.Sprintf("\tSUB\tR3 R3\t; false branch"))
+			asm = append(asm, fmt.Sprintf("\tJMP\t%s\t",falseBranch))
+			asm = append(asm, fmt.Sprintf("%s:\tSUB\tR3 R3\t;True Branch",trueBranch))
+			asm = append(asm, fmt.Sprintf("\tADI\tR3 #1\t;True Branch"))
+			//asm = append(asm, "TRP #99")
+
+			//save it to where its supposed to go
+			for i, r := range saveFromRegister(st, row.GetOp1(), "R3") {
+				label := ""
+				if i == 0 {
+					label = falseBranch + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", label, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", label, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", label, r.GetCommand(), r.GetComment()))
 				}
 			}
 		case "BF":
@@ -240,7 +420,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 
 			//break if false
 			//asm = append(asm, "TRP #99")
-			asm = append(asm, fmt.Sprintf("\tBNZ\tR3 %s:\t;%s", row.GetOp2(), row.GetComment()))
+			asm = append(asm, fmt.Sprintf("\tBRZ\tR3 %s:\t;%s", row.GetOp2(), row.GetComment()))
 			//asm = append(asm, "TRP #99")
 
 		case "JMP":
@@ -270,6 +450,8 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			//asm = append(asm, `STR     R0 (RSP)        ; R0 is wherever the value is for return`)
 			asm = append(asm, fmt.Sprintf(`JMR     R10             ; go back "%s"`, row.GetComment()))
 			asm = append(asm, "\n")
+		default:
+			panic(fmt.Sprintf("Dont have translation for %#v\n",row))
 		}
 	}
 
