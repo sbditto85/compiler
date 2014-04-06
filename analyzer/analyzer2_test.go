@@ -1015,7 +1015,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Scope: g, SymId: Cl1, Value: Baz, Kind: Class
 	//Extra Data:
 	//Key: size, Value: 8
-	//Key: StaticInit, Value: St13
+	//Key: StaticInit, Value: St12
 	//--------------
 	//Scope: g.Baz, SymId: Iv2, Value: notused, Kind: Ivar
 	//Extra Data:
@@ -1042,47 +1042,47 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Key: paramSymIds, Value: []
 	//Key: size, Value: 0
 	//--------------
-	//Scope: g, SymId: Ma5, Value: main, Kind: Main
+	//Scope: g, SymId: MAIN, Value: main, Kind: Main
 	//Extra Data:
 	//Key: type, Value: void
 	//Key: size, Value: 19
 	//--------------
-	//Scope: g.main, SymId: Lv6, Value: i, Kind: Lvar
+	//Scope: g.main, SymId: Lv5, Value: i, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: int
 	//Key: offset, Value: 0
 	//--------------
-	//Scope: g.main, SymId: Lv7, Value: j, Kind: Lvar
+	//Scope: g.main, SymId: Lv6, Value: j, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: int
 	//Key: offset, Value: 4
 	//--------------
-	//Scope: g.main, SymId: Lv8, Value: c, Kind: Lvar
+	//Scope: g.main, SymId: Lv7, Value: c, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: char
 	//Key: offset, Value: 8
 	//--------------
-	//Scope: g.main, SymId: Lv9, Value: b, Kind: Lvar
+	//Scope: g.main, SymId: Lv8, Value: b, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: bool
 	//Key: offset, Value: 9
 	//--------------
-	//Scope: g.main, SymId: Lv10, Value: b2, Kind: Lvar
+	//Scope: g.main, SymId: Lv9, Value: b2, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: bool
 	//Key: offset, Value: 10
 	//--------------
-	//Scope: g, SymId: Ty11, Value: int, Kind: Type
+	//Scope: g, SymId: Ty10, Value: int, Kind: Type
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g.Baz, SymId: Tv12, Value: this.notused, Kind: Tvar
+	//Scope: g.Baz, SymId: Tv11, Value: this.notused, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: class_symId, Value: this
@@ -1090,48 +1090,48 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Key: indirect, Value: true
 	//Key: offset, Value: 4
 	//--------------
-	//Scope: g.Baz, SymId: St13, Value: BazStaticInit, Kind: StaticInit
+	//Scope: g.Baz, SymId: St12, Value: BazStaticInit, Kind: StaticInit
 	//Extra Data:
 	//Key: type, Value: Baz
 	//Key: accessMod, Value: private
 	//Key: scope, Value: g.Baz
 	//--------------
-	//Scope: g, SymId: Li14, Value: 1, Kind: LitVar
+	//Scope: g, SymId: Li13, Value: 1, Kind: LitVar
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g, SymId: Ty15, Value: char, Kind: Type
+	//Scope: g, SymId: Ty14, Value: char, Kind: Type
 	//Extra Data:
 	//Key: type, Value: char
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g, SymId: Ty16, Value: bool, Kind: Type
+	//Scope: g, SymId: Ty15, Value: bool, Kind: Type
 	//Extra Data:
 	//Key: type, Value: bool
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g.main, SymId: Tv17, Value: i < j, Kind: Tvar
+	//Scope: g.main, SymId: Tv16, Value: i < j, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//Key: offset, Value: 11
 	//--------------
-	//Scope: g.main, SymId: Tv20, Value: b && b2, Kind: Tvar
+	//Scope: g.main, SymId: Tv19, Value: b && b2, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//Key: offset, Value: 12
 	//--------------
-	//Scope: g.main, SymId: Tv21, Value: b && b2 || b, Kind: Tvar
+	//Scope: g.main, SymId: Tv20, Value: b && b2 || b, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: bool
 	//Key: offset, Value: 13
 	//--------------
-	//Scope: g.main, SymId: Tv23, Value: atoi(c), Kind: Tvar
+	//Scope: g.main, SymId: Tv22, Value: atoi(c), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: char
 	//Key: offset, Value: 14
 	//--------------
-	//Scope: g.main, SymId: Tv24, Value: itoa(i), Kind: Tvar
+	//Scope: g.main, SymId: Tv23, Value: itoa(i), Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: offset, Value: 15

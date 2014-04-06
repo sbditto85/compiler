@@ -141,11 +141,11 @@ func ExampleTCodeFunction() {
 	asm := GenerateASM(table, symbolTable)
 
 	/*
-	fmt.Printf("ASM:\n")
+		fmt.Printf("ASM:\n")
 
-	for i, line := range asm {
-		fmt.Printf("%d : %s\n", i+1, line)
-	}
+		for i, line := range asm {
+			fmt.Printf("%d : %s\n", i+1, line)
+		}
 	*/
 
 	assembler := amb.NewAssembler()
@@ -174,7 +174,6 @@ func ExampleTCodeFunction() {
 	//a
 	//n
 }
-
 
 func ExampleTCodeMath() {
 	defer func() {
@@ -224,11 +223,11 @@ func ExampleTCodeMath() {
 	asm := GenerateASM(table, symbolTable)
 
 	/*
-	fmt.Printf("ASM:\n")
+		fmt.Printf("ASM:\n")
 
-	for i, line := range asm {
-		fmt.Printf("%d : %s\n", i+1, line)
-	}
+		for i, line := range asm {
+			fmt.Printf("%d : %s\n", i+1, line)
+		}
 	*/
 
 	assembler := amb.NewAssembler()

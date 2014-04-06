@@ -165,21 +165,23 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 		case "NEWI":
 			//get size of obj
 			elem, err := st.GetElement(row.GetOp1())
-			if err != nil { panic(fmt.Sprintf("Could not get elem for symId %s",row.GetOp1())) }
+			if err != nil {
+				panic(fmt.Sprintf("Could not get elem for symId %s", row.GetOp1()))
+			}
 
-			objSize, err := sym.IntFromData(elem.Data,"size") //if err then assume 0
+			objSize, err := sym.IntFromData(elem.Data, "size") //if err then assume 0
 
 			//check for overflow (RSL)
 			asm = append(asm, `;; Test for heap overflow`)
-			asm = append(asm, `MOV     R10 R9`) //copy free pointer to tmp
-			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d`, objSize * 1)) //add size of obj
-			asm = append(asm, `CMP     R10 RSL`) //comp with the stack limit
-			asm = append(asm, `BGT     R10 HOVRFLW:`) //if it would put it over the stack limit then branch to overflow
+			asm = append(asm, `MOV     R10 R9`)                          //copy free pointer to tmp
+			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d`, objSize*1)) //add size of obj
+			asm = append(asm, `CMP     R10 RSL`)                         //comp with the stack limit
+			asm = append(asm, `BGT     R10 HOVRFLW:`)                    //if it would put it over the stack limit then branch to overflow
 
 			//FREE: (R9) reg value moved for storage (tmp)
 			asm = append(asm, `MOV     R10 R9`) //copy free pointer to tmp
 			//FREE: (R9) updated by size of Op1
-			asm = append(asm, fmt.Sprintf(`ADI     R9 #%d`, objSize * 1)) //add size of obj
+			asm = append(asm, fmt.Sprintf(`ADI     R9 #%d`, objSize*1)) //add size of obj
 			//Store tmp in Op2
 			for _, r := range saveFromRegister(st, row.GetOp2(), "R9") {
 				switch {
@@ -575,16 +577,20 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 		case "PEEK":
 			//get size of obj
 			elem, err := st.GetElement(row.GetOp1())
-			if err != nil { panic(fmt.Sprintf("Could not get elem for symId %s",row.GetOp1())) }
-
-			varSize, err := sym.IntFromData(elem.Data,"size") //if err then assume 0
 			if err != nil {
-				typ, err := sym.StringFromData(elem.Data,"type")
-				if err != nil { panic(fmt.Sprintf("Could not get type of elem with symId %s",elem.SymId)) }
+				panic(fmt.Sprintf("Could not get elem for symId %s", row.GetOp1()))
+			}
 
-				isArray, _ := sym.BoolFromData(elem.Data,"isArray")
+			varSize, err := sym.IntFromData(elem.Data, "size") //if err then assume 0
+			if err != nil {
+				typ, err := sym.StringFromData(elem.Data, "type")
+				if err != nil {
+					panic(fmt.Sprintf("Could not get type of elem with symId %s", elem.SymId))
+				}
 
-				varSize = sym.SizeOfType(typ,isArray)
+				isArray, _ := sym.BoolFromData(elem.Data, "isArray")
+
+				varSize = sym.SizeOfType(typ, isArray)
 			}
 			label := row.GetLabel()
 			if label != "" {
@@ -592,11 +598,11 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			}
 			switch varSize {
 			case 1:
-				asm = append(asm, fmt.Sprintf("%s\tLDB\tR11 (RSP)\t;%s",label,row.GetComment()))
+				asm = append(asm, fmt.Sprintf("%s\tLDB\tR11 (RSP)\t;%s", label, row.GetComment()))
 			default:
-				asm = append(asm, fmt.Sprintf("%s\tLDR\tR11 (RSP)\t;%s",label,row.GetComment()))
+				asm = append(asm, fmt.Sprintf("%s\tLDR\tR11 (RSP)\t;%s", label, row.GetComment()))
 			}
-			
+
 			//save it to the desired location
 			for _, r := range saveFromRegister(st, row.GetOp1(), "R11") {
 				switch {
@@ -639,16 +645,20 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				}
 				//get size of obj
 				elem, err := st.GetElement(row.GetOp1())
-				if err != nil { panic(fmt.Sprintf("Could not get elem for symId %s",row.GetOp1())) }
-
-				varSize, err := sym.IntFromData(elem.Data,"size") //if err then assume 0
 				if err != nil {
-					typ, err := sym.StringFromData(elem.Data,"type")
-					if err != nil { panic(fmt.Sprintf("Could not get type of elem with symId %s",elem.SymId)) }
+					panic(fmt.Sprintf("Could not get elem for symId %s", row.GetOp1()))
+				}
 
-					isArray, _ := sym.BoolFromData(elem.Data,"isArray")
+				varSize, err := sym.IntFromData(elem.Data, "size") //if err then assume 0
+				if err != nil {
+					typ, err := sym.StringFromData(elem.Data, "type")
+					if err != nil {
+						panic(fmt.Sprintf("Could not get type of elem with symId %s", elem.SymId))
+					}
 
-					varSize = sym.SizeOfType(typ,isArray)
+					isArray, _ := sym.BoolFromData(elem.Data, "isArray")
+
+					varSize = sym.SizeOfType(typ, isArray)
 				}
 				switch varSize {
 				case 1:

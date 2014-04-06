@@ -55,16 +55,16 @@ func ExampleICodeAssignment() {
 	//Output:
 	//Num Rows: 5 curRow: 4
 	//Lables:
-	//Li5: []int{1}
-	//Li6: []int{2}
-	//Lv2: []int{1, 3}
-	//Lv3: []int{2, 3}
-	//Ma1: []int{0}
+	//Li4: []int{1}
+	//Li5: []int{2}
+	//Lv1: []int{1, 3}
+	//Lv2: []int{2, 3}
+	//MAIN: []int{0}
 	//Rows:
-	//FUNC Ma1 ;
-	//MOV Lv2, Li5 ;     int r = 7;
-	//MOV Lv3, Li6 ;     int s = 8;
-	//MOV Lv2, Lv3 ;     r = s;
+	//FUNC MAIN ;
+	//MOV Lv1, Li4 ;     int r = 7;
+	//MOV Lv2, Li5 ;     int s = 8;
+	//MOV Lv1, Lv2 ;     r = s;
 	//RTN  ;}
 
 }
@@ -117,18 +117,18 @@ func ExampleICodeAddition() {
 	//Output:
 	//Num Rows: 6 curRow: 5
 	//Lables:
-	//Li5: []int{1}
-	//Li6: []int{2}
-	//Lv2: []int{1, 3, 4}
-	//Lv3: []int{2, 3}
-	//Ma1: []int{0}
-	//Tv7: []int{3, 4}
+	//Li4: []int{1}
+	//Li5: []int{2}
+	//Lv1: []int{1, 3, 4}
+	//Lv2: []int{2, 3}
+	//MAIN: []int{0}
+	//Tv6: []int{3, 4}
 	//Rows:
-	//FUNC Ma1 ;
-	//MOV Lv2, Li5 ;     int r = 7;
-	//MOV Lv3, Li6 ;     int s = 8;
-	//ADD Tv7, Lv3, Lv2 ;     r = r + s;
-	//MOV Lv2, Tv7 ;     r = r + s;
+	//FUNC MAIN ;
+	//MOV Lv1, Li4 ;     int r = 7;
+	//MOV Lv2, Li5 ;     int s = 8;
+	//ADD Tv6, Lv2, Lv1 ;     r = r + s;
+	//MOV Lv1, Tv6 ;     r = r + s;
 	//RTN  ;}
 
 }
@@ -181,18 +181,18 @@ func ExampleICodeSubtraction() {
 	//Output:
 	//Num Rows: 6 curRow: 5
 	//Lables:
-	//Li5: []int{1}
-	//Li6: []int{2}
-	//Lv2: []int{1, 3, 4}
-	//Lv3: []int{2, 3}
-	//Ma1: []int{0}
-	//Tv7: []int{3, 4}
+	//Li4: []int{1}
+	//Li5: []int{2}
+	//Lv1: []int{1, 3, 4}
+	//Lv2: []int{2, 3}
+	//MAIN: []int{0}
+	//Tv6: []int{3, 4}
 	//Rows:
-	//FUNC Ma1 ;
-	//MOV Lv2, Li5 ;     int r = 7;
-	//MOV Lv3, Li6 ;     int s = 8;
-	//SUB Tv7, Lv3, Lv2 ;     r = r - s;
-	//MOV Lv2, Tv7 ;     r = r - s;
+	//FUNC MAIN ;
+	//MOV Lv1, Li4 ;     int r = 7;
+	//MOV Lv2, Li5 ;     int s = 8;
+	//SUB Tv6, Lv2, Lv1 ;     r = r - s;
+	//MOV Lv1, Tv6 ;     r = r - s;
 	//RTN  ;}
 
 }
@@ -245,18 +245,18 @@ func ExampleICodeMultiply() {
 	//Output:
 	//Num Rows: 6 curRow: 5
 	//Lables:
-	//Li5: []int{1}
-	//Li6: []int{2}
-	//Lv2: []int{1, 3, 4}
-	//Lv3: []int{2, 3}
-	//Ma1: []int{0}
-	//Tv7: []int{3, 4}
+	//Li4: []int{1}
+	//Li5: []int{2}
+	//Lv1: []int{1, 3, 4}
+	//Lv2: []int{2, 3}
+	//MAIN: []int{0}
+	//Tv6: []int{3, 4}
 	//Rows:
-	//FUNC Ma1 ;
-	//MOV Lv2, Li5 ;     int r = 7;
-	//MOV Lv3, Li6 ;     int s = 8;
-	//MUL Tv7, Lv3, Lv2 ;     r = r * s;
-	//MOV Lv2, Tv7 ;     r = r * s;
+	//FUNC MAIN ;
+	//MOV Lv1, Li4 ;     int r = 7;
+	//MOV Lv2, Li5 ;     int s = 8;
+	//MUL Tv6, Lv2, Lv1 ;     r = r * s;
+	//MOV Lv1, Tv6 ;     r = r * s;
 	//RTN  ;}
 }
 
@@ -315,7 +315,7 @@ func ExampleICodeDivide() {
 	//MAIN: []int{0}
 	//Tv6: []int{3, 4}
 	//Rows:
-	//FUNC Ma1 ;
+	//FUNC MAIN ;
 	//MOV Lv1, Li4 ;     int r = 7;
 	//MOV Lv2, Li5 ;     int s = 8;
 	//DIV Tv6, Lv2, Lv1 ;     r = r / s;
@@ -402,7 +402,6 @@ func ExampleICodeArithmetic() {
 	//Num Rows: 0 curRow: -1
 	//Lables:
 	//Rows:
-
 
 }
 
