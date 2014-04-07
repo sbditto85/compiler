@@ -337,7 +337,7 @@ func (s *SemanticManager) Func(scope string) (err error) {
 func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
 	exp := s.sas.pop()
 	if exp.GetType() != "int" {
-		return fmt.Errorf("Invalid array count, should be int")
+		return fmt.Errorf("Invalid array offset, should be int")
 	}
 
 	id := s.sas.pop()
@@ -351,10 +351,21 @@ func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
 
 	value := id_sar.GetValue() + "[" + exp.GetValue() + "]"
 
+	if !id_sar.Exists(st) {
+		return fmt.Errorf("Expected identifier for array, received %s", id.GetValue())
+	}
+
+	if !exp.Exists(st) {
+		return fmt.Errorf("Expected offset for array, received %s", exp.GetValue())
+	}
+
 	//symbol table
 	data := make(map[string]interface{})
 	data["arr_symId"] = id_sar.GetSymId()
+	data["type"] = id_sar.GetType()
 	data["exp_symId"] = exp.GetSymId()
+	data["indirect"] = true
+	data["isArray"] = true
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
 	arr_sar := &Arr_Sar{value: value, typ: id_sar.GetType(), scope: st.GetScope(), id_sar: id_sar, exp: exp, symId: symId}
@@ -616,6 +627,8 @@ func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
 	//symbol table
 	data := make(map[string]interface{})
 	data["type_symId"] = type_sar.GetSymId()
+	data["type"] = type_sar.GetValue()
+	data["isArray"] = true
 	data["exp_symId"] = sar.GetSymId()
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
@@ -632,10 +645,11 @@ func (s *SemanticManager) NewArray(st *sym.SymbolTable) (err error) {
 	//icode
 	data = make(map[string]interface{})
 	data["type_symId"] = type_sar.GetSymId()
+	data["type"] = sar.GetType()
 	symId = s.st.AddElement(value, "Tvar", data, true)
 
 	s.gen.AddRow("", "MUL", symId, s.GetTypeSize(type_sar.GetValue()), sar.GetSymId(), s.lx.GetCurFullLine())
-	s.gen.AddRow("", "NEW", new_sar.GetSymId(), symId, "", s.lx.GetCurFullLine())
+	s.gen.AddRow("", "NEW", symId, new_sar.GetSymId(), "", s.lx.GetCurFullLine())
 
 	return
 }

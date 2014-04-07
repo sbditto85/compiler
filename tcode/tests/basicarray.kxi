@@ -1,0 +1,8 @@
+
+void main() {
+     int i[] = new int[5];
+     
+     i[1] = 5;
+
+     cout << i[1];
+}

@@ -108,10 +108,12 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	for _, row := range table.GetRows() {
 		//fmt.Printf("row: %#v\n", row) //TODO: delete me
 		switch row.GetCommand() {
+		case "AEF":
 		case "REF":
-			/*
-				label := row.GetLabel()
-				for i, r := range loadToRegister(st, row.GetOp1(), "R3") {
+		case "ADD", "SUB", "MUL", "DIV":
+			label := row.GetLabel()
+			if _, err := strconv.Atoi(row.GetOp2()); err != nil {
+				for i, r := range loadToRegister(st, row.GetOp2(), "R4") {
 					beg := ""
 					if label != "" && i == 0 {
 						beg = label + ":"
@@ -123,28 +125,11 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 						asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
 					default:
 						asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
-					}
-
+					}	
 				}
-
-				panic("DONE")
-			*/
-		case "ADD", "SUB", "MUL", "DIV":
-			label := row.GetLabel()
-			for i, r := range loadToRegister(st, row.GetOp2(), "R4") {
-				beg := ""
-				if label != "" && i == 0 {
-					beg = label + ":"
-				}
-				switch {
-				case r.GetOp2() != "":
-					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
-				case r.GetOp1() != "":
-					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
-				default:
-					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
-				}
-
+			} else { //received a literal
+				asm = append(asm, fmt.Sprintf("%s\tSUB\tR4 R4\t;%s",label,row.GetComment()))
+				asm = append(asm, fmt.Sprintf("\tADI\tR4 #%s\t;%s",row.GetOp2(),row.GetComment()))
 			}
 
 			for _, r := range loadToRegister(st, row.GetOp3(), "R3") {
@@ -183,6 +168,45 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
 				}
 			}
+		case "NEW":
+			label := row.GetLabel()
+			for i, r := range loadToRegister(st, row.GetOp2(), "R3") {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
+				}	
+			}
+			
+			//check for overflow (RSL)
+			asm = append(asm, `;; Test for heap overflow`)
+			asm = append(asm, `MOV     R10 R9`)                          //copy free pointer to tmp
+			asm = append(asm, `ADD     R10 R3`) //add size of obj
+			asm = append(asm, `CMP     R10 RSL`)                         //comp with the stack limit
+			asm = append(asm, `BGT     R10 HOVRFLW:`)                    //if it would put it over the stack limit then branch to overflow
+
+			//FREE: (R9) reg value moved for storage (tmp)
+			asm = append(asm, `MOV     R11 R9`) //copy free pointer to tmp
+			//FREE: (R9) updated by Op1
+			asm = append(asm, `ADD     R9 R3`) //add size of obj
+			//Store tmp in Op2
+			for _, r := range saveFromRegister(st, row.GetOp2(), "R11") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
 		case "NEWI":
 			//get size of obj
 			elem, err := st.GetElement(row.GetOp1())
@@ -194,7 +218,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 
 			//check for overflow (RSL)
 			asm = append(asm, `;; Test for heap overflow`)
-			asm = append(asm, `MOV     R10 R9`)                          //copy free pointer to tmp
+			asm = append(asm, fmt.Sprintf("%s\tMOV     R10 R9",row.GetLabel()))                          //copy free pointer to tmp
 			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d`, objSize*1)) //add size of obj
 			asm = append(asm, `CMP     R10 RSL`)                         //comp with the stack limit
 			asm = append(asm, `BGT     R10 HOVRFLW:`)                    //if it would put it over the stack limit then branch to overflow
@@ -795,8 +819,30 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 				rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R13)", "", ""))
 			}
 
+		} else if baseSymId, err := sym.StringFromData(v.Data, "arr_symId"); err == nil {
+
+			offsetSymId, err := sym.StringFromData(v.Data, "exp_symId")
+			if err != nil { panic(fmt.Sprintf("Could not get offset symId %s", v.SymId)) }
+
+			//load base into R13
+			for _, r := range loadToRegister(st, baseSymId, "R13") {
+				rows = append(rows, r)
+			}
+
+			for _, r := range loadToRegister(st, offsetSymId, "R14") {
+				rows = append(rows, r)
+			}
+
+			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
+
+			switch size {
+			case 1:
+				rows = append(rows, ic.NewQuadRow("", "LDB", reg, "(R13)", "", ""))
+			default:
+				rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R13)", "", ""))
+			}
 		} else {
-			panic("WHAT THE") //TODO: FIX ME
+			panic(fmt.Sprintf("Unable to calculate heap location",v.Value))
 		}
 
 	case "memory":
@@ -864,8 +910,30 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 				rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R13)", "", ""))
 			}
 
+		} else if baseSymId, err := sym.StringFromData(v.Data, "arr_symId"); err == nil {
+
+			offsetSymId, err := sym.StringFromData(v.Data, "exp_symId")
+			if err != nil { panic(fmt.Sprintf("Could not get offset symId %s", v.SymId)) }
+
+			//load base into R13
+			for _, r := range loadToRegister(st, baseSymId, "R13") {
+				rows = append(rows, r)
+			}
+
+			for _, r := range loadToRegister(st, offsetSymId, "R14") {
+				rows = append(rows, r)
+			}
+
+			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
+
+			switch size {
+			case 1:
+				rows = append(rows, ic.NewQuadRow("", "STB", reg, "(R13)", "", ""))
+			default:
+				rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R13)", "", ""))
+			}
 		} else {
-			panic("WHAT THE") //TODO: FIX ME
+			panic(fmt.Sprintf("Unable to calculate heap location",v.Value))
 		}
 	case "stack":
 		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
