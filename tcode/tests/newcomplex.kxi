@@ -1,0 +1,103 @@
+
+class Casey {
+    private Emmy e1 = new Emmy(3,true);
+
+    public Emmy e2;
+
+    Casey(Emmy tmp) {
+	e2 = tmp;
+    }
+
+    public void printEmmys() {
+	e1.printAge();
+	e2.printAge();
+    }
+}
+
+class Emmy {
+
+    private bool awesome = true;
+    
+    public int ageMonths = 8;
+    
+    Emmy(int age, bool yeah) {
+	cout << 'a';
+	cout << ' ';
+	cout << '=';
+	cout << ' ';
+	cout << ageMonths;
+	cout << '\n';
+
+	ageMonths = age;
+	awesome = yeah;
+
+	cout << 'E';
+	cout << 'm';
+	cout << 'm';
+	cout << 'y';
+	cout << ' ';
+	cout << '=';
+	cout << ' ';
+	cout << ageMonths;
+	cout << '\n';
+    }
+
+    public void addMonthToAge(int months) {
+	ageMonths = ageMonths + months;
+    }
+
+    public void printAge() {
+	cout << 'E';
+	cout << 'm';
+	cout << 'm';
+	cout << 'y';
+	cout << ' ';
+	cout << 'i';
+	cout << 's';
+	cout << ' ';
+	cout << ageMonths;
+	cout << '!';
+	cout << '\n';
+    }
+    
+}
+
+void main() {
+    Emmy e = new Emmy(9, false);
+    Emmy b = new Emmy(7, true);
+    Casey c = new Casey(b);
+
+    e.printAge();
+    b.printAge();
+    e.addMonthToAge(2);
+    e.printAge();
+    b.printAge();
+    e.addMonthToAge(1);
+    e.printAge();
+    b.printAge();
+    
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '\n';
+
+    b.addMonthToAge(4);
+    e.printAge();
+    b.printAge();
+    b.addMonthToAge(2);
+    e.printAge();
+    b.printAge();
+
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '\n';    
+
+    c.printEmmys();
+}
