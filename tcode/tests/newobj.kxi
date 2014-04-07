@@ -1,0 +1,77 @@
+
+class Emmy {
+
+    private bool awesome = true;
+    
+    public int ageMonths = 8;
+    
+    Emmy() {
+	cout << 'E';
+	cout << 'm';
+	cout << 'm';
+	cout << 'y';
+	cout << ' ';
+	cout << '=';
+	cout << ' ';
+	cout << ageMonths;
+	cout << '\n';
+    }
+
+    public void addMonthToAge() {
+	int tmp;
+	
+	//tmp = ageMonths + 1;
+	//cout << tmp;
+	//cout << '\n';
+	
+	//cout << ageMonths;
+	//cout << ' ';
+	ageMonths = ageMonths + 1;
+	//cout << ageMonths;
+	//cout << '\n';
+    }
+
+    public void printAge() {
+	cout << 'E';
+	cout << 'm';
+	cout << 'm';
+	cout << 'y';
+	cout << ' ';
+	cout << 'i';
+	cout << 's';
+	cout << ' ';
+	cout << ageMonths;
+	cout << '!';
+	cout << '\n';
+    }
+    
+}
+
+void main() {
+    Emmy e = new Emmy();
+    Emmy b = new Emmy();
+
+    e.printAge();
+    b.printAge();
+    e.addMonthToAge();
+    e.printAge();
+    b.printAge();
+    e.addMonthToAge();
+    e.printAge();
+    b.printAge();
+    
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '-';
+    cout << '\n';
+
+    b.addMonthToAge();
+    e.printAge();
+    b.printAge();
+    b.addMonthToAge();
+    e.printAge();
+    b.printAge();
+}

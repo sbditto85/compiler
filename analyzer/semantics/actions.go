@@ -11,6 +11,12 @@ func (s *SemanticManager) IPush(value, scope string) {
 }
 
 func (s *SemanticManager) LPush(value, scope, typ string) {
+	switch value {
+	case "true":
+		value = "1"
+	case "false":
+		value = "0"
+	}
 
 	//symbol table action
 	//check if there
@@ -158,7 +164,11 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 		data["type"] = var_sar.GetType()
 		data["class_symId"] = class_sar.GetSymId()
 		data["var_symId"] = var_sar.GetSymId()
-		data["indirect"] = true
+		switch var_sar.(type) {
+		case *Func_Sar:
+		default:
+			data["indirect"] = true
+		}
 		value := fmt.Sprintf("%s.%s", class_sar.GetValue(), var_sar.GetValue())
 		symId := s.st.AddElement(value, "Tvar", data, true)
 
@@ -281,6 +291,13 @@ func (s *SemanticManager) StaticInit(className string, st *sym.SymbolTable) {
 func (s *SemanticManager) ReturnFunc(st *sym.SymbolTable) {
 	//icode
 	s.gen.AddRow("", "RTN", "", "", "", s.lx.GetCurFullLine())
+	s.gen.SwitchToStatic()
+}
+
+func (s *SemanticManager) ReturnThisFunc(st *sym.SymbolTable) {
+	//icode
+	s.gen.SwitchToMain()
+	s.gen.AddRow("", "RETURN", "this", "", "", s.lx.GetCurFullLine())
 	s.gen.SwitchToStatic()
 }
 

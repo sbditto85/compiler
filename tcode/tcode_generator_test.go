@@ -310,11 +310,13 @@ func ExampleTCodeLoop() {
 
 	asm := GenerateASM(table, symbolTable)
 
-	fmt.Printf("ASM:\n")
+	/*
+		fmt.Printf("ASM:\n")
 
-	for i, line := range asm {
-		fmt.Printf("%d : %s\n", i+1, line)
-	}
+		for i, line := range asm {
+			fmt.Printf("%d : %s\n", i+1, line)
+		}
+	*/
 
 	assembler := amb.NewAssembler()
 	assembler.ReadStrings(asm)
@@ -338,6 +340,100 @@ func ExampleTCodeLoop() {
 	}
 
 	//Output:
-	//
+	//yyyyy
+	//fffftttt
+
+}
+
+func ExampleTCodeNewObj() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "tests/newobj.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := an.NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	table, symbolTable := a.GetICodeInfo()
+
+	asm := GenerateASM(table, symbolTable)
+
+	/*
+		fmt.Printf("ASM:\n")
+
+		for i, line := range asm {
+			fmt.Printf("%d : %s\n", i+1, line)
+		}
+	*/
+
+	assembler := amb.NewAssembler()
+	assembler.ReadStrings(asm)
+
+	fperr := assembler.FirstPass()
+	if fperr == nil {
+		sperr := assembler.SecondPass()
+		if sperr == nil {
+			sperr = sperr
+		} else {
+			fmt.Println(sperr)
+		}
+	} else {
+		fmt.Println(fperr)
+	}
+
+	v := vm.NewVirtualMachine(assembler.GetBytes())
+	verr := v.Run()
+	if verr != nil {
+		fmt.Printf("%s\n", verr.Error())
+	}
+
+	//Output:
+	//Emmy = 8
+	//Emmy = 8
+	//Emmy is 8!
+	//Emmy is 8!
+	//Emmy is 9!
+	//Emmy is 8!
+	//Emmy is 10!
+	//Emmy is 8!
+	//------
+	//Emmy is 10!
+	//Emmy is 9!
+	//Emmy is 10!
+	//Emmy is 10!
 
 }

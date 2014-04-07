@@ -296,7 +296,7 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 	//Pushed operator =
 	//LPush: true from scope g.main
 	//SM: Testing operation = ...
-	//SM: Comparing true(bool) to k(bool)
+	//SM: Comparing 1(bool) to k(bool)
 	//SM: ... finished operation =
 	//EOE
 	//Type int pushed

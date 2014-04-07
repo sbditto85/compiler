@@ -317,7 +317,7 @@ func (a *Analyzer) IsCompilationUnit() (error, ErrorType) {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
 
-	if e, _ := a.IsMethodBody(); e != nil {
+	if e, _ := a.IsMethodBody(false); e != nil {
 		panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
 	}
 
@@ -529,7 +529,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 		symdata["parameters"] = paramList
 		a.AddSymbol(identifier, "Method", symdata, a.pass == 1)
 
-		if e, _ := a.IsMethodBody(); e != nil {
+		if e, _ := a.IsMethodBody(false); e != nil {
 			panic(BuildErrFromTokErrType(curTok, METHOD_BODY))
 		}
 
@@ -589,14 +589,15 @@ func (a *Analyzer) IsConstructorDeclaration() (error, ErrorType) {
 	symdata["accessMod"] = "public"
 	a.AddSymbol(className, "Constructor", symdata, a.pass == 1)
 
-	if e, t := a.IsMethodBody(); e != nil {
+	if e, t := a.IsMethodBody(true); e != nil {
 		panic(BuildErrMessFromTokErrType(curTok, t))
 	}
+
 	a.debugMessagePassOne("is a constructor declaration!")
 	return nil, NONE
 }
 
-func (a *Analyzer) IsMethodBody() (error, ErrorType) {
+func (a *Analyzer) IsMethodBody(isConstructor bool) (error, ErrorType) {
 	curTok, err := a.GetCurr()
 	a.debugMessagePassOne(fmt.Sprintf("Testing is method body with token %s...", curTok.Lexeme))
 	if err != nil {
@@ -620,7 +621,11 @@ func (a *Analyzer) IsMethodBody() (error, ErrorType) {
 	//Semantic Action (icode)
 	endFunc := false
 	if curTok.Lexeme == "}" && a.pass == 2 {
-		a.sm.ReturnFunc(a.st)
+		if isConstructor {
+			a.sm.ReturnThisFunc(a.st)
+		} else {
+			a.sm.ReturnFunc(a.st)
+		}
 		endFunc = true
 	}
 
@@ -647,7 +652,11 @@ func (a *Analyzer) IsMethodBody() (error, ErrorType) {
 
 	//Semantic Action (icode)
 	if a.pass == 2 && !endFunc {
-		a.sm.ReturnFunc(a.st)
+		if isConstructor {
+			a.sm.ReturnThisFunc(a.st)
+		} else {
+			a.sm.ReturnFunc(a.st)
+		}
 	}
 
 	//symbol table opperation

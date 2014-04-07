@@ -1335,7 +1335,7 @@ func ExampleMethodBodyPass() {
 
 	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err, _ := a.IsMethodBody()
+	err, _ := a.IsMethodBody(false)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -1373,7 +1373,7 @@ func ExampleMethodBodyFullPass() {
 
 	a := NewAnalyzer(l, true)
 	a.GetNext()
-	err, _ := a.IsMethodBody()
+	err, _ := a.IsMethodBody(false)
 
 	if err != nil {
 		fmt.Println(err.Error())

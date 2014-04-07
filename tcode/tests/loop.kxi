@@ -15,20 +15,77 @@ void main() {
     int i = 10;
     int j = 5;
 
+    bool b = false;
+
     //should not happen
     while(i < j) {
 	cout << 'n';
-	cout << '\n';
 	i = i + 1;
     }
+    cout << '\n';
 
     //should have 5 y's
     while(i > j) {
 	cout << 'y';
-	cout << '\n';
 	i = i - 1;
     }
+    cout << '\n';
 
-    
+    //should execute once
+    while(b == false) {
 
+	if(b == false) {
+	    cout << 'f';
+	} else {
+	    cout << 't';
+	}
+	
+	if(b != false) {
+	    cout << 't';
+	} else {
+	    cout << 'f';
+	}
+	
+	if(b == true) {
+	    cout << 't';
+	} else {
+	    cout << 'f';
+	}
+	
+	if(b != true) {
+	    cout << 'f';
+	} else {
+	    cout << 't';
+	}
+	
+	b = true;
+    }
+
+    //should execute once
+    while(b == true) {
+	if(b == false) {
+	    cout << 'f';
+	} else {
+	    cout << 't';
+	}
+	
+	if(b != false) {
+	    cout << 't';
+	} else {
+	    cout << 'f';
+	}
+	
+	if(b == true) {
+	    cout << 't';
+	} else {
+	    cout << 'f';
+	}
+	
+	if(b != true) {
+	    cout << 'f';
+	} else {
+	    cout << 't';
+	}
+	b = false;
+    }
 }
