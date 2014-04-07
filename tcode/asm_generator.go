@@ -125,11 +125,11 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 						asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
 					default:
 						asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
-					}	
+					}
 				}
 			} else { //received a literal
-				asm = append(asm, fmt.Sprintf("%s\tSUB\tR4 R4\t;%s",label,row.GetComment()))
-				asm = append(asm, fmt.Sprintf("\tADI\tR4 #%s\t;%s",row.GetOp2(),row.GetComment()))
+				asm = append(asm, fmt.Sprintf("%s\tSUB\tR4 R4\t;%s", label, row.GetComment()))
+				asm = append(asm, fmt.Sprintf("\tADI\tR4 #%s\t;%s", row.GetOp2(), row.GetComment()))
 			}
 
 			for _, r := range loadToRegister(st, row.GetOp3(), "R3") {
@@ -182,15 +182,15 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
 				default:
 					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
-				}	
+				}
 			}
-			
+
 			//check for overflow (RSL)
 			asm = append(asm, `;; Test for heap overflow`)
-			asm = append(asm, `MOV     R10 R9`)                          //copy free pointer to tmp
-			asm = append(asm, `ADD     R10 R3`) //add size of obj
-			asm = append(asm, `CMP     R10 RSL`)                         //comp with the stack limit
-			asm = append(asm, `BGT     R10 HOVRFLW:`)                    //if it would put it over the stack limit then branch to overflow
+			asm = append(asm, `MOV     R10 R9`)       //copy free pointer to tmp
+			asm = append(asm, `ADD     R10 R3`)       //add size of obj
+			asm = append(asm, `CMP     R10 RSL`)      //comp with the stack limit
+			asm = append(asm, `BGT     R10 HOVRFLW:`) //if it would put it over the stack limit then branch to overflow
 
 			//FREE: (R9) reg value moved for storage (tmp)
 			asm = append(asm, `MOV     R11 R9`) //copy free pointer to tmp
@@ -218,10 +218,10 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 
 			//check for overflow (RSL)
 			asm = append(asm, `;; Test for heap overflow`)
-			asm = append(asm, fmt.Sprintf("%s\tMOV     R10 R9",row.GetLabel()))                          //copy free pointer to tmp
-			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d`, objSize*1)) //add size of obj
-			asm = append(asm, `CMP     R10 RSL`)                         //comp with the stack limit
-			asm = append(asm, `BGT     R10 HOVRFLW:`)                    //if it would put it over the stack limit then branch to overflow
+			asm = append(asm, fmt.Sprintf("%s\tMOV     R10 R9", row.GetLabel())) //copy free pointer to tmp
+			asm = append(asm, fmt.Sprintf(`ADI     R10 #%d`, objSize*1))         //add size of obj
+			asm = append(asm, `CMP     R10 RSL`)                                 //comp with the stack limit
+			asm = append(asm, `BGT     R10 HOVRFLW:`)                            //if it would put it over the stack limit then branch to overflow
 
 			//FREE: (R9) reg value moved for storage (tmp)
 			asm = append(asm, `MOV     R11 R9`) //copy free pointer to tmp
@@ -822,7 +822,9 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 		} else if baseSymId, err := sym.StringFromData(v.Data, "arr_symId"); err == nil {
 
 			offsetSymId, err := sym.StringFromData(v.Data, "exp_symId")
-			if err != nil { panic(fmt.Sprintf("Could not get offset symId %s", v.SymId)) }
+			if err != nil {
+				panic(fmt.Sprintf("Could not get offset symId %s", v.SymId))
+			}
 
 			//load base into R13
 			for _, r := range loadToRegister(st, baseSymId, "R13") {
@@ -842,7 +844,7 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 				rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R13)", "", ""))
 			}
 		} else {
-			panic(fmt.Sprintf("Unable to calculate heap location",v.Value))
+			panic(fmt.Sprintf("Unable to calculate heap location", v.Value))
 		}
 
 	case "memory":
@@ -913,7 +915,9 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 		} else if baseSymId, err := sym.StringFromData(v.Data, "arr_symId"); err == nil {
 
 			offsetSymId, err := sym.StringFromData(v.Data, "exp_symId")
-			if err != nil { panic(fmt.Sprintf("Could not get offset symId %s", v.SymId)) }
+			if err != nil {
+				panic(fmt.Sprintf("Could not get offset symId %s", v.SymId))
+			}
 
 			//load base into R13
 			for _, r := range loadToRegister(st, baseSymId, "R13") {
@@ -933,7 +937,7 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 				rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R13)", "", ""))
 			}
 		} else {
-			panic(fmt.Sprintf("Unable to calculate heap location",v.Value))
+			panic(fmt.Sprintf("Unable to calculate heap location", v.Value))
 		}
 	case "stack":
 		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))

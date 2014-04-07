@@ -538,7 +538,6 @@ func ExampleTCodeNewComplex() {
 
 }
 
-
 func ExampleTCodeBasicArray() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -586,12 +585,12 @@ func ExampleTCodeBasicArray() {
 
 	asm := GenerateASM(table, symbolTable)
 
-	/*    
-	fmt.Printf("ASM:\n")
-	
-	for i, line := range asm {
-		fmt.Printf("%d : %s\n", i+1, line)
-	}
+	/*
+		fmt.Printf("ASM:\n")
+
+		for i, line := range asm {
+			fmt.Printf("%d : %s\n", i+1, line)
+		}
 	*/
 
 	assembler := amb.NewAssembler()

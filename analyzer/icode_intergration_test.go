@@ -899,7 +899,7 @@ func ExampleICodeArraysEverywhere() {
 	//RTN  ;}
 	//FUNC MAIN ;void main() {
 	//MUL Tv13, 4, Li11 ;    Frog frogs[] = new Frog[10];
-	//NEW Tv12, Tv13 ;    Frog frogs[] = new Frog[10];
+	//NEW Tv13, Tv12 ;    Frog frogs[] = new Frog[10];
 	//MOV Lv5, Tv12 ;    Frog frogs[] = new Frog[10];
 	//AEF Tv15, Li14, Lv5 ;    frogs[0] = new Frog(1);
 	//NEWI Cl1, Tv17 ;    frogs[0] = new Frog(1);
