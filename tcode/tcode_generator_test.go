@@ -625,7 +625,7 @@ func ExampleTCodeArraysEverywhere() {
 			fmt.Println(r)
 		}
 	}()
-	file := "tests/arrayseverywhere_small.kxi"
+	file := "tests/arrayseverywhere_small.kxi" //.kxi"// 
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
@@ -649,7 +649,7 @@ func ExampleTCodeArraysEverywhere() {
 	l.ReadFile(file)
 	a.SetLexer(l)
 
-	err = a.PerformNextPass(true)
+	err = a.PerformNextPass(false)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

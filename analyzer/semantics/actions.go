@@ -356,7 +356,7 @@ func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
 	data["type"] = id_sar.GetType()
 	data["exp_symId"] = exp.GetSymId()
 	data["indirect"] = true
-	data["isArray"] = true
+	data["isArray"] = false
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
 	arr_sar := &Arr_Sar{value: value, typ: id_sar.GetType(), scope: st.GetScope(), id_sar: id_sar, exp: exp, symId: symId}
@@ -725,7 +725,7 @@ func (s *SemanticManager) ArithmeticOperator(op string) error {
 	op1 := s.sas.pop()
 	op2 := s.sas.pop()
 	if op1 == nil || op2 == nil {
-		return fmt.Errorf("Not enough operands to test assignment operator")
+		return fmt.Errorf("Not enough operands to test arithmetic operator")
 	}
 	op1Typ := op1.GetType()
 	op2Typ := op2.GetType()
@@ -768,6 +768,25 @@ func (s *SemanticManager) ArithmeticOperator(op string) error {
 	return nil
 }
 
+func (s *SemanticManager) IsSarAnArray(sar SemanticActionRecord) (isArray bool) {
+	//var err error
+	switch stype := sar.(type) {
+	case *Lit_Sar:
+		isArray = false
+	case *Ref_Sar:
+		elem, _ := s.st.GetElement(stype.GetSymId())
+		var_symId, _ := sym.StringFromData(elem.Data,"var_symId")
+		varElem, _ := s.st.GetElement(var_symId)
+		isArray, _ = sym.BoolFromData(varElem.Data,"isArray")
+		//if err != nil { panic(fmt.Sprintf("Could not find isArray for %s",elem.SymId)) }
+	default:
+		elem, _ := s.st.GetElement(stype.GetSymId())
+		isArray, _ = sym.BoolFromData(elem.Data,"isArray")
+		//if err != nil { panic(fmt.Sprintf("Could not find isArray for %s",elem.SymId)) }
+	}
+	return
+}
+
 func (s *SemanticManager) AssignmentOperator() error {
 	op1 := s.sas.pop()
 	op2 := s.sas.pop()
@@ -776,6 +795,11 @@ func (s *SemanticManager) AssignmentOperator() error {
 	}
 	op1Typ := op1.GetType()
 	op2Typ := op2.GetType()
+
+	if s.IsSarAnArray(op1) != s.IsSarAnArray(op2) {
+		return fmt.Errorf("Must assign arrays to arrays %#v, %#v\n", op1, op2)
+	}
+
 	if op1Typ == "" {
 		return fmt.Errorf("Operand doesn't have type %#v", op1)
 	}

@@ -17,7 +17,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	mainSize, _ := sym.IntFromData(mainElem.Data, "size")
 
 	//debug?
-	//asm = append(asm, `TRP     #99`)
+	asm = append(asm, `TRP     #99`)
 
 	//setup heap
 	asm = append(asm, `LDA     R9 FREE:`)
@@ -106,16 +106,111 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		fmt.Printf("row: %#v\n", row) //TODO: delete me
+		//fmt.Printf("row: %#v\n", row) //TODO: delete me
 		switch row.GetCommand() {
 		case "AEF":
-			if row.GetLabel() != "" {
-				asm = append(asm, fmt.Sprintf("%s:\tADI\tR0 #0\t;%s", row.GetLabel(), row.GetComment()))
+			//load base into R13
+			label := row.GetLabel()
+			for i, r := range loadToRegister(st, row.GetOp3(), "R13") {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
+				}
 			}
+
+			for _, r := range loadToRegister(st, row.GetOp2(), "R14") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
+
+			baseSymId := row.GetOp3()
+			baseElem, _ := st.GetElement(baseSymId)
+			baseSize, err := sym.IntFromData(baseElem.Data,"size")
+			if err != nil {
+				typ, err := sym.StringFromData(baseElem.Data, "type")
+				if err != nil { panic(fmt.Sprintf("Could not get type for symId %s",baseSymId)) }
+
+				isArray, _ := sym.BoolFromData(baseElem.Data, "isArray")
+
+				baseSize = sym.SizeOfType(typ,isArray)
+			}
+
+			asm = append(asm, fmt.Sprintf("\tSUB\tR12 R12"))
+			asm = append(asm, fmt.Sprintf("\tADI\tR12 #%d", baseSize))
+			asm = append(asm, fmt.Sprintf("\tMUL\tR14 R12"))
+
+			asm = append(asm, fmt.Sprintf("\tADD\tR13 R14"))
+
+			for _, r := range saveAddressFromRegister(st, row.GetOp1(), "R13") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
+
 		case "REF":
-			if row.GetLabel() != "" {
-				asm = append(asm, fmt.Sprintf("%s:\tADI\tR0 #0\t;%s", row.GetLabel(), row.GetComment()))
+			//load base into R13
+			label := row.GetLabel()
+			for i, r := range loadToRegister(st, row.GetOp3(), "R13") {
+				beg := ""
+				if label != "" && i == 0 {
+					beg = label + ":"
+				}
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s %s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("%s\t%s\t%s\t;%s", beg, r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
+				}
 			}
+			
+			offsetSymId := row.GetOp2()
+			offsetElem, err := st.GetElement(offsetSymId)
+			if err != nil {
+				panic(fmt.Sprintf("Could not get elem for %s", offsetSymId))
+			}
+			
+			offset, err := sym.IntFromData(offsetElem.Data, "offset")
+			if err != nil {
+				panic(fmt.Sprintf("No offset for %s", offsetSymId))
+			}
+			
+			asm = append(asm, fmt.Sprintf("\tSUB\tR14 R14"))
+			asm = append(asm, fmt.Sprintf("\tADI\tR14 #%d",offset))
+			
+			asm = append(asm, fmt.Sprintf("\tADD\tR13 R14"))
+			
+			for _, r := range saveAddressFromRegister(st, row.GetOp1(), "R13") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
+			}
+
 		case "ADD", "SUB", "MUL", "DIV":
 			label := row.GetLabel()
 			if _, err := strconv.Atoi(row.GetOp2()); err != nil {
@@ -794,84 +889,47 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 	rows = make([]*ic.QuadRow, 0)
 	switch loc {
 	case "heap":
-		v, _ := st.GetElement(symId) //would of errored before
-		baseSymId, err := sym.StringFromData(v.Data, "class_symId")
+		for _, r := range(loadAddressToRegister(st,symId,"R13")) {
+			rows = append(rows, r)
+		}
+		
+		elem, _ := st.GetElement(symId)
+
+		size := 4
+		
+		varSymId, err := sym.StringFromData(elem.Data,"var_symId")
 		if err == nil {
-			offsetSymId, err := sym.StringFromData(v.Data, "var_symId")
+			varElem, _ := st.GetElement(varSymId)
+
+			size, err = sym.IntFromData(varElem.Data,"size")
 			if err != nil {
-				panic(fmt.Sprintf("Could not get offset symId %s", v.SymId))
-			}
+				typ, err := sym.StringFromData(varElem.Data,"type")
+				if err != nil { panic(fmt.Sprintf("Could not get type for %s",varSymId)) }
 
-			//load base into R13
-			for _, r := range loadToRegister(st, baseSymId, "R13") {
-				rows = append(rows, r)
-			}
+				isArray, _ := sym.BoolFromData(varElem.Data,"isArray")
 
-			offsetElem, err := st.GetElement(offsetSymId)
-			if err != nil {
-				panic(fmt.Sprintf("Could not get elem for %s", offsetSymId))
-			}
-
-			offset, err := sym.IntFromData(offsetElem.Data, "offset")
-			if err != nil {
-				panic(fmt.Sprintf("No offset for %s", offsetSymId))
-			}
-
-			rows = append(rows, ic.NewQuadRow("", "SUB", "R14", "R14", "", ""))
-			rows = append(rows, ic.NewQuadRow("", "ADI", "R14", "#"+strconv.Itoa(offset), "", ""))
-
-			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
-
-			switch size {
-			case 1:
-				rows = append(rows, ic.NewQuadRow("", "LDB", reg, "(R13)", "", ""))
-			default:
-				rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R13)", "", ""))
-			}
-
-		} else if baseSymId, err := sym.StringFromData(v.Data, "arr_symId"); err == nil {
-
-			offsetSymId, err := sym.StringFromData(v.Data, "exp_symId")
-			if err != nil {
-				panic(fmt.Sprintf("Could not get offset symId %s", v.SymId))
-			}
-
-			//load base into R13
-			for _, r := range loadToRegister(st, baseSymId, "R13") {
-				rows = append(rows, r)
-			}
-
-			for _, r := range loadToRegister(st, offsetSymId, "R14") {
-				rows = append(rows, r)
-			}
-
-			baseElem, _ := st.GetElement(baseSymId)
-			baseSize, err := sym.IntFromData(baseElem.Data,"size")
-			if err != nil {
-				typ, err := sym.StringFromData(baseElem.Data, "type")
-				if err != nil { panic(fmt.Sprintf("Could not get type for symId %s",baseSymId)) }
-
-				isArray, _ := sym.BoolFromData(baseElem.Data, "isArray")
-
-				baseSize = sym.SizeOfType(typ,isArray)
-			}
-
-			rows = append(rows, ic.NewQuadRow("", "SUB", "R12", "R12", "", ""))
-			rows = append(rows, ic.NewQuadRow("", "ADI", "R12", "#"+strconv.Itoa(baseSize), "", ""))
-			rows = append(rows, ic.NewQuadRow("", "MUL", "R14", "R12", "", ""))
-
-			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
-
-			switch size {
-			case 1:
-				rows = append(rows, ic.NewQuadRow("", "LDB", reg, "(R13)", "", ""))
-			default:
-				rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R13)", "", ""))
+				size = sym.SizeOfType(typ,isArray)
 			}
 		} else {
-			panic(fmt.Sprintf("Unable to calculate heap location", v.Value))
-		}
+			arrSymId, _ := sym.StringFromData(elem.Data,"arr_symId")
+			arrElem, _ := st.GetElement(arrSymId)
 
+			size, err = sym.IntFromData(arrElem.Data,"size")
+			if err != nil {
+				typ, err := sym.StringFromData(arrElem.Data,"type")
+				if err != nil { panic(fmt.Sprintf("Could not get type for %s",varSymId)) }
+
+				isArray, _ := sym.BoolFromData(arrElem.Data,"isArray")
+
+				size = sym.SizeOfType(typ,isArray)
+			}
+		}
+		switch size {
+		case 1:
+			rows = append(rows, ic.NewQuadRow("", "LDB", reg, "(R13)", "", "Load to register"))
+		default:
+			rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R13)", "", "Load to register"))
+		}
 	case "memory":
 		switch size {
 		case 1:
@@ -896,92 +954,116 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 	return
 }
 
+
+func loadAddressToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow) {
+	loc, offset, size := getLocation(st, symId)
+	rows = make([]*ic.QuadRow, 0)
+	switch loc {
+	case "memory":
+		switch size {
+		case 1:
+			rows = append(rows, ic.NewQuadRow("", "LDB", reg, symId+":", "", ""))
+		default:
+			rows = append(rows, ic.NewQuadRow("", "LDR", reg, symId+":", "", ""))
+		}
+	case "heap":
+		offset = (offset * -1) - 12
+		fallthrough
+	case "stack":
+		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
+		rows = append(rows, ic.NewQuadRow("", "MOV", "R10", "RFP", "", "Load Address"))
+		rows = append(rows, ic.NewQuadRow("", "ADI", "R10", "#"+strconv.Itoa(offset), "", ""))
+		switch size {
+		case 1:
+			rows = append(rows, ic.NewQuadRow("", "LDB", reg, "(R10)", "", ""))
+		default:
+			rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R10)", "", ""))
+		}
+		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
+	default:
+		panic(fmt.Sprintf("loading from location %s unknown", loc))
+	}
+	return
+}
+
 func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow) {
 	loc, offset, size := getLocation(st, symId)
 	rows = make([]*ic.QuadRow, 0)
 	switch loc {
 
 	case "heap":
-		v, _ := st.GetElement(symId) //would of errored before
-		baseSymId, err := sym.StringFromData(v.Data, "class_symId")
+		for _, r := range(loadAddressToRegister(st,symId,"R13")) {
+			rows = append(rows, r)
+		}
+		
+		elem, _ := st.GetElement(symId)
+
+		size := 4
+		
+		varSymId, err := sym.StringFromData(elem.Data,"var_symId")
 		if err == nil {
-			offsetSymId, err := sym.StringFromData(v.Data, "var_symId")
+			varElem, _ := st.GetElement(varSymId)
+
+			size, err = sym.IntFromData(varElem.Data,"size")
 			if err != nil {
-				panic(fmt.Sprintf("Could not get offset symId %s", v.SymId))
-			}
+				typ, err := sym.StringFromData(varElem.Data,"type")
+				if err != nil { panic(fmt.Sprintf("Could not get type for %s",varSymId)) }
 
-			//load base into R13
-			for _, r := range loadToRegister(st, baseSymId, "R13") {
-				rows = append(rows, r)
-			}
+				isArray, _ := sym.BoolFromData(varElem.Data,"isArray")
 
-			offsetElem, err := st.GetElement(offsetSymId)
-			if err != nil {
-				panic(fmt.Sprintf("Could not get elem for %s", offsetSymId))
-			}
-
-			offset, err := sym.IntFromData(offsetElem.Data, "offset")
-			if err != nil {
-				panic(fmt.Sprintf("No offset for %s", offsetSymId))
-			}
-
-			rows = append(rows, ic.NewQuadRow("", "SUB", "R14", "R14", "", ""))
-			rows = append(rows, ic.NewQuadRow("", "ADI", "R14", "#"+strconv.Itoa(offset), "", ""))
-
-			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
-
-			switch size {
-			case 1:
-				rows = append(rows, ic.NewQuadRow("", "STB", reg, "(R13)", "", ""))
-			default:
-				rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R13)", "", ""))
-			}
-
-		} else if baseSymId, err := sym.StringFromData(v.Data, "arr_symId"); err == nil {
-
-			offsetSymId, err := sym.StringFromData(v.Data, "exp_symId")
-			if err != nil {
-				panic(fmt.Sprintf("Could not get offset symId %s", v.SymId))
-			}
-
-			//load base into R13
-			for _, r := range loadToRegister(st, baseSymId, "R13") {
-				rows = append(rows, r)
-			}
-
-			for _, r := range loadToRegister(st, offsetSymId, "R14") {
-				rows = append(rows, r)
-			}
-
-			baseElem, _ := st.GetElement(baseSymId)
-			baseSize, err := sym.IntFromData(baseElem.Data,"size")
-			if err != nil {
-				typ, err := sym.StringFromData(baseElem.Data, "type")
-				if err != nil { panic(fmt.Sprintf("Could not get type for symId %s",baseSymId)) }
-
-				isArray, _ := sym.BoolFromData(baseElem.Data, "isArray")
-
-				baseSize = sym.SizeOfType(typ,isArray)
-			}
-
-			rows = append(rows, ic.NewQuadRow("", "SUB", "R12", "R12", "", ""))
-			rows = append(rows, ic.NewQuadRow("", "ADI", "R12", "#"+strconv.Itoa(baseSize), "", ""))
-			rows = append(rows, ic.NewQuadRow("", "MUL", "R14", "R12", "", ""))
-
-			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
-
-			switch size {
-			case 1:
-				rows = append(rows, ic.NewQuadRow("", "STB", reg, "(R13)", "", ""))
-			default:
-				rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R13)", "", ""))
+				size = sym.SizeOfType(typ,isArray)
 			}
 		} else {
-			panic(fmt.Sprintf("Unable to calculate heap location", v.Value))
+			arrSymId, _ := sym.StringFromData(elem.Data,"arr_symId")
+			arrElem, _ := st.GetElement(arrSymId)
+
+			size, err = sym.IntFromData(arrElem.Data,"size")
+			if err != nil {
+				typ, err := sym.StringFromData(arrElem.Data,"type")
+				if err != nil { panic(fmt.Sprintf("Could not get type for %s",varSymId)) }
+
+				isArray, _ := sym.BoolFromData(arrElem.Data,"isArray")
+
+				size = sym.SizeOfType(typ,isArray)
+			}
 		}
+		switch size {
+		case 1:
+			rows = append(rows, ic.NewQuadRow("", "STB", reg, "(R13)", "", "Save from Register"))
+		default:
+			rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R13)", "", "Save from Register"))
+		}
+
 	case "stack":
 		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
 		rows = append(rows, ic.NewQuadRow("", "MOV", "R10", "RFP", "", ""))
+		rows = append(rows, ic.NewQuadRow("", "ADI", "R10", "#"+strconv.Itoa(offset), "", ""))
+		switch size {
+		case 1:
+			rows = append(rows, ic.NewQuadRow("", "STB", reg, "(R10)", "", ""))
+		default:
+			rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R10)", "", ""))
+		}
+		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
+	default:
+		panic(fmt.Sprintf("saving to location %s unknown", loc))
+	}
+	return
+}
+
+
+
+func saveAddressFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow) {
+	loc, offset, size := getLocation(st, symId)
+	rows = make([]*ic.QuadRow, 0)
+	switch loc {
+
+	case "heap":
+		offset = (offset * -1) - 12
+		fallthrough
+	case "stack":
+		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
+		rows = append(rows, ic.NewQuadRow("", "MOV", "R10", "RFP", "", "Save Address"))
 		rows = append(rows, ic.NewQuadRow("", "ADI", "R10", "#"+strconv.Itoa(offset), "", ""))
 		switch size {
 		case 1:
