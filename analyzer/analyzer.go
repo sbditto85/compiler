@@ -344,6 +344,13 @@ func (a *Analyzer) IsClassDeclaration() (error, ErrorType) {
 	symdata := make(map[string]interface{})
 	a.AddSymbol(className, "Class", symdata, a.pass == 1)
 
+	//symbol table action (for icode)
+	data := make(map[string]interface{})
+	data["type"] = className
+	data["accessMod"] = "private"
+	data["scope"] = "g." + className
+	a.AddSymbol(className+"StaticInit", "StaticInit", data, a.pass == 2)
+
 	curTok, err = a.GetCurr()
 	if curTok.Lexeme != "{" {
 		panic(BuildErrMessFromTok(curTok, "{"))

@@ -106,10 +106,16 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		//fmt.Printf("row: %#v\n", row) //TODO: delete me
+		fmt.Printf("row: %#v\n", row) //TODO: delete me
 		switch row.GetCommand() {
 		case "AEF":
+			if row.GetLabel() != "" {
+				asm = append(asm, fmt.Sprintf("%s:\tADI\tR0 #0\t;%s", row.GetLabel(), row.GetComment()))
+			}
 		case "REF":
+			if row.GetLabel() != "" {
+				asm = append(asm, fmt.Sprintf("%s:\tADI\tR0 #0\t;%s", row.GetLabel(), row.GetComment()))
+			}
 		case "ADD", "SUB", "MUL", "DIV":
 			label := row.GetLabel()
 			if _, err := strconv.Atoi(row.GetOp2()); err != nil {
@@ -170,7 +176,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			}
 		case "NEW":
 			label := row.GetLabel()
-			for i, r := range loadToRegister(st, row.GetOp2(), "R3") {
+			for i, r := range loadToRegister(st, row.GetOp1(), "R3") {
 				beg := ""
 				if label != "" && i == 0 {
 					beg = label + ":"
@@ -312,6 +318,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			if err != nil {
 				panic(fmt.Sprintf("Could not find elem for symbol %s", funSymId))
 			}
+			funcSize, _ := sym.IntFromData(funcElem.Data, "size")
 
 			asm = append(asm, fmt.Sprintf(`;; local varibales on the stack    ; %s`, row.GetComment()))
 			//add main's local variables
@@ -328,6 +335,9 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				isArray, _ := sym.BoolFromData(e.Data, "isArray")
 				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
 			}
+			asm = append(asm, `;; set the stack pointer`)
+			asm = append(asm, "\tMOV\tRSP R15")
+			asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d", -12+(funcSize*-1)))
 			asm = append(asm, `;; set the frame pointer`)
 			asm = append(asm, `MOV     RFP R15`)
 			asm = append(asm, `;; set the return address and jump`)
@@ -835,6 +845,21 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 				rows = append(rows, r)
 			}
 
+			baseElem, _ := st.GetElement(baseSymId)
+			baseSize, err := sym.IntFromData(baseElem.Data,"size")
+			if err != nil {
+				typ, err := sym.StringFromData(baseElem.Data, "type")
+				if err != nil { panic(fmt.Sprintf("Could not get type for symId %s",baseSymId)) }
+
+				isArray, _ := sym.BoolFromData(baseElem.Data, "isArray")
+
+				baseSize = sym.SizeOfType(typ,isArray)
+			}
+
+			rows = append(rows, ic.NewQuadRow("", "SUB", "R12", "R12", "", ""))
+			rows = append(rows, ic.NewQuadRow("", "ADI", "R12", "#"+strconv.Itoa(baseSize), "", ""))
+			rows = append(rows, ic.NewQuadRow("", "MUL", "R14", "R12", "", ""))
+
 			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
 
 			switch size {
@@ -876,7 +901,7 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 	rows = make([]*ic.QuadRow, 0)
 	switch loc {
 
-	case "heap": //TODO: working here on why not working
+	case "heap":
 		v, _ := st.GetElement(symId) //would of errored before
 		baseSymId, err := sym.StringFromData(v.Data, "class_symId")
 		if err == nil {
@@ -927,6 +952,21 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 			for _, r := range loadToRegister(st, offsetSymId, "R14") {
 				rows = append(rows, r)
 			}
+
+			baseElem, _ := st.GetElement(baseSymId)
+			baseSize, err := sym.IntFromData(baseElem.Data,"size")
+			if err != nil {
+				typ, err := sym.StringFromData(baseElem.Data, "type")
+				if err != nil { panic(fmt.Sprintf("Could not get type for symId %s",baseSymId)) }
+
+				isArray, _ := sym.BoolFromData(baseElem.Data, "isArray")
+
+				baseSize = sym.SizeOfType(typ,isArray)
+			}
+
+			rows = append(rows, ic.NewQuadRow("", "SUB", "R12", "R12", "", ""))
+			rows = append(rows, ic.NewQuadRow("", "ADI", "R12", "#"+strconv.Itoa(baseSize), "", ""))
+			rows = append(rows, ic.NewQuadRow("", "MUL", "R14", "R12", "", ""))
 
 			rows = append(rows, ic.NewQuadRow("", "ADD", "R13", "R14", "", ""))
 

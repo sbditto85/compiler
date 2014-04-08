@@ -1,0 +1,19 @@
+
+class Dogs {
+    private int i[];
+    private int i2[] = new int[5];
+
+    Dogs(int tmp[]) {
+	i = tmp;
+	i[2] = 2;
+	cout << i[2];
+    }
+}
+
+void main() {
+    //Dogs d[] = new Dogs[1];
+    int size = 10;
+    int j = 0;
+    int i[] = new int[size];
+    Dogs d2 = new Dogs(i);
+}

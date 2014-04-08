@@ -129,6 +129,11 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	case "Lvar", "Tvar":
 		scopeCheck, method, _ := s.ScopeBelowWithCurr(curScope)
 		methodElem := s.GetElementInScope(scopeCheck, method)
+		switch methodElem.Kind {
+		case "Class":
+			methodElem = s.GetElementInScope(curScope, methodElem.Value+"StaticInit")
+		}
+
 		offset, _ := IntFromData(methodElem.Data, "size")
 
 		data["offset"] = offset
@@ -157,6 +162,7 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 				}
 				elem.Data["size"] = classSize + toAdd
 				data["offset"] = classSize
+
 				break
 			}
 		}

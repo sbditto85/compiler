@@ -261,19 +261,10 @@ LOOP:
 	s.gen.AddRow("", "FUNC", symId, "", "", s.lx.GetCurFullLine())
 	switch e.Kind {
 	case "Constructor":
-		class := st.GetElementInScope("g", e.Value) //Later figure out scope class
+		classStaticInit := st.GetElementInScope("g."+e.Value, e.Value+"StaticInit") //Later figure out scope class
 
-		//symbol table action
-		data := make(map[string]interface{})
-		data["type"] = class.Value
-		data["accessMod"] = "private"
-		data["scope"] = "g." + class.Value
-		symId := s.st.AddElement(class.Value+"StaticInit", "StaticInit", data, true)
-
-		class.Data["StaticInit"] = symId
-
-		s.gen.AddRow("", "FRAME", "this", symId, "", s.lx.GetCurFullLine())
-		s.gen.AddRow("", "CALL", symId, "", "", s.lx.GetCurFullLine())
+		s.gen.AddRow("", "FRAME", "this", classStaticInit.SymId, "", s.lx.GetCurFullLine())
+		s.gen.AddRow("", "CALL", classStaticInit.SymId, "", "", s.lx.GetCurFullLine())
 	}
 }
 
