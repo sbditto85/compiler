@@ -1,18 +1,28 @@
 
 class Dogs {
-    private int i[];
-    //private int i2[] = new int[5];
-
-    public char a;
+    private int i[] = new int[5];
+    private int o[];
 
     Dogs(int tmp[]) {
-	i = tmp;
-	//i[2] = 2;
-	//cout << i[2];
+	o = tmp;
+    }
+
+    public void set(int t) {
+	o[0] = t;
+    }
+
+    public void print() {
+	cout << o[0];
     }
 }
 
 void main() {
-    int i[] = new int[5];
-    Dogs d2 = new Dogs(i);
+    int os[] = new int[10];
+    Dogs d2 = new Dogs(os);
+
+    d2.set(1);
+    d2.print();
+
+    d2.set(3);
+    d2.print();
 }

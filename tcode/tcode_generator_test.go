@@ -625,7 +625,7 @@ func ExampleTCodeArraysEverywhere() {
 			fmt.Println(r)
 		}
 	}()
-	file := "tests/arrayseverywhere_small.kxi" //.kxi"// 
+	file := "tests/arrayseverywhere.kxi"// _small.kxi" //
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
@@ -669,7 +669,9 @@ func ExampleTCodeArraysEverywhere() {
 	fmt.Printf("ASM:\n")
 
 	for i, line := range asm {
-		fmt.Printf("%d : %s\n", i+1, line)
+		//fmt.Printf("%d : %s\n", i+1, line)
+		i = i
+		fmt.Printf("%s\n", line)
 	}
 
 	assembler := amb.NewAssembler()

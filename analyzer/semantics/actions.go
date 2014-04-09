@@ -346,6 +346,13 @@ func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
 		return fmt.Errorf("Expected identifier for array, received %s", id.GetValue())
 	}
 
+	s.sas.push(id_sar)
+	if err := s.IExist(st); err != nil {
+		return fmt.Errorf("Expected identifier for array, received %s", id.GetValue())
+	}
+
+	base := s.sas.pop()
+
 	if !exp.Exists(st) {
 		return fmt.Errorf("Expected offset for array, received %s", exp.GetValue())
 	}
@@ -370,7 +377,7 @@ func (s *SemanticManager) Arr(st *sym.SymbolTable) (err error) {
 	s.debugMessage(fmt.Sprintf("Type: %s, with array size %s", id_sar.GetValue(), exp.GetValue()))
 
 	//icode
-	s.gen.AddRow("", "AEF", symId, exp.GetSymId(), id_sar.GetSymId(), s.lx.GetCurFullLine())
+	s.gen.AddRow("", "AEF", symId, exp.GetSymId(), base.GetSymId(), s.lx.GetCurFullLine())
 
 	return
 }

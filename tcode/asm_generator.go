@@ -17,7 +17,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	mainSize, _ := sym.IntFromData(mainElem.Data, "size")
 
 	//debug?
-	asm = append(asm, `TRP     #99`)
+	//asm = append(asm, `TRP     #99`)
 
 	//setup heap
 	asm = append(asm, `LDA     R9 FREE:`)
@@ -106,12 +106,13 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		//fmt.Printf("row: %#v\n", row) //TODO: delete me
+		fmt.Printf("row: %#v\n", row) //TODO: delete me
 		switch row.GetCommand() {
 		case "AEF":
 			//load base into R13
 			label := row.GetLabel()
-			for i, r := range loadToRegister(st, row.GetOp3(), "R13") {
+			//fmt.Printf("AEF OP3: %s\n",row.GetOp3())
+			for i, r := range loadAddressToRegister(st, row.GetOp3(), "R13") {
 				beg := ""
 				if label != "" && i == 0 {
 					beg = label + ":"
@@ -125,6 +126,8 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
 				}
 			}
+
+			//asm = append(asm, "\tLDR\tR13 (R13)")
 
 			for _, r := range loadToRegister(st, row.GetOp2(), "R14") {
 				switch {
@@ -864,7 +867,7 @@ func getLocation(st *sym.SymbolTable, symId string) (loc string, offset int, siz
 	indirect, _ := sym.BoolFromData(elem.Data, "indirect")
 
 	switch {
-	case elem.Kind == "Tvar" && indirect:
+	case elem.Kind == "Ivar" || indirect:
 		loc = "heap"
 		offset, err = sym.IntFromData(elem.Data, "offset")
 		if err != nil {
@@ -881,6 +884,8 @@ func getLocation(st *sym.SymbolTable, symId string) (loc string, offset int, siz
 		offset += 12 //for pfp,ret,this
 		offset *= -1
 	}
+
+	//fmt.Printf("symId: %s, loc: %s, elem: %v\n", symId, loc, elem)
 	return
 }
 
