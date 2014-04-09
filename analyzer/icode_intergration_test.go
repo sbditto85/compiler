@@ -456,24 +456,24 @@ func ExampleICodeReference() {
 	//Cl1: []int{16}
 	//Co3: []int{0, 17, 18}
 	//Iv2: []int{5, 6, 7, 12}
-	//Li9: []int{13}
+	//Li10: []int{13}
 	//Lv6: []int{20, 21, 22}
 	//MAIN: []int{15}
 	//Me5: []int{4, 21, 23}
 	//Pa4: []int{7}
-	//St10: []int{1, 2, 11}
+	//St7: []int{1, 2, 11}
 	//Tv13: []int{5, 9}
 	//Tv14: []int{6, 8}
 	//Tv15: []int{7, 8}
 	//Tv16: []int{8, 9}
 	//Tv17: []int{16, 17, 19, 20}
 	//Tv18: []int{24}
-	//Tv8: []int{12, 13}
+	//Tv9: []int{12, 13}
 	//this: []int{1, 3, 5, 6, 12}
 	//Rows:
 	//FUNC Co3 ;      Dog(){}
-	//FRAME this, St10 ;      Dog(){}
-	//CALL St10 ;      Dog(){}
+	//FRAME this, St7 ;      Dog(){}
+	//CALL St7 ;      Dog(){}
 	//RETURN this ;      Dog(){}
 	//FUNC Me5 ;      public void AddX(Dog d) {
 	//REF Tv13, Iv2, this ;             x = x + d.x;
@@ -482,9 +482,9 @@ func ExampleICodeReference() {
 	//ADD Tv16, Tv15, Tv14 ;             x = x + d.x;
 	//MOV Tv13, Tv16 ;             x = x + d.x;
 	//RTN  ;      }
-	//FUNC St10 ;}
-	//REF Tv8, Iv2, this ;      public int x = 7;
-	//MOV Tv8, Li9 ;      public int x = 7;
+	//FUNC St7 ;}
+	//REF Tv9, Iv2, this ;      public int x = 7;
+	//MOV Tv9, Li10 ;      public int x = 7;
 	//RTN  ;}
 	//FUNC MAIN ;void main() {
 	//NEWI Cl1, Tv17 ;     Dog d = new Dog();
@@ -653,7 +653,7 @@ func ExampleICodeFunctionChain() {
 	//Cl1: []int{22}
 	//Co3: []int{0, 23, 24}
 	//Iv2: []int{8, 9, 14, 18, 30, 38}
-	//Li11: []int{19}
+	//Li12: []int{19}
 	//Li17: []int{10, 31}
 	//Li27: []int{43}
 	//Li28: []int{43}
@@ -663,8 +663,8 @@ func ExampleICodeFunctionChain() {
 	//Me4: []int{4, 27, 28, 32, 33, 35, 36}
 	//Me5: []int{7}
 	//Me6: []int{13, 40, 41}
-	//St12: []int{1, 2, 17}
-	//Tv10: []int{18, 19}
+	//St9: []int{1, 2, 17}
+	//Tv11: []int{18, 19}
 	//Tv15: []int{8, 11}
 	//Tv16: []int{9, 10}
 	//Tv18: []int{10, 11}
@@ -681,8 +681,8 @@ func ExampleICodeFunctionChain() {
 	//this: []int{1, 3, 5, 8, 9, 14, 18}
 	//Rows:
 	//FUNC Co3 ;      Dog() {
-	//FRAME this, St12 ;      Dog() {
-	//CALL St12 ;      Dog() {
+	//FRAME this, St9 ;      Dog() {
+	//CALL St9 ;      Dog() {
 	//RETURN this ;      }
 	//FUNC Me4 ;      public Dog GetDog() {
 	//RETURN this ;             return this;
@@ -697,9 +697,9 @@ func ExampleICodeFunctionChain() {
 	//REF Tv19, Iv2, this ;             return bites;
 	//RETURN Tv19 ;             return bites;
 	//RTN  ;      }
-	//FUNC St12 ;}
-	//REF Tv10, Iv2, this ;      public int bites = 0;
-	//MOV Tv10, Li11 ;      public int bites = 0;
+	//FUNC St9 ;}
+	//REF Tv11, Iv2, this ;      public int bites = 0;
+	//MOV Tv11, Li12 ;      public int bites = 0;
 	//RTN  ;}
 	//FUNC MAIN ;void main() {
 	//NEWI Cl1, Tv20 ;     Dog d = new Dog();
@@ -730,8 +730,9 @@ func ExampleICodeFunctionChain() {
 	//Num Rows: 0 curRow: -1
 	//Lables:
 	//Rows:
-}
 
+}
+	
 func ExampleICodeFunctionCall() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -877,25 +878,25 @@ func ExampleICodeArraysEverywhere() {
 	//Lv5: []int{12, 13, 20, 21}
 	//MAIN: []int{9}
 	//Pa3: []int{4}
-	//St8: []int{1, 2, 6}
+	//St6: []int{1, 2, 6}
 	//Tv12: []int{11, 12}
 	//Tv13: []int{10, 11}
 	//Tv15: []int{13, 19}
 	//Tv17: []int{14, 15, 18, 19}
 	//Tv18: []int{20, 22}
 	//Tv19: []int{21, 22}
-	//Tv7: []int{7}
+	//Tv8: []int{7}
 	//Tv9: []int{3, 4}
 	//this: []int{1, 3, 5, 7}
 	//Rows:
 	//FUNC Co4 ;    Frog(int i) {
-	//FRAME this, St8 ;    Frog(int i) {
-	//CALL St8 ;    Frog(int i) {
+	//FRAME this, St6 ;    Frog(int i) {
+	//CALL St6 ;    Frog(int i) {
 	//REF Tv9, Iv2, this ;	f = i;
 	//MOV Tv9, Pa3 ;	f = i;
 	//RETURN this ;    }
-	//FUNC St8 ;}
-	//REF Tv7, Iv2, this ;    private int f;
+	//FUNC St6 ;}
+	//REF Tv8, Iv2, this ;    private int f;
 	//RTN  ;}
 	//FUNC MAIN ;void main() {
 	//MUL Tv13, 4, Li11 ;    Frog frogs[] = new Frog[10];
@@ -915,5 +916,6 @@ func ExampleICodeArraysEverywhere() {
 	//Num Rows: 0 curRow: -1
 	//Lables:
 	//Rows:
+
 
 }

@@ -1014,8 +1014,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Elements:
 	//Scope: g, SymId: Cl1, Value: Baz, Kind: Class
 	//Extra Data:
-	//Key: size, Value: 8
-	//Key: StaticInit, Value: St12
+	//Key: size, Value: 4
 	//--------------
 	//Scope: g.Baz, SymId: Iv2, Value: notused, Kind: Ivar
 	//Extra Data:
@@ -1039,6 +1038,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Key: accessMod, Value: public
 	//Key: type, Value: int
 	//Key: parameters, Value: []
+	//Key: this_class, Value: Baz
 	//Key: paramSymIds, Value: []
 	//Key: size, Value: 0
 	//--------------
@@ -1077,24 +1077,25 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	//Key: type, Value: bool
 	//Key: offset, Value: 10
 	//--------------
-	//Scope: g, SymId: Ty10, Value: int, Kind: Type
+	//Scope: g.Baz, SymId: St10, Value: BazStaticInit, Kind: StaticInit
+	//Extra Data:
+	//Key: type, Value: Baz
+	//Key: accessMod, Value: private
+	//Key: scope, Value: g.Baz
+	//Key: size, Value: 4
+	//--------------
+	//Scope: g, SymId: Ty11, Value: int, Kind: Type
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: scope, Value: g
 	//--------------
-	//Scope: g.Baz, SymId: Tv11, Value: this.notused, Kind: Tvar
+	//Scope: g.Baz, SymId: Tv12, Value: this.notused, Kind: Tvar
 	//Extra Data:
 	//Key: type, Value: int
 	//Key: class_symId, Value: this
 	//Key: var_symId, Value: Iv2
 	//Key: indirect, Value: true
-	//Key: offset, Value: 4
-	//--------------
-	//Scope: g.Baz, SymId: St12, Value: BazStaticInit, Kind: StaticInit
-	//Extra Data:
-	//Key: type, Value: Baz
-	//Key: accessMod, Value: private
-	//Key: scope, Value: g.Baz
+	//Key: offset, Value: 0
 	//--------------
 	//Scope: g, SymId: Li13, Value: 1, Kind: LitVar
 	//Extra Data:

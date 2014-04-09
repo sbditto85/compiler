@@ -337,7 +337,7 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable) (err error) {
 			default:
 				panic("Ivar is messed up compiler error")
 			}
-			
+
 			s.sas.push(func_sar)
 			//call RExist()
 			if err := s.RExist(st); err != nil {

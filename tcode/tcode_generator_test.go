@@ -811,7 +811,7 @@ func ExampleTCodeBasicRecursion() {
 			fmt.Println(r)
 		}
 	}()
-	file := "tests/recursion.kxi" 
+	file := "tests/recursion.kxi"
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
@@ -891,14 +891,13 @@ func ExampleTCodeBasicRecursion() {
 
 }
 
-
 func ExampleTCodeAtoiItoa() {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
-	file := "tests/atoiitoa.kxi" 
+	file := "tests/atoiitoa.kxi"
 	l := lex.NewLexer()
 	l.ReadFile(file)
 

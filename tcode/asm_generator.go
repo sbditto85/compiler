@@ -1053,7 +1053,7 @@ func loadAddressToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.Q
 		// case 1:
 		// 	rows = append(rows, ic.NewQuadRow("", "LDB", reg, "(R10)", "", ""))
 		// default:
-			rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R10)", "", ""))
+		rows = append(rows, ic.NewQuadRow("", "LDR", reg, "(R10)", "", ""))
 		// }
 		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
 	default:
@@ -1147,7 +1147,7 @@ func saveAddressFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic
 		// case 1:
 		// 	rows = append(rows, ic.NewQuadRow("", "STB", reg, "(R10)", "", ""))
 		// default:
-			rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R10)", "", ""))
+		rows = append(rows, ic.NewQuadRow("", "STR", reg, "(R10)", "", ""))
 		// }
 		//rows = append(rows, ic.NewQuadRow("","TRP", "#99", "", "", ""))
 	default:

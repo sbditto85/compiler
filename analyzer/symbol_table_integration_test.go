@@ -97,6 +97,7 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: accessMod, Value: public
 	//Key: type, Value: bool
 	//Key: parameters, Value: [{int i false} {char c false}]
+	//Key: this_class, Value: Cat
 	//Key: paramSymIds, Value: [Pa8 Pa9]
 	//Key: size, Value: 9
 	//--------------
