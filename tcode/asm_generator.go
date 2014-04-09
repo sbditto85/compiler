@@ -106,7 +106,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		fmt.Printf("row: %#v\n", row) //TODO: delete me
+		//fmt.Printf("row: %#v\n", row) //TODO: delete me
 		switch row.GetCommand() {
 		case "AEF":
 			//load base into R13

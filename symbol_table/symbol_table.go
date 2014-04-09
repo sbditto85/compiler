@@ -267,6 +267,20 @@ func (s *SymbolTable) GetElementInScope(scope, value string) SymbolTableElement 
 	return SymbolTableElement{}
 }
 
+func (s *SymbolTable) GetElementInScopeWithType(scope, value, typ string) SymbolTableElement {
+	if elemsSymIds, ok := s.scopeElements[scope]; ok {
+		for _, symId := range elemsSymIds {
+			elem := s.elems[symId]
+			eTyp, _ := StringFromData(elem.Data,"type")
+			if elem.Value == value && eTyp == typ {
+				return elem
+			}
+
+		}
+	}
+	return SymbolTableElement{}
+}
+
 func (s *SymbolTable) PrintTable() {
 	fmt.Printf("Current Scope: %s\n", s.scope)
 	fmt.Println("=================")

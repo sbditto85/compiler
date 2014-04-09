@@ -485,13 +485,13 @@ func ExampleTCodeNewComplex() {
 
 	asm := GenerateASM(table, symbolTable)
 
-	/*
-		fmt.Printf("ASM:\n")
+	fmt.Printf("ASM:\n")
 
-		for i, line := range asm {
-			fmt.Printf("%d : %s\n", i+1, line)
-		}
-	*/
+	// for i, line := range asm {
+	// 	//fmt.Printf("%d : %s\n", i+1, line)
+	// 	i = i
+	// 	fmt.Println(line)
+	// }
 
 	assembler := amb.NewAssembler()
 	assembler.ReadStrings(asm)
@@ -666,13 +666,13 @@ func ExampleTCodeArraysEverywhere() {
 
 	asm := GenerateASM(table, symbolTable)
 
-	fmt.Printf("ASM:\n")
+	// fmt.Printf("ASM:\n")
 
-	for i, line := range asm {
-		//fmt.Printf("%d : %s\n", i+1, line)
-		i = i
-		fmt.Printf("%s\n", line)
-	}
+	// for i, line := range asm {
+	// 	//fmt.Printf("%d : %s\n", i+1, line)
+	// 	i = i
+	// 	fmt.Printf("%s\n", line)
+	// }
 
 	assembler := amb.NewAssembler()
 	assembler.ReadStrings(asm)
@@ -696,5 +696,111 @@ func ExampleTCodeArraysEverywhere() {
 	}
 
 	//Output:
-	//
+	//I
+	//1: 1: 0: 1
+	//I
+	//0: 0
+	//1: 1
+	//2: 0
+	//3: 0
+	//4: 0
+	//I
+	//0: 0
+	//1: 1
+	//2: 0
+	//3: 0
+	//4: 0
+	//d
+	//I
+	//1: 1: 1: 1
+	//I
+	//0: 0
+	//1: 1
+	//2: 2
+	//3: 3
+	//4: 4
+	//I
+	//0: 0
+	//1: 1
+	//2: 2
+	//3: 3
+	//4: 4
+	//2
+	//0: 0
+	//1: 1
+	//2: 2
+	//3: 3
+	//4: 4
+	//5: 5
+	//6: 6
+	//7: 7
+	//8: 8
+	//9: 9
+	//I2
+	//0: 0: 0: 0
+	//I2
+	//1: 1: 0: 1
+	//I2
+	//2: 2: 0: 2
+	//I2
+	//3: 3: 0: 3
+	//I2
+	//4: 4: 0: 4
+	//I2
+	//0: 0
+	//1: 1
+	//2: 2
+	//3: 3
+	//4: 4
+	//I
+	//0: 0
+	//1: 1
+	//2: 2
+	//3: 3
+	//4: 4
+	//I2
+	//0: 0
+	//1: 1
+	//2: 2
+	//3: 3
+	//4: 4
+	//I
+	//0: 4: 0: 4
+	//I
+	//1: 3: 1: 3
+	//I
+	//2: 2: 2: 2
+	//I
+	//3: 1: 3: 1
+	//I
+	//4: 0: 4: 0
+	//I
+	//0: 4
+	//1: 3
+	//2: 2
+	//3: 1
+	//4: 0
+	//2
+	//0: 4
+	//1: 3
+	//2: 2
+	//3: 1
+	//4: 0
+	//5: 5
+	//6: 6
+	//7: 7
+	//8: 8
+	//9: 9
+	//6
+	//0: 7
+	//1: 3
+	//2: 6
+	//3: 1
+	//4: 0
+	//5: 5
+	//6: 6
+	//7: 5
+	//8: 8
+	//9: 9
+
 }

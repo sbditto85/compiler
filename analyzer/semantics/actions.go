@@ -20,7 +20,7 @@ func (s *SemanticManager) LPush(value, scope, typ string) {
 
 	//symbol table action
 	//check if there
-	elem := s.st.GetElementInScope("g", value)
+	elem := s.st.GetElementInScopeWithType("g", value, typ)
 	symId := elem.SymId
 	if symId == "" {
 		//add it
