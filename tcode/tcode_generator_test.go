@@ -973,7 +973,6 @@ func ExampleTCodeAtoiItoa() {
 
 }
 
-
 func ExampleTCodeObjectsEverywhere() {
 	defer func() {
 		if r := recover(); r != nil {

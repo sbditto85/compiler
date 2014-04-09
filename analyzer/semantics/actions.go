@@ -326,7 +326,7 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable, hasRef bool) (
 	}
 	fun_val += ")"
 	func_sar := &Func_Sar{value: fun_val, scope: scope, id_sar: id_sar, al_sar: al_sar}
-	
+
 	// fmt.Printf("inClass: %v\n",inClass)
 	// if inClass {
 	// 	elem, _ := st.GetElement(id_sar.GetSymId())
@@ -337,9 +337,13 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable, hasRef bool) (
 	// 		case string:
 	if !hasRef {
 		mScope, _, err := st.ScopeBelowWithCurr(st.GetScope())
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		_, class, err := st.ScopeBelowWithCurr(mScope)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		s.sas.push(&Id_Sar{value: "this", typ: class, symId: "this", exists: true, scope: "g"})
 		s.sas.push(func_sar)
 		//call RExist()
@@ -347,18 +351,18 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable, hasRef bool) (
 			return err
 		}
 	} else {
-	// 		default:
-	// 			panic("Ivar is messed up compiler error")
-	// 		}
+		// 		default:
+		// 			panic("Ivar is messed up compiler error")
+		// 		}
 
-	// 		s.sas.push(func_sar)
-	// 		//call RExist()
-	// 		if err := s.RExist(st); err != nil {
-	// 			//fmt.Printf("REXIST FAILED %s\n",err)
-	// 			return err
-	// 		}
-	// 	}
-	// } else {
+		// 		s.sas.push(func_sar)
+		// 		//call RExist()
+		// 		if err := s.RExist(st); err != nil {
+		// 			//fmt.Printf("REXIST FAILED %s\n",err)
+		// 			return err
+		// 		}
+		// 	}
+		// } else {
 		s.sas.push(func_sar)
 	}
 
