@@ -485,7 +485,7 @@ func ExampleTCodeNewComplex() {
 
 	asm := GenerateASM(table, symbolTable)
 
-	fmt.Printf("ASM:\n")
+	// fmt.Printf("ASM:\n")
 
 	// for i, line := range asm {
 	// 	//fmt.Printf("%d : %s\n", i+1, line)
@@ -625,7 +625,7 @@ func ExampleTCodeArraysEverywhere() {
 			fmt.Println(r)
 		}
 	}()
-	file := "tests/arrayseverywhere.kxi"// _small.kxi" //
+	file := "tests/arrayseverywhere.kxi" // _small.kxi" //
 	l := lex.NewLexer()
 	l.ReadFile(file)
 
@@ -802,5 +802,174 @@ func ExampleTCodeArraysEverywhere() {
 	//7: 5
 	//8: 8
 	//9: 9
+
+}
+
+func ExampleTCodeBasicRecursion() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "tests/recursion.kxi" 
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := an.NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	table, symbolTable := a.GetICodeInfo()
+
+	asm := GenerateASM(table, symbolTable)
+
+	// fmt.Printf("ASM:\n")
+
+	// for i, line := range asm {
+	// 	//fmt.Printf("%d : %s\n", i+1, line)
+	// 	i = i
+	// 	fmt.Printf("%s\n", line)
+	// }
+
+	assembler := amb.NewAssembler()
+	assembler.ReadStrings(asm)
+
+	fperr := assembler.FirstPass()
+	if fperr == nil {
+		sperr := assembler.SecondPass()
+		if sperr == nil {
+			sperr = sperr
+		} else {
+			fmt.Println(sperr)
+		}
+	} else {
+		fmt.Println(fperr)
+	}
+
+	v := vm.NewVirtualMachine(assembler.GetBytes())
+	verr := v.Run()
+	if verr != nil {
+		fmt.Printf("%s\n", verr.Error())
+	}
+
+	//Output:
+	//5
+	//4
+	//3
+	//2
+	//1
+	//0
+
+}
+
+
+func ExampleTCodeAtoiItoa() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "tests/atoiitoa.kxi" 
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := an.NewAnalyzer(l, false)
+	a.GetNext()
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	table, symbolTable := a.GetICodeInfo()
+
+	asm := GenerateASM(table, symbolTable)
+
+	// fmt.Printf("ASM:\n")
+
+	// for i, line := range asm {
+	// 	//fmt.Printf("%d : %s\n", i+1, line)
+	// 	i = i
+	// 	fmt.Printf("%s\n", line)
+	// }
+
+	assembler := amb.NewAssembler()
+	assembler.ReadStrings(asm)
+
+	fperr := assembler.FirstPass()
+	if fperr == nil {
+		sperr := assembler.SecondPass()
+		if sperr == nil {
+			sperr = sperr
+		} else {
+			fmt.Println(sperr)
+		}
+	} else {
+		fmt.Println(fperr)
+	}
+
+	v := vm.NewVirtualMachine(assembler.GetBytes())
+	verr := v.Run()
+	if verr != nil {
+		fmt.Printf("%s\n", verr.Error())
+	}
+
+	//Output:
+	//97
+	//a
 
 }

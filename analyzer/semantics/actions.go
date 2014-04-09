@@ -151,6 +151,7 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 	if !class_sar.Exists(st) {
 		return fmt.Errorf("%s doesn't exist", class_sar.GetValue())
 	}
+
 	//class_sar now has symId set to the appropriate one
 	scopeToTest := st.ScopeAbove("g", class_sar.GetType())
 
@@ -158,7 +159,6 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 	ref_sar := &Ref_Sar{value: value, scope: scopeToTest, class_sar: class_sar, var_sar: var_sar}
 
 	if ref_sar.InstExists(st, var_sar) {
-
 		//symbol table action
 		data := make(map[string]interface{})
 		data["type"] = var_sar.GetType()
@@ -188,7 +188,6 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 		default:
 			s.gen.AddRow("", "REF", symId, var_sar.GetSymId(), class_sar.GetSymId(), s.lx.GetCurFullLine())
 		}
-
 		return nil
 	}
 
@@ -292,7 +291,7 @@ func (s *SemanticManager) ReturnThisFunc(st *sym.SymbolTable) {
 	s.gen.SwitchToStatic()
 }
 
-func (s *SemanticManager) Func(scope string) (err error) {
+func (s *SemanticManager) Func(scope string, st *sym.SymbolTable) (err error) {
 	as := s.sas.pop()
 	var al_sar *Al_Sar
 	switch a := as.(type) {
@@ -311,6 +310,11 @@ func (s *SemanticManager) Func(scope string) (err error) {
 		return fmt.Errorf("Expected identifier for function")
 	}
 
+	inClass := true
+	if !id_sar.Exists(st) {
+		inClass = false
+	}
+
 	s.debugMessage(fmt.Sprintf("Identifer: %s, with %d Arguments", id_sar.GetValue(), len(al_sar.GetArgs())))
 
 	fun_val := id_sar.GetValue() + "("
@@ -321,7 +325,30 @@ func (s *SemanticManager) Func(scope string) (err error) {
 		fun_val += a.GetType()
 	}
 	fun_val += ")"
-	s.sas.push(&Func_Sar{value: fun_val, scope: scope, id_sar: id_sar, al_sar: al_sar})
+	func_sar := &Func_Sar{value: fun_val, scope: scope, id_sar: id_sar, al_sar: al_sar}
+
+	if inClass {
+		elem, _ := st.GetElement(id_sar.GetSymId())
+		if cls, ok := elem.Data["this_class"]; ok {
+			//push a class sar
+			switch class := cls.(type) {
+			case string:
+				s.sas.push(&Id_Sar{value: "this", typ: class, symId: "this", exists: true, scope: "g." + class})
+			default:
+				panic("Ivar is messed up compiler error")
+			}
+			
+			s.sas.push(func_sar)
+			//call RExist()
+			if err := s.RExist(st); err != nil {
+				//fmt.Printf("REXIST FAILED %s\n",err)
+				return err
+			}
+		}
+	} else {
+		s.sas.push(func_sar)
+	}
+
 	return nil
 }
 
@@ -518,6 +545,10 @@ func (s *SemanticManager) Atoi(scope string) (err error) {
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
 	s.sas.push(&Tvar_Sar{value: value, typ: "int", scope: scope, symId: symId})
+
+	//icode
+	s.gen.AddRow("", "ATOI", symId, sar.GetSymId(), "", s.lx.GetCurFullLine())
+
 	return
 }
 
@@ -535,6 +566,9 @@ func (s *SemanticManager) Itoa(scope string) (err error) {
 	symId := s.st.AddElement(value, "Tvar", data, true)
 
 	s.sas.push(&Tvar_Sar{value: value, typ: "char", scope: scope, symId: symId})
+
+	//icode
+	s.gen.AddRow("", "ITOA", symId, sar.GetSymId(), "", s.lx.GetCurFullLine())
 	return
 }
 
@@ -782,13 +816,13 @@ func (s *SemanticManager) IsSarAnArray(sar SemanticActionRecord) (isArray bool) 
 		isArray = false
 	case *Ref_Sar:
 		elem, _ := s.st.GetElement(stype.GetSymId())
-		var_symId, _ := sym.StringFromData(elem.Data,"var_symId")
+		var_symId, _ := sym.StringFromData(elem.Data, "var_symId")
 		varElem, _ := s.st.GetElement(var_symId)
-		isArray, _ = sym.BoolFromData(varElem.Data,"isArray")
+		isArray, _ = sym.BoolFromData(varElem.Data, "isArray")
 		//if err != nil { panic(fmt.Sprintf("Could not find isArray for %s",elem.SymId)) }
 	default:
 		elem, _ := s.st.GetElement(stype.GetSymId())
-		isArray, _ = sym.BoolFromData(elem.Data,"isArray")
+		isArray, _ = sym.BoolFromData(elem.Data, "isArray")
 		//if err != nil { panic(fmt.Sprintf("Could not find isArray for %s",elem.SymId)) }
 	}
 	return

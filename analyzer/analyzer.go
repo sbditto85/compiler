@@ -1279,7 +1279,7 @@ func (a *Analyzer) IsFnArrMember() (error, ErrorType) {
 			a.sm.EAL(a.st.GetScope())
 			a.debugMessagePassTwo("EAL")
 
-			a.sm.Func(a.st.GetScope())
+			a.sm.Func(a.st.GetScope(), a.st)
 			a.debugMessagePassTwo("func")
 		}
 

@@ -1,0 +1,23 @@
+
+class Rec {
+    Rec() {}
+
+    public int recurse(int i) {
+	int res;
+	if(i == 0) {
+	    return i;
+	}
+	cout << i;
+	cout << '\n';
+	i = i - 1;
+	res = recurse(i);
+	return res;
+    }
+}
+
+void main() {
+    Rec r;
+    int j;
+    j = r.recurse(5);
+    cout << j;
+}

@@ -1,0 +1,16 @@
+
+
+void main() {
+
+    char a;
+    int i;
+    
+    i = atoi('a');
+    cout << i;
+    cout << '\n';
+
+    a = itoa(i);
+    cout << a;
+    cout << '\n';
+
+}

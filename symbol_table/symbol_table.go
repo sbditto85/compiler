@@ -53,7 +53,11 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 	case "Ivar":
 		tmp := str.Split(s.scope, ".")
 		data["this_class"] = tmp[len(tmp)-1]
-	case "Method", "Main", "Constructor":
+	case "Method":
+		tmp := str.Split(s.scope, ".")
+		data["this_class"] = tmp[len(tmp)-1]
+		fallthrough
+	case "Main", "Constructor":
 		if _, ok := data["scope"]; ok {
 			break
 		}
@@ -271,7 +275,7 @@ func (s *SymbolTable) GetElementInScopeWithType(scope, value, typ string) Symbol
 	if elemsSymIds, ok := s.scopeElements[scope]; ok {
 		for _, symId := range elemsSymIds {
 			elem := s.elems[symId]
-			eTyp, _ := StringFromData(elem.Data,"type")
+			eTyp, _ := StringFromData(elem.Data, "type")
 			if elem.Value == value && eTyp == typ {
 				return elem
 			}

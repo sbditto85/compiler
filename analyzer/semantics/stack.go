@@ -244,8 +244,9 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 	for scopeChecking != "" {
 		elems := st.GetScopeElements(scopeChecking)
 		for _, elem := range elems {
+			//fmt.Printf("checking elem: %#v\n",elem)
 			switch elem.Kind {
-			case "Lvar", "Ivar", "Parameter":
+			case "Lvar", "Ivar", "Parameter", "Method":
 				if elem.Value == i.value {
 					//fmt.Printf("elem: %#v\n",elem)
 					//fmt.Printf("i: %#v\n",i)
@@ -253,7 +254,8 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 					if typ, ok := elem.Data["type"]; ok {
 						i.typ = typ.(string)
 					} else {
-						return false //NEED TYPE, break? check other scopes?
+						break
+						//return false //NEED TYPE, break? check other scopes?
 					}
 					i.symId = elem.SymId
 					i.exists = true
@@ -262,7 +264,9 @@ func (i *Id_Sar) Exists(st *sym.SymbolTable) bool {
 			}
 		}
 		scopeChecking, err = st.ScopeBelow(scopeChecking)
+		//fmt.Printf("scopeChecking: %s\n",scopeChecking)
 		if err != nil {
+			fmt.Println("DONE")
 			return false
 		}
 	}
