@@ -732,7 +732,7 @@ func ExampleICodeFunctionChain() {
 	//Rows:
 
 }
-	
+
 func ExampleICodeFunctionCall() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -916,6 +916,5 @@ func ExampleICodeArraysEverywhere() {
 	//Num Rows: 0 curRow: -1
 	//Lables:
 	//Rows:
-
 
 }

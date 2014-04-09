@@ -291,7 +291,7 @@ func (s *SemanticManager) ReturnThisFunc(st *sym.SymbolTable) {
 	s.gen.SwitchToStatic()
 }
 
-func (s *SemanticManager) Func(scope string, st *sym.SymbolTable) (err error) {
+func (s *SemanticManager) Func(scope string, st *sym.SymbolTable, hasRef bool) (err error) {
 	as := s.sas.pop()
 	var al_sar *Al_Sar
 	switch a := as.(type) {
@@ -310,10 +310,10 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable) (err error) {
 		return fmt.Errorf("Expected identifier for function")
 	}
 
-	inClass := true
-	if !id_sar.Exists(st) {
-		inClass = false
-	}
+	// inClass := true
+	// if !id_sar.Exists(st) {
+	// 	inClass = false
+	// }
 
 	s.debugMessage(fmt.Sprintf("Identifer: %s, with %d Arguments", id_sar.GetValue(), len(al_sar.GetArgs())))
 
@@ -326,26 +326,39 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable) (err error) {
 	}
 	fun_val += ")"
 	func_sar := &Func_Sar{value: fun_val, scope: scope, id_sar: id_sar, al_sar: al_sar}
-
-	if inClass {
-		elem, _ := st.GetElement(id_sar.GetSymId())
-		if cls, ok := elem.Data["this_class"]; ok {
-			//push a class sar
-			switch class := cls.(type) {
-			case string:
-				s.sas.push(&Id_Sar{value: "this", typ: class, symId: "this", exists: true, scope: "g." + class})
-			default:
-				panic("Ivar is messed up compiler error")
-			}
-
-			s.sas.push(func_sar)
-			//call RExist()
-			if err := s.RExist(st); err != nil {
-				//fmt.Printf("REXIST FAILED %s\n",err)
-				return err
-			}
+	
+	// fmt.Printf("inClass: %v\n",inClass)
+	// if inClass {
+	// 	elem, _ := st.GetElement(id_sar.GetSymId())
+	// 	fmt.Printf("elem: %v\n",elem)
+	// 	if cls, ok := elem.Data["this_class"]; ok {
+	// 		//push a class sar
+	// 		switch class := cls.(type) {
+	// 		case string:
+	if !hasRef {
+		mScope, _, err := st.ScopeBelowWithCurr(st.GetScope())
+		if err != nil { return err }
+		_, class, err := st.ScopeBelowWithCurr(mScope)
+		if err != nil { return err }
+		s.sas.push(&Id_Sar{value: "this", typ: class, symId: "this", exists: true, scope: "g"})
+		s.sas.push(func_sar)
+		//call RExist()
+		if err := s.RExist(st); err != nil {
+			return err
 		}
 	} else {
+	// 		default:
+	// 			panic("Ivar is messed up compiler error")
+	// 		}
+
+	// 		s.sas.push(func_sar)
+	// 		//call RExist()
+	// 		if err := s.RExist(st); err != nil {
+	// 			//fmt.Printf("REXIST FAILED %s\n",err)
+	// 			return err
+	// 		}
+	// 	}
+	// } else {
 		s.sas.push(func_sar)
 	}
 

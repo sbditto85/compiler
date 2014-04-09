@@ -1210,7 +1210,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 		}
 
 		a.GetNext()
-		if e, t := a.IsFnArrMember(); e != nil && t != FN_ARR_MEMBER {
+		if e, t := a.IsFnArrMember(false); e != nil && t != FN_ARR_MEMBER {
 			panic(e.Error())
 		}
 
@@ -1235,7 +1235,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 	return nil, NONE
 }
 
-func (a *Analyzer) IsFnArrMember() (error, ErrorType) {
+func (a *Analyzer) IsFnArrMember(hasRef bool) (error, ErrorType) {
 	curTok, err := a.GetCurr()
 	a.debugMessagePassOne(fmt.Sprintf("Testing is fn arr member with token %s...", curTok.Lexeme))
 	if err != nil {
@@ -1279,7 +1279,7 @@ func (a *Analyzer) IsFnArrMember() (error, ErrorType) {
 			a.sm.EAL(a.st.GetScope())
 			a.debugMessagePassTwo("EAL")
 
-			a.sm.Func(a.st.GetScope(), a.st)
+			a.sm.Func(a.st.GetScope(), a.st, hasRef)
 			a.debugMessagePassTwo("func")
 		}
 
@@ -1350,7 +1350,7 @@ func (a *Analyzer) IsMemberRefz() (error, ErrorType) {
 	}
 
 	a.GetNext()
-	if e, t := a.IsFnArrMember(); e != nil && t != FN_ARR_MEMBER {
+	if e, t := a.IsFnArrMember(true); e != nil && t != FN_ARR_MEMBER {
 		panic(e.Error())
 	}
 

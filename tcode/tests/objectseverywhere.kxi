@@ -1,0 +1,72 @@
+
+class A {
+    private B b;
+
+    public C c;
+    
+    A(B b2) {
+	b = b2;
+    }
+
+    public void print() {
+	cout << 'A';
+	cout << '\n';
+    }
+
+    public void printB() {
+	//print();
+	//B b2 = new B();
+	//b2.print();
+	b.print();
+	c.getB().print();
+    }
+    
+    public void printC() {
+	c.print();
+    }
+    
+}
+
+class B {
+    B() {}
+
+    public void print() {
+	cout << 'B';
+	cout << '\n';
+    }
+
+}
+
+class C {
+    private B b = new B();
+
+    C() {}
+
+    public B getB() {
+	return b;
+    }
+
+    public void print() {
+	cout << 'C';
+	cout << '\n';
+    }
+
+}
+
+void main() {
+    B b = new B();
+    B b2;
+    A a = new A(b);
+    C c = new C();
+
+    a.print();
+    a.printB();
+    a.printC();
+    
+    b.print();
+    c.print();
+
+    b2 = c.getB();
+    b2.print();
+
+}
