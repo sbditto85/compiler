@@ -126,8 +126,12 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 					asm = append(asm, fmt.Sprintf("%s\t%s\t;%s", beg, r.GetCommand(), r.GetComment()))
 				}
 			}
-
-			//asm = append(asm, "\tLDR\tR13 (R13)")
+			
+			elem, _ := st.GetElement(row.GetOp3())
+			indirect, _ := sym.BoolFromData(elem.Data,"indirect")
+			if indirect {
+				asm = append(asm, "\tLDR\tR13 (R13)")
+			}
 
 			for _, r := range loadToRegister(st, row.GetOp2(), "R14") {
 				switch {

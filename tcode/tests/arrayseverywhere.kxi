@@ -30,7 +30,7 @@ class Dogs {
 	    cout << j;
 	    cout << ':';
 	    cout << ' ';
-	    cout << i2[j];
+	    cout << i[j];
 	    cout << '\n';
 	    j = j + 1;
 	}
@@ -77,21 +77,41 @@ class Dogs {
 }
 
 void main() {
-    //Dogs d[] = new Dogs[1];
+    Dogs d[] = new Dogs[2];
     int size = 10;
     int j = 0;
     int i[] = new int[size];
     Dogs d2 = new Dogs(i);
 
-    //d[1] = new Dogs(i);
-    //d[1].setI2(1,1);
-    //d[1].printI2();
+    d[1] = new Dogs(i);
+    d[1].setI(1,1);
+    d[1].printI(5);
 
+    d2.printI(5);
 
     i[2] = 2;
     j = 0;
     while(j < size) {
 	i[j] = j;
+	j = j + 1;
+    }
+
+    cout << 'd';
+    cout << '\n';
+    d[1].setI(1,1);
+    d[1].printI(5);
+
+    d2.printI(5);
+    
+    cout << i[2];
+    cout << '\n';
+    j = 0;
+    while(j < size) {
+	cout << j;
+	cout << ':';
+	cout << ' ';
+	cout << i[j];
+	cout << '\n';
 	j = j + 1;
     }
 

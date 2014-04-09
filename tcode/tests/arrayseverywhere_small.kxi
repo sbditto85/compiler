@@ -18,11 +18,14 @@ class Dogs {
 
 void main() {
     int os[] = new int[10];
-    Dogs d2 = new Dogs(os);
+    Dogs d2[] = new Dogs[10];
+    d2[1] = new Dogs(10);
 
-    d2.set(1);
-    d2.print();
+    os[3] = 3;
 
-    d2.set(3);
-    d2.print();
+    d2[1].set(1);
+    d2[1].print();
+
+    d2[1].set(3);
+    d2[1].print();
 }
