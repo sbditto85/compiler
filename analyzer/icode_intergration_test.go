@@ -18,7 +18,7 @@ func ExampleICodeAssignment() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -80,7 +80,7 @@ func ExampleICodeAddition() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -144,7 +144,7 @@ func ExampleICodeSubtraction() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -208,7 +208,7 @@ func ExampleICodeMultiply() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -271,7 +271,7 @@ func ExampleICodeDivide() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -334,7 +334,7 @@ func ExampleICodeArithmetic() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -416,7 +416,7 @@ func ExampleICodeReference() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -511,7 +511,7 @@ func ExampleICodeFlowControlBasic() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -612,7 +612,7 @@ func ExampleICodeFunctionChain() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -744,7 +744,7 @@ func ExampleICodeFunctionCall() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -830,7 +830,7 @@ func ExampleICodeArraysEverywhere() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {

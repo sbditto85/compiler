@@ -29,7 +29,7 @@ func verifyToken(t *testing.T, tok *token.Token, tokTypeString string, tokType t
 
 func testNextToken(l *Lexer, t *testing.T, tokTypeString string, tokType token.TokenType, tokLexeme string, tokLine int) {
 	//t.Logf("%s ::: %s\n",tokTypeString,tokLexeme)
-	tok, e := l.GetNextToken()
+	tok, e := l.GetNextToken(false)
 	//t.Logf("Lexeme: %s",tok.Lexeme)
 	shouldNotError(t, e)
 	verifyToken(t, tok, tokTypeString, tokType, tokLexeme, tokLine)

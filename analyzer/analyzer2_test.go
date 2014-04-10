@@ -18,7 +18,7 @@ func ExampleXEqualYPass2() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -81,7 +81,7 @@ func ExampleAssignInfixToPostfix() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -172,7 +172,7 @@ func ExampleAssignClassRef() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -247,7 +247,7 @@ func ExampleAssignMemberFunctionWInfixToPostfix() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -374,7 +374,7 @@ func ExampleAssignMemberElemntReturnByFunc() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -476,7 +476,7 @@ func ExampleCreateInstanceOfClass() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -553,7 +553,7 @@ func ExampleCreateInstanceOfArray() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -628,7 +628,7 @@ func ExampleFuncInfixToPostfixArg() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -731,7 +731,7 @@ func ExampleArrayArrayInfixPostfix() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -835,7 +835,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolops() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {
@@ -974,7 +974,7 @@ func ExampleIfWhileReturnCoutCinAtoiItoaCdBoolopsSymTable() {
 	l.ReadFile(file)
 
 	a := NewAnalyzer(l, false)
-	a.GetNext()
+	a.GetNext(false)
 	err := a.PerformPass()
 
 	if err != nil {

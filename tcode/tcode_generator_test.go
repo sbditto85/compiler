@@ -1060,7 +1060,6 @@ func ExampleTCodeObjectsEverywhere() {
 
 }
 
-
 func ExampleTCodeObjectsNull() {
 	defer func() {
 		if r := recover(); r != nil {

@@ -14,7 +14,7 @@ func ExampleParseXEqualsY() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -47,7 +47,7 @@ func ExampleParseTrueEqualsFalse() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -74,7 +74,7 @@ func ExampleParseTrue() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -95,7 +95,7 @@ func ExampleParse123() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -116,7 +116,7 @@ func ExampleParseCharacter() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -137,7 +137,7 @@ func ExampleParseCharacterNewLine() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -158,7 +158,7 @@ func ExampleParseXGreaterThanYPlus3() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -195,7 +195,7 @@ func ExampleParseXAssignThis() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -223,7 +223,7 @@ func ExampleParseXAssignIToA() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -257,7 +257,7 @@ func ExampleParseXAssignAToI() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -291,7 +291,7 @@ func ExampleParseXAssignNewYNoArgs() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -330,7 +330,7 @@ func ExampleParseXAssignNewYArg() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -373,7 +373,7 @@ func ExampleParseXAssignNewYArgs() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -421,7 +421,7 @@ func ExampleParseXAssignNewYArgs2() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -484,7 +484,7 @@ func ExampleParseXAssignNewYArr() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	a.IsStatement()
 
 	//Output:
@@ -531,7 +531,7 @@ func ExampleFailXEqualSemi() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -565,7 +565,7 @@ func ExampleFailEqualYSemi() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -587,7 +587,7 @@ func ExampleFunctionCallWithExpressionParams() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -676,7 +676,7 @@ func ExampleCinPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -710,7 +710,7 @@ func ExampleCoutPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -753,7 +753,7 @@ func ExampleReturnPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -788,7 +788,7 @@ func ExampleReturnParamPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -829,7 +829,7 @@ func ExampleWhilePass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -878,7 +878,7 @@ func ExampleIfPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -927,7 +927,7 @@ func ExampleIfElsePass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -986,7 +986,7 @@ func ExampleBlockStatementPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -1041,7 +1041,7 @@ func ExampleEmptyBlockPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsStatement()
 
 	if err != nil {
@@ -1084,7 +1084,7 @@ func ExampleParameterPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _, _ := a.IsParameter()
 
 	if err != nil {
@@ -1121,7 +1121,7 @@ func ExampleParameterArrPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _, _ := a.IsParameter()
 
 	if err != nil {
@@ -1160,7 +1160,7 @@ func ExampleParameterAsParameterListPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _, _ := a.IsParameterList()
 
 	if err != nil {
@@ -1201,7 +1201,7 @@ func ExampleParameterListPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _, _ := a.IsParameterList()
 
 	if err != nil {
@@ -1251,7 +1251,7 @@ func ExampleVariableDeclarationPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsVariableDeclaration()
 
 	if err != nil {
@@ -1289,7 +1289,7 @@ func ExampleVariableDeclarationAssignPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsVariableDeclaration()
 
 	if err != nil {
@@ -1334,7 +1334,7 @@ func ExampleMethodBodyPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsMethodBody(false)
 
 	if err != nil {
@@ -1372,7 +1372,7 @@ func ExampleMethodBodyFullPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsMethodBody(false)
 
 	if err != nil {
@@ -1434,7 +1434,7 @@ func ExampleConstructorPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsConstructorDeclaration()
 
 	if err != nil {
@@ -1483,7 +1483,7 @@ func ExampleConstructorParamsPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsConstructorDeclaration()
 
 	if err != nil {
@@ -1543,7 +1543,7 @@ func ExampleFieldDeclarationPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
 
 	if err != nil {
@@ -1577,7 +1577,7 @@ func ExampleFieldDeclarationArrPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
 
 	if err != nil {
@@ -1613,7 +1613,7 @@ func ExampleFieldDeclarationAssignPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
 
 	if err != nil {
@@ -1664,7 +1664,7 @@ func ExampleFieldDeclarationArrAssignPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsFieldDeclaration("modifier", "typ", "identifier")
 
 	if err != nil {
@@ -1707,7 +1707,7 @@ func ExampleBasicClassDeclarationPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsClassDeclaration()
 
 	if err != nil {
@@ -1753,7 +1753,7 @@ func ExampleBasicClassDeclarationComplexPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsClassDeclaration()
 
 	if err != nil {
@@ -1851,7 +1851,7 @@ func ExampleCompilationUnitPass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l, true)
-	a.GetNext()
+	a.GetNext(false)
 	err, _ := a.IsCompilationUnit()
 
 	if err != nil {
@@ -1904,7 +1904,7 @@ func ExamplePass() {
 	l.LoadStrings(str)
 
 	a := NewAnalyzer(l,true)
-	a.GetNext()
+	a.GetNext(false)
 	err,_ := a.IsParameter()
 
 	if err != nil {
