@@ -14,7 +14,7 @@ func (s *SemanticManager) LPush(value, scope, typ string) {
 	switch value {
 	case "true":
 		value = "1"
-	case "false":
+	case "false", "null":
 		value = "0"
 	}
 
@@ -327,14 +327,6 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable, hasRef bool) (
 	fun_val += ")"
 	func_sar := &Func_Sar{value: fun_val, scope: scope, id_sar: id_sar, al_sar: al_sar}
 
-	// fmt.Printf("inClass: %v\n",inClass)
-	// if inClass {
-	// 	elem, _ := st.GetElement(id_sar.GetSymId())
-	// 	fmt.Printf("elem: %v\n",elem)
-	// 	if cls, ok := elem.Data["this_class"]; ok {
-	// 		//push a class sar
-	// 		switch class := cls.(type) {
-	// 		case string:
 	if !hasRef {
 		mScope, _, err := st.ScopeBelowWithCurr(st.GetScope())
 		if err != nil {
@@ -351,18 +343,6 @@ func (s *SemanticManager) Func(scope string, st *sym.SymbolTable, hasRef bool) (
 			return err
 		}
 	} else {
-		// 		default:
-		// 			panic("Ivar is messed up compiler error")
-		// 		}
-
-		// 		s.sas.push(func_sar)
-		// 		//call RExist()
-		// 		if err := s.RExist(st); err != nil {
-		// 			//fmt.Printf("REXIST FAILED %s\n",err)
-		// 			return err
-		// 		}
-		// 	}
-		// } else {
 		s.sas.push(func_sar)
 	}
 
@@ -865,7 +845,9 @@ func (s *SemanticManager) AssignmentOperator() error {
 		return fmt.Errorf("Operand doesn't have type %#v", op2)
 	}
 	s.debugMessage(fmt.Sprintf("Comparing %s(%s) to %s(%s)", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ))
-	if op1Typ != op2Typ {
+	if op1Typ == "null" && (op2Typ == "int" || op2Typ == "bool" || op2Typ == "char") {
+		return fmt.Errorf("Cann't assign operand %s(%s) to %s(%s) types mismatch", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
+	} else if op1Typ != "null" && op1Typ != op2Typ {
 		return fmt.Errorf("Cann't assign operand %s(%s) to %s(%s) types mismatch", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
 	}
 
@@ -942,8 +924,10 @@ func (s *SemanticManager) EqualNot(op string) error {
 
 	s.debugMessage(fmt.Sprintf("Comparing %s(%s) to %s(%s) for op %s", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ, op))
 
-	if op1Typ != op2Typ {
-		return fmt.Errorf("Cann't assign operand %s(%s) to %s(%s) types mismatch", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
+	if (op1Typ == "null" && (op2Typ == "int" || op2Typ == "bool" || op2Typ == "char")) || (op2Typ == "null" && (op1Typ == "int" || op1Typ == "bool" || op1Typ == "char")) {
+		return fmt.Errorf("Cann't compare operand %s(%s) to %s(%s) types mismatch 1", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
+	} else if op1Typ != "null" && op2Typ != "null" && op1Typ != op2Typ {
+		return fmt.Errorf("Cann't compare operand %s(%s) to %s(%s) types mismatch 2", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ)
 	}
 
 	if op1Typ == "void" {

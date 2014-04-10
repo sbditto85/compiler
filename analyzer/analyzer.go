@@ -158,8 +158,8 @@ func (a *Analyzer) PrintTableInAddOrder() {
 	a.st.PrintTableInAddOrder()
 }
 
-func (a *Analyzer) GetNext() (*tok.Token, error) {
-	curTok, err := a.lex.GetNextToken()
+func (a *Analyzer) GetNext(expectSymbol bool) (*tok.Token, error) {
+	curTok, err := a.lex.GetNextToken(expectSymbol)
 	if curTok.Lexeme == "" {
 		a.debugMessagePassOne("Token: ''")
 	} else {
@@ -211,7 +211,7 @@ func (a *Analyzer) IsModifier() (error, ErrorType) {
 	}
 	switch curTok.Lexeme {
 	case "public", "private":
-		a.GetNext()
+		a.GetNext(false)
 	default:
 		return BuildErrFromTokErrType(curTok, MODIFIER), MODIFIER
 	}
@@ -227,7 +227,7 @@ func (a *Analyzer) IsClassName() (error, ErrorType, string) {
 	}
 	switch curTok.Type {
 	case tok.Identifier:
-		a.GetNext()
+		a.GetNext(false)
 	default:
 		return BuildErrFromTokErrType(curTok, CLASS_NAME), CLASS_NAME, ""
 	}
@@ -243,7 +243,7 @@ func (a *Analyzer) IsType() (error, ErrorType) {
 	}
 	switch curTok.Lexeme {
 	case "int", "char", "bool", "void":
-		a.GetNext()
+		a.GetNext(false)
 	default:
 		if err, _, _ := a.IsClassName(); err != nil {
 			return BuildErrFromTokErrType(curTok, TYPE), TYPE
@@ -282,7 +282,7 @@ func (a *Analyzer) IsCompilationUnit() (error, ErrorType) {
 	if curTok.Lexeme != "void" {
 		panic(BuildErrMessFromTok(curTok, "void"))
 	}
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -290,7 +290,7 @@ func (a *Analyzer) IsCompilationUnit() (error, ErrorType) {
 	if curTok.Lexeme != "main" {
 		panic(BuildErrMessFromTok(curTok, "main"))
 	}
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -298,7 +298,7 @@ func (a *Analyzer) IsCompilationUnit() (error, ErrorType) {
 	if curTok.Lexeme != "(" {
 		panic(BuildErrMessFromTok(curTok, "("))
 	}
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -312,7 +312,7 @@ func (a *Analyzer) IsCompilationUnit() (error, ErrorType) {
 	symdata["type"] = "void"
 	a.AddSymbol("main", "Main", symdata, a.pass == 1)
 
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -334,7 +334,7 @@ func (a *Analyzer) IsClassDeclaration() (error, ErrorType) {
 	if curTok.Lexeme != "class" {
 		panic(BuildErrMessFromTok(curTok, "class"))
 	}
-	a.GetNext()
+	a.GetNext(false)
 	err, _, className := a.IsClassName()
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, CLASS_DECLARATION))
@@ -355,7 +355,7 @@ func (a *Analyzer) IsClassDeclaration() (error, ErrorType) {
 	if curTok.Lexeme != "{" {
 		panic(BuildErrMessFromTok(curTok, "{"))
 	}
-	a.GetNext()
+	a.GetNext(false)
 
 	for err == nil {
 		err, _ = a.IsClassMemberDeclaration()
@@ -375,7 +375,7 @@ func (a *Analyzer) IsClassDeclaration() (error, ErrorType) {
 	//fmt.Println("in class declaration")
 	a.DropScope()
 
-	a.GetNext()
+	a.GetNext(false)
 	a.debugMessagePassOne("is a class declaration!")
 	return nil, NONE
 }
@@ -413,7 +413,7 @@ func (a *Analyzer) IsClassMemberDeclaration() (error, ErrorType) {
 		if curTok.Type != tok.Identifier {
 			panic(BuildErrFromTokErrType(curTok, CLASS_MEMBER_DECLARATION))
 		}
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -450,7 +450,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 	case "[", "=", ";":
 		isArr := false
 		if curTok.Lexeme == "[" {
-			curTok, err = a.GetNext()
+			curTok, err = a.GetNext(false)
 			if err != nil {
 				panic(BuildErrFromTokErrType(curTok, COMPILER))
 			}
@@ -460,7 +460,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 
 			isArr = true
 
-			curTok, err = a.GetNext()
+			curTok, err = a.GetNext(false)
 			if err != nil {
 				panic(BuildErrFromTokErrType(curTok, COMPILER))
 			}
@@ -486,7 +486,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 				a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 			}
 
-			curTok, err = a.GetNext()
+			curTok, err = a.GetNext(false)
 			if err != nil {
 				panic(BuildErrFromTokErrType(curTok, COMPILER))
 			}
@@ -508,7 +508,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 			a.debugMessagePassTwo("EOE")
 		}
 
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -517,7 +517,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 		return nil, NONE
 	}
 	if curTok.Lexeme == "(" {
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -527,7 +527,7 @@ func (a *Analyzer) IsFieldDeclaration(modifier string, typ string, identifier st
 		if curTok.Lexeme != ")" {
 			panic(BuildErrMessFromTok(curTok, ")"))
 		}
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -573,7 +573,7 @@ func (a *Analyzer) IsConstructorDeclaration() (error, ErrorType) {
 	if curTok.Lexeme != "(" {
 		return BuildErrFromTok(curTok, "("), CONSTRUCTOR_DECLARATION
 	}
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -583,7 +583,7 @@ func (a *Analyzer) IsConstructorDeclaration() (error, ErrorType) {
 	if curTok.Lexeme != ")" {
 		panic(BuildErrMessFromTok(curTok, ")"))
 	}
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrMessFromTokErrType(curTok, COMPILER))
 	}
@@ -620,7 +620,7 @@ func (a *Analyzer) IsMethodBody(isConstructor bool) (error, ErrorType) {
 		a.sm.SetupFunc(a.st)
 	}
 
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -670,7 +670,7 @@ func (a *Analyzer) IsMethodBody(isConstructor bool) (error, ErrorType) {
 	//fmt.Println("in method body")
 	a.DropScope()
 
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -713,14 +713,14 @@ func (a *Analyzer) IsVariableDeclaration() (error, ErrorType) {
 		return BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION), VARIABLE_DECLARATION
 		//panic(BuildErrFromTokErrType(curTok, VARIABLE_DECLARATION))
 	}
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
 
 	isArr := false
 	if curTok.Lexeme == "[" {
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -729,7 +729,7 @@ func (a *Analyzer) IsVariableDeclaration() (error, ErrorType) {
 		}
 		isArr = true
 
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -758,7 +758,7 @@ func (a *Analyzer) IsVariableDeclaration() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -779,7 +779,7 @@ func (a *Analyzer) IsVariableDeclaration() (error, ErrorType) {
 		a.debugMessagePassTwo("EOE")
 	}
 
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
@@ -808,7 +808,7 @@ func (a *Analyzer) IsParameterList() (error, ErrorType, []sym.Parameter) {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
 		if curTok.Lexeme == "," {
-			a.GetNext()
+			a.GetNext(false)
 			e, _, param := a.IsParameter()
 			if e != nil {
 				panic(BuildErrFromTokErrType(curTok, PARAMETER_LIST))
@@ -850,21 +850,21 @@ func (a *Analyzer) IsParameter() (error, ErrorType, sym.Parameter) {
 	if curTok.Type != tok.Identifier {
 		panic(BuildTtErrMessFromTok(curTok, tok.Identifier))
 	}
-	curTok, err = a.GetNext()
+	curTok, err = a.GetNext(false)
 	if err != nil {
 		panic(BuildErrFromTokErrType(curTok, COMPILER))
 	}
 
 	isArr := false
 	if curTok.Lexeme == "[" {
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
 		if curTok.Lexeme != "]" {
 			panic(BuildErrMessFromTok(curTok, "{"))
 		}
-		a.GetNext()
+		a.GetNext(false)
 
 		isArr = true
 	}
@@ -880,7 +880,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 	}
 	switch {
 	case curTok.Lexeme == "{":
-		a.GetNext()
+		a.GetNext(false)
 		for err == nil {
 			err, _ = a.IsStatement()
 		}
@@ -888,9 +888,9 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 		if curTok.Lexeme != "}" {
 			panic(BuildErrMessFromTok(curTok, "}"))
 		}
-		a.GetNext()
+		a.GetNext(false)
 	case curTok.Lexeme == "if":
-		a.GetNext()
+		a.GetNext(false)
 		curTok, err = a.GetCurr() //now at next token after expression
 		if curTok.Lexeme != "(" {
 			panic(BuildErrMessFromTok(curTok, "("))
@@ -904,7 +904,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if err, _ := a.IsExpression(); err == nil {
 			curTok, err = a.GetCurr()
 			if curTok.Lexeme != ")" {
@@ -924,7 +924,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 				a.debugMessagePassTwo("If is bool")
 			}
 
-			a.GetNext()
+			a.GetNext(false)
 			if err, _ := a.IsStatement(); err != nil {
 				panic(BuildErrFromTokErrType(curTok, STATEMENT))
 			}
@@ -936,7 +936,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 					a.sm.Else()
 				}
 
-				a.GetNext()
+				a.GetNext(false)
 				if err, _ := a.IsStatement(); err != nil {
 					panic(BuildErrFromTokErrType(curTok, STATEMENT))
 				}
@@ -961,7 +961,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			initLabel = a.sm.InitWhile()
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		curTok, err = a.GetCurr() //now at next token after expression
 		if curTok.Lexeme != "(" {
 			panic(BuildErrMessFromTok(curTok, "("))
@@ -975,7 +975,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if err, _ := a.IsExpression(); err == nil {
 			curTok, err = a.GetCurr()
 			if curTok.Lexeme != ")" {
@@ -995,7 +995,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 				a.debugMessagePassTwo("While is bool")
 			}
 
-			a.GetNext()
+			a.GetNext(false)
 			if err, _ := a.IsStatement(); err != nil {
 				panic(BuildErrFromTokErrType(curTok, STATEMENT))
 			}
@@ -1008,7 +1008,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
 		}
 	case curTok.Lexeme == "return":
-		a.GetNext()
+		a.GetNext(false)
 
 		//Semantic Action Meta
 		var isVoid bool
@@ -1031,14 +1031,14 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 			}
 			a.debugMessagePassTwo("Return")
 		}
-		a.GetNext()
+		a.GetNext(false)
 	case curTok.Lexeme == "cout":
-		a.GetNext()
+		a.GetNext(false)
 		curTok, err = a.GetCurr() //now at next token after expression
 		if curTok.Lexeme != "<<" {
 			panic(BuildErrMessFromTok(curTok, "<<"))
 		}
-		a.GetNext()
+		a.GetNext(false)
 		if err, _ := a.IsExpression(); err == nil {
 			curTok, err = a.GetCurr()
 			if curTok.Lexeme != ";" {
@@ -1053,17 +1053,17 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 				a.debugMessagePassTwo("Cout")
 			}
 
-			a.GetNext()
+			a.GetNext(false)
 		} else {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
 		}
 	case curTok.Lexeme == "cin":
-		a.GetNext()
+		a.GetNext(false)
 		curTok, err = a.GetCurr() //now at next token after expression
 		if curTok.Lexeme != ">>" {
 			panic(BuildErrMessFromTok(curTok, ">>"))
 		}
-		a.GetNext()
+		a.GetNext(false)
 		if err, _ := a.IsExpression(); err == nil {
 			curTok, err = a.GetCurr()
 			if curTok.Lexeme != ";" {
@@ -1078,7 +1078,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 				a.debugMessagePassTwo("Cout")
 			}
 
-			a.GetNext()
+			a.GetNext(false)
 		} else {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
 		}
@@ -1095,7 +1095,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 				}
 				a.debugMessagePassTwo("EOE")
 			}
-			a.GetNext()
+			a.GetNext(false)
 		} else {
 			return BuildErrFromTokErrType(curTok, STATEMENT), STATEMENT
 		}
@@ -1120,13 +1120,13 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if e, _ := a.IsExpression(); e != nil {
 			panic(e.Error())
 		}
 		curTok, err = a.GetCurr() //now at next token after expression
 		if curTok.Lexeme == ")" {
-			a.GetNext()
+			a.GetNext(false)
 		} else {
 			panic(BuildErrMessFromTok(curTok, ")"))
 		}
@@ -1148,7 +1148,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s", curTok.Lexeme, a.st.GetScope()))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if e, t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
@@ -1160,7 +1160,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s", curTok.Lexeme, a.st.GetScope()))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if e, t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
@@ -1172,7 +1172,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s", curTok.Lexeme, a.st.GetScope()))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if e, t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
@@ -1184,7 +1184,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s", curTok.Lexeme, a.st.GetScope()))
 		}
 
-		a.GetNext()
+		a.GetNext(true)
 		if e, t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
@@ -1196,7 +1196,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("LPush: %s from scope %s", curTok.Lexeme, a.st.GetScope()))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if e, t := a.IsExpressionZ(); e != nil && t != EXPRESSIONZ {
 			panic(e.Error())
 		}
@@ -1209,7 +1209,7 @@ func (a *Analyzer) IsExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("IPush: %s from scope %s", curTok.Lexeme, a.st.GetScope()))
 		}
 
-		a.GetNext()
+		a.GetNext(true)
 		if e, t := a.IsFnArrMember(false); e != nil && t != FN_ARR_MEMBER {
 			panic(e.Error())
 		}
@@ -1254,7 +1254,7 @@ func (a *Analyzer) IsFnArrMember(hasRef bool) (error, ErrorType) {
 			a.debugMessagePassTwo("BAL")
 		}
 
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if err != nil {
 			panic(BuildErrFromTokErrType(curTok, COMPILER))
 		}
@@ -1283,7 +1283,7 @@ func (a *Analyzer) IsFnArrMember(hasRef bool) (error, ErrorType) {
 			a.debugMessagePassTwo("func")
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 	case "[":
 
 		//Semantic Action OPush
@@ -1294,7 +1294,7 @@ func (a *Analyzer) IsFnArrMember(hasRef bool) (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if e, _ := a.IsExpression(); err != nil {
 			panic(e.Error())
 		}
@@ -1317,7 +1317,7 @@ func (a *Analyzer) IsFnArrMember(hasRef bool) (error, ErrorType) {
 
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 	default:
 		return BuildErrFromTokErrType(curTok, FN_ARR_MEMBER), FN_ARR_MEMBER
 	}
@@ -1334,7 +1334,7 @@ func (a *Analyzer) IsMemberRefz() (error, ErrorType) {
 	if curTok.Lexeme != "." {
 		return BuildErrFromTokErrType(curTok, MEMBER_REFZ), MEMBER_REFZ
 	}
-	a.GetNext()
+	a.GetNext(false)
 	curTok, err = a.GetCurr()
 	if err != nil {
 		return err, COMPILER
@@ -1349,7 +1349,7 @@ func (a *Analyzer) IsMemberRefz() (error, ErrorType) {
 		a.debugMessagePassTwo(fmt.Sprintf("IPush: %s from scope %s", curTok.Lexeme, a.st.GetScope()))
 	}
 
-	a.GetNext()
+	a.GetNext(false)
 	if e, t := a.IsFnArrMember(true); e != nil && t != FN_ARR_MEMBER {
 		panic(e.Error())
 	}
@@ -1377,7 +1377,7 @@ func (a *Analyzer) IsExpressionZ() (error, ErrorType) {
 	}
 	switch curTok.Lexeme {
 	case "&&", "||", "==", "!=", "<=", ">=", ">", "<", "+", "-", "*", "/":
-		a.GetNext()
+		a.GetNext(false)
 		//Semantic Action OPush
 		if a.pass == 2 {
 			if err := a.sm.OPush(curTok.Lexeme); err != nil {
@@ -1397,7 +1397,7 @@ func (a *Analyzer) IsExpressionZ() (error, ErrorType) {
 			a.debugMessagePassTwo("Pushed operator =")
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if err, _ := a.IsAssignmentExpression(); err != nil {
 			panic(err.Error())
 		}
@@ -1416,9 +1416,9 @@ func (a *Analyzer) IsAssignmentExpression() (error, ErrorType) {
 	}
 	switch {
 	case curTok.Lexeme == "this":
-		a.GetNext()
+		a.GetNext(false)
 	case curTok.Lexeme == "new":
-		a.GetNext()
+		a.GetNext(false)
 		if err, _ := a.IsType(); err != nil {
 			panic(err.Error())
 		}
@@ -1426,7 +1426,7 @@ func (a *Analyzer) IsAssignmentExpression() (error, ErrorType) {
 			panic(err.Error())
 		}
 	case curTok.Lexeme == "atoi":
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if curTok.Lexeme != "(" || err != nil {
 			panic(BuildErrMessFromTok(curTok, "("))
 		}
@@ -1439,7 +1439,7 @@ func (a *Analyzer) IsAssignmentExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if e, _ := a.IsExpression(); e != nil {
 			panic(e.Error())
 		}
@@ -1459,9 +1459,9 @@ func (a *Analyzer) IsAssignmentExpression() (error, ErrorType) {
 			a.debugMessagePassTwo("atoi")
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 	case curTok.Lexeme == "itoa":
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if curTok.Lexeme != "(" || err != nil {
 			panic(BuildErrMessFromTok(curTok, "("))
 		}
@@ -1474,7 +1474,7 @@ func (a *Analyzer) IsAssignmentExpression() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		curTok, err = a.GetNext()
+		curTok, err = a.GetNext(false)
 		if e, _ := a.IsExpression(); e != nil {
 			panic(e.Error())
 		}
@@ -1494,7 +1494,7 @@ func (a *Analyzer) IsAssignmentExpression() (error, ErrorType) {
 			a.debugMessagePassTwo("itoa")
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 	default:
 		if err, _ := a.IsExpression(); err != nil {
 			return err, ASSIGNMENT_EXPRESSION
@@ -1524,7 +1524,7 @@ func (a *Analyzer) IsNewDeclaration() (error, ErrorType) {
 			a.debugMessagePassTwo("BAL")
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		a.IsArgumentList() //dont care if fails
 		//should be pointing at ")"
 		curTok, err = a.GetCurr()
@@ -1548,7 +1548,7 @@ func (a *Analyzer) IsNewDeclaration() (error, ErrorType) {
 			a.debugMessagePassTwo("newObj")
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 	case "[":
 
 		//Semantic Action OPush
@@ -1559,7 +1559,7 @@ func (a *Analyzer) IsNewDeclaration() (error, ErrorType) {
 			a.debugMessagePassTwo(fmt.Sprintf("Pushed operator %s", curTok.Lexeme))
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if err, _ := a.IsExpression(); err != nil {
 			panic(err.Error())
 		}
@@ -1582,7 +1582,7 @@ func (a *Analyzer) IsNewDeclaration() (error, ErrorType) {
 
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 	default:
 		return BuildErrFromTokErrType(curTok, NEW_DECLARATION), NEW_DECLARATION
 	}
@@ -1616,7 +1616,7 @@ func (a *Analyzer) IsArgumentList() (error, ErrorType) {
 			a.debugMessagePassTwo("Comma")
 		}
 
-		a.GetNext()
+		a.GetNext(false)
 		if e, _ := a.IsExpression(); e != nil {
 			panic(e.Error())
 		}

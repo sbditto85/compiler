@@ -91,7 +91,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	for _, e := range st.GetAllOfKind("LitVar") {
 		typ, _ := sym.StringFromData(e.Data, "type")
 		switch typ {
-		case "int":
+		case "int", "null":
 			asm = append(asm, fmt.Sprintf("%s:\t.INT\t%s", e.SymId, e.Value))
 		case "char", "bool":
 			if e.Value == `' '` {

@@ -73,7 +73,7 @@ func (l *Lexer) GetCurrentToken() (*token.Token, error) {
 	if l.cur != nil {
 		return l.cur, nil
 	}
-	t, err := l.GetNextToken() //if we haven't then get one
+	t, err := l.GetNextToken(false) //if we haven't then get one
 	return t, err
 }
 
@@ -123,10 +123,10 @@ func testEOT(l *Lexer) (*token.Token, error) {
 	return nil, fmt.Errorf("")
 }
 
-func (l *Lexer) GetNextToken() (*token.Token, error) {
+func (l *Lexer) GetNextToken(expectSymbol bool) (*token.Token, error) {
 	if res := WhiteSpace.FindSubmatch(l.curline); len(res) == 3 {
 		l.curline = res[2]
-		t, e := l.GetNextToken()
+		t, e := l.GetNextToken(expectSymbol)
 		return t, e
 	}
 
@@ -134,7 +134,7 @@ func (l *Lexer) GetNextToken() (*token.Token, error) {
 	if bytes.Equal(l.curline, emptyString) || Comment.Match(l.curline) {
 		//can we get a new line?
 		if l.loadNextLine() {
-			tok, e := l.GetNextToken()
+			tok, e := l.GetNextToken(expectSymbol)
 			return tok, e
 		}
 		tok := &token.Token{Type: token.EOT, Lexeme: "", Linenum: l.curlinenum}
@@ -151,11 +151,20 @@ func (l *Lexer) GetNextToken() (*token.Token, error) {
 	if tok, found := testType(l, Character, token.Character, false); found {
 		return tok, nil
 	}
-	if tok, found := testType(l, Number, token.Number, false); found {
-		return tok, nil
-	}
-	if tok, found := testType(l, Symbol, token.Symbol, false); found {
-		return tok, nil
+	if expectSymbol {
+		if tok, found := testType(l, Symbol, token.Symbol, false); found {
+			return tok, nil
+		}
+		if tok, found := testType(l, Number, token.Number, false); found {
+			return tok, nil
+		}
+	} else {
+		if tok, found := testType(l, Number, token.Number, false); found {
+			return tok, nil
+		}
+		if tok, found := testType(l, Symbol, token.Symbol, false); found {
+			return tok, nil
+		}
 	}
 	if tok, found := testType(l, Punctuation, token.Punctuation, false); found {
 		return tok, nil

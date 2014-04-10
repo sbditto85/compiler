@@ -1,0 +1,29 @@
+
+class Obj {
+    private Obj self;
+
+    Obj() {
+	self = this;
+    }
+}
+
+void main() {
+    int i = 1+1;
+    Obj o = null;
+
+
+    cout << i;
+    cout << '\n';
+    
+    if(o == null) {
+	cout << 'n';
+	cout << 'u';
+	cout << 'l';
+	cout << 'l';
+	cout << '\n';
+    } else {
+	cout << 's';
+	cout << '\n';
+    }
+    
+}
