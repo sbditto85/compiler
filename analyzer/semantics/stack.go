@@ -320,6 +320,12 @@ type Ref_Sar struct {
 	symId     string
 }
 
+func (r *Ref_Sar) GetClassSar() SemanticActionRecord {
+	return r.class_sar
+}
+func (r *Ref_Sar) GetVarSar() SemanticActionRecord {
+	return r.var_sar
+}
 func (r *Ref_Sar) GetValue() string {
 	return r.value
 }

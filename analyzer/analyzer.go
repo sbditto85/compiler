@@ -1279,7 +1279,9 @@ func (a *Analyzer) IsFnArrMember(hasRef bool) (error, ErrorType) {
 			a.sm.EAL(a.st.GetScope())
 			a.debugMessagePassTwo("EAL")
 
-			a.sm.Func(a.st.GetScope(), a.st, hasRef)
+			if err := a.sm.Func(a.st.GetScope(), a.st, hasRef); err != nil {
+				panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
+			}
 			a.debugMessagePassTwo("func")
 		}
 

@@ -774,10 +774,10 @@ func (s *SemanticManager) ArithmeticOperator(op string) error {
 		return fmt.Errorf("Operand doesn't have type %#v", op2)
 	}
 	if op1Typ != "int" {
-		return fmt.Errorf("Operand of type %s cannot perform %s", op1, op)
+		return fmt.Errorf("Operand of type %s cannot perform %s", op1Typ, op)
 	}
 	if op2Typ != "int" {
-		return fmt.Errorf("Operand of type %s cannot perform %s", op1, op)
+		return fmt.Errorf("Operand of type %s cannot perform %s", op2Typ, op)
 	}
 	s.debugMessage(fmt.Sprintf("Comparing %s(%s) to %s(%s) for %s", op1.GetValue(), op1Typ, op2.GetValue(), op2Typ, op))
 	if op1Typ != op2Typ {
