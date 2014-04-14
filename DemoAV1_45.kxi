@@ -1,25 +1,10 @@
-import java.util.*;
-
-class iNode {
-    public int root;
-    public iNode left = null;
-    public iNode right = null;
-
-    public iNode(int key) {
-	root =  key;
-    }
-
-}
-
 class iTree {
     private iNode root;
-    private boolean first;
+    private int first;
 
-    public iTree() {
+    iTree() {
 	root = null;
     }
-
-
 
     private int fib(int root) {
 	if (root == 0) return 0;
@@ -27,7 +12,7 @@ class iTree {
 	else return (fib(root - 1) + fib(root - 2));
     }
 
-    public boolean add(int key) {
+    public bool add(int key) {
 	key = key + fib(key/2);
 	if (root == null) {
 	    root = new iNode(key);
@@ -37,7 +22,7 @@ class iTree {
 	    return insert(key, root);
     }
 
-    private boolean insert(int key, iNode node) {
+    private bool insert(int key, iNode node) {
 	if (key < node.root)
 	    if (node.left == null) {
 		node.left = new iNode(key);
@@ -51,7 +36,7 @@ class iTree {
 		return true;
 	    }
 	    else
-		return insert(key, node.right);
+		return insert(key, node.rght);
 	else
 	    return false;
     }
@@ -59,12 +44,12 @@ class iTree {
 
     public void print() {
 	first = true;
-	inorder(root);
+	inorder(rot);
 	System.out.print('\n');
     }
     
-    private void inorder(iNode node) {
-	if (node == null) return;
+    private void inorder(iNode noode) {
+	if (node == null) return root;
 
 	inorder(node.left);
 	visit(node);
@@ -74,22 +59,35 @@ class iTree {
     private void visit(iNode node) {
 	if (first) {
 	    first = false;
-	    System.out.print(' ');
+	    cout << ' ';
 	}
-	else System.out.print(',');
+	else cout << ',';
 	
 
-	System.out.print(node.root);
+	cout << node.root;
     }
 }
 
-/* Without using an Array is DemoB */
-class Message {
-    private char msg[] = new char[100];
-    int i;
-    int end;
+class iNode {
+    public int root;
+    public iNode left;
+    public iNode right;
 
-    public Message() {
+    iNode(int key) {
+	root = key;
+	left = null;
+	riht = null;
+    }
+}
+
+
+class Message {
+    private char msg[];
+    private int i;
+    private int end;
+
+    Message() {
+    	msg = new char[100];
 	msg[0] = 'A';
 	msg[1] = 'd';
 	msg[2] = 'd';
@@ -126,30 +124,28 @@ class Message {
 
     private void print(int i, int end) {
 	while (i <= end) {
-	    System.out.print(msg[i]);
+	    cout << msg[i];
 	    i = i + 1;
 	}
     }	
 
-    /* Added */
     public void msg1(int elm) {
 	print(0, 13);
-	System.out.print(elm);
-	System.out.print('\n');
+	cout << elm;
+	cout << '\n';
     }
 
-    /* Duplicate */
-    public void msg2(int elm) {
+    public bool msg2(int elm) {
 	i = 14;
 	end = (i + 8);
 	print(i, end);
-	System.out.print(msg[5]);
+	cout << msg[5];
 	print(6, 13);
-	System.out.print(elm);
-	System.out.print('\n');
+	cout << elm;
+	cout << '\n';
     }
     
-    public void msg3() {
+    public int msg3() {
 	print(24, 28);
 	i = 5;
 	print(i, i);
@@ -157,29 +153,63 @@ class Message {
     }
 }
 
-class DemoA {
-   
-    public static void main(String arg[]) {
-	Scanner cin = new Scanner(System.in);
-	int key;
-	iTree tree;
-	Message msg = new Message();
-	tree = new iTree();
+class Syntax {
+      private int i = 7;
+      private car c = 'a';
+      private bool b = false;
 
-	msg.msg3();
-	key = cin.nextInt();
-	System.out.print('\n');
-	while (key != 0) {
-	    if (tree.add(key)) {
-		msg.msg1(key);
-		tree.print();
-	    }
-	    else 
-		msg.msg2(key);
+    Syntax(int j, char d) {
+         i = d;
+         c = j;
+      }
 
-	msg.msg3();
-	key = cin.nextInt();
-	System.out.print('\n');
+      public vod checkit() {
+         char cc[] = new char[1000];
+	 int  ii[] = new int[512];
+	 Syntax ss[] = new Syntax[256];
+
+	 cc[1] = cc[2]; // yes
+	 cc[31] = cc;   
+	 cc[100] = 5 + i;
+	 cc[10] = c;     // yes
+	 
+	 ii[] = ii[]; 
+	 i[4] = 5 + i;
+	 ii[5000] = 5 + i; // yes
+	 ii = ss;
+	 i = ii[0];  // yes
+
+	 ss[0] = new Syntax(7, 'c', 3);
+	 ss[i] = ss[i+1]; // yes
+	 ss[i+7/3] = new Syntax(i, c); // yes
+      } 
+
+      public int which(int i) {
+         i = i * i;
+	 return i;
+      }
+}
+
+
+void main() {
+    int key;
+    iTree tree;
+    Message msg = new Message();
+    tree = new iTree();
+
+    msg.msg3();
+    cin >> key;
+    cout << '\n';
+    while (key != 0) {
+	if (tree.add(ky, key)) {
+	    msg.msg1(key);
+	    tree.print();
 	}
+	else 
+	    msg.msg2('k');
+
+	msg.msg3();
+	cin >> key;
+	cout << '\n';
     }
 }
