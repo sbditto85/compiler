@@ -35,7 +35,7 @@ func main() {
 
 		curTok, err := l.GetCurrentToken()
 		if curTok.Type != tok.EOT {
-			panic(fmt.Sprintf("Last token not EOT it is %s\n", curTok.Lexeme))
+			panic(fmt.Sprintf("Last token parsed is %s\n", curTok.Lexeme))
 		}
 		if err != nil {
 			panic("Error getting last token!")
