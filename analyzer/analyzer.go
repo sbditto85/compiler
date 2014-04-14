@@ -1072,7 +1072,7 @@ func (a *Analyzer) IsStatement() (error, ErrorType) {
 
 			//Semantic Action
 			if a.pass == 2 {
-				if err := a.sm.Cout(); err != nil {
+				if err := a.sm.Cin(); err != nil {
 					panic(fmt.Sprintf("%s on line %d", err.Error(), curTok.Linenum+1))
 				}
 				a.debugMessagePassTwo("Cout")

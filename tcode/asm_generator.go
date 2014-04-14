@@ -107,6 +107,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 
 	for _, row := range table.GetRows() {
 		//fmt.Printf("row: %#v\n", row) //TODO: delete me
+		asm = append(asm, fmt.Sprintf(";; row: %s:\t%s\t%s %s %s; %s", row.GetLabel(), row.GetCommand(), row.GetOp1(), row.GetOp2(), row.GetOp3(), row.GetComment()))
 		switch row.GetCommand() {
 		case "ATOI":
 			//load value to R0
@@ -576,7 +577,8 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 					panic(fmt.Sprintf("could not find size for symId: %s", elem.SymId))
 				}
 
-				isArr, _ := sym.BoolFromData(elem.Data, "isArray")
+				//isArr, _ := sym.BoolFromData(elem.Data, "isArray")
+				isArr := false
 
 				size = sym.SizeOfType(typ, isArr)
 			}
@@ -585,6 +587,41 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 				asm = append(asm, fmt.Sprintf("\tTRP\t#3\t;%s", row.GetComment()))
 			default:
 				asm = append(asm, fmt.Sprintf("\tTRP\t#1\t;%s", row.GetComment()))
+			}
+		case "READ":
+			elem, err := st.GetElement(row.GetOp1())
+			if err != nil {
+				panic(fmt.Sprintf("Could not find the symbol table element to write %s", row.GetOp1()))
+			}
+
+			size, err := sym.IntFromData(elem.Data, "size")
+			if err != nil {
+				typ, err := sym.StringFromData(elem.Data, "type")
+				if err != nil {
+					panic(fmt.Sprintf("could not find size for symId: %s", elem.SymId))
+				}
+
+				//isArr, _ := sym.BoolFromData(elem.Data, "isArray")
+				isArr := false
+
+				size = sym.SizeOfType(typ, isArr)
+			}
+			switch size {
+			case 1:
+				asm = append(asm, fmt.Sprintf("%s\tTRP\t#4\t;%s", row.GetLabel(), row.GetComment()))
+			default:
+				asm = append(asm, fmt.Sprintf("%s\tTRP\t#2\t;%s", row.GetLabel(), row.GetComment()))
+			}
+			//save it to where its supposed to go
+			for _, r := range saveFromRegister(st, row.GetOp1(), "R0") {
+				switch {
+				case r.GetOp2() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
+				case r.GetOp1() != "":
+					asm = append(asm, fmt.Sprintf("\t%s\t%s\t;%s", r.GetCommand(), r.GetOp1(), r.GetComment()))
+				default:
+					asm = append(asm, fmt.Sprintf("\t%s\t;%s", r.GetCommand(), r.GetComment()))
+				}
 			}
 
 		case "GT", "GTE":
@@ -981,7 +1018,8 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 					panic(fmt.Sprintf("Could not get type for %s", varSymId))
 				}
 
-				isArray, _ := sym.BoolFromData(varElem.Data, "isArray")
+				//isArray, _ := sym.BoolFromData(varElem.Data, "isArray")
+				isArray := false
 
 				size = sym.SizeOfType(typ, isArray)
 			}
@@ -996,7 +1034,8 @@ func loadToRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRow)
 					panic(fmt.Sprintf("Could not get type for %s", varSymId))
 				}
 
-				isArray, _ := sym.BoolFromData(arrElem.Data, "isArray")
+				//isArray, _ := sym.BoolFromData(arrElem.Data, "isArray")
+				isArray := false
 
 				size = sym.SizeOfType(typ, isArray)
 			}
@@ -1087,7 +1126,8 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 					panic(fmt.Sprintf("Could not get type for %s", varSymId))
 				}
 
-				isArray, _ := sym.BoolFromData(varElem.Data, "isArray")
+				//isArray, _ := sym.BoolFromData(varElem.Data, "isArray")
+				isArray := false
 
 				size = sym.SizeOfType(typ, isArray)
 			}
@@ -1102,7 +1142,8 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 					panic(fmt.Sprintf("Could not get type for %s", varSymId))
 				}
 
-				isArray, _ := sym.BoolFromData(arrElem.Data, "isArray")
+				//isArray, _ := sym.BoolFromData(arrElem.Data, "isArray")
+				isArray := false
 
 				size = sym.SizeOfType(typ, isArray)
 			}

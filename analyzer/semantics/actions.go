@@ -470,6 +470,7 @@ func (s *SemanticManager) Return(st *sym.SymbolTable, isVoid bool) (err error) {
 			err = fmt.Errorf("Returning something from a void function")
 		}
 		s.debugMessage("Returning from a void function")
+		s.gen.AddRow("", "RTN", "", "", "", s.lx.GetCurFullLine())
 		return
 	}
 
@@ -835,7 +836,8 @@ func (s *SemanticManager) AssignmentOperator() error {
 	op2Typ := op2.GetType()
 
 	if s.IsSarAnArray(op1) != s.IsSarAnArray(op2) {
-		return fmt.Errorf("Must assign arrays to arrays %#v, %#v\n", op1, op2)
+		return fmt.Errorf("Must assign arrays to arrays")
+		//return fmt.Errorf("Must assign arrays to arrays %#v, %#v\n", op1, op2)
 	}
 
 	if op1Typ == "" {
