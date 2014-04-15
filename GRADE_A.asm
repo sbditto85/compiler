@@ -2,7 +2,7 @@ LDA     R9 FREE:
 ;; Call function "MAIN:"
 ;; Test for overflow
 MOV     R10 RSP
-ADI     R10 #-57          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+ADI     R10 #-63          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
 ;; Create Activation Record and invoke MAIN
@@ -20,15 +20,18 @@ ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
+ADI     RSP #-4
 ;; Temp variables on the stack
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
+ADI     RSP #-4
+ADI     RSP #-4
+ADI     RSP #-1
 ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
+ADI     RSP #-1
 ADI     RSP #-4
 ;; set the return address and jump
 MOV     R10 RPC         ; PC already at next instruction
@@ -58,64 +61,63 @@ NL:     .BYT    '\n'
 LTRCU:  .BYT    'U'
 LTRCO:  .BYT    'O'
 LTRCH:  .BYT    'H'
-Li143:	.INT	100
-Li190:	.INT	13
-Li228:	.BYT	'a'
-Li168:	.INT	7
-Li179:	.INT	10
-Li199:	.BYT	'D'
-Li250:	.INT	27
-Li172:	.INT	8
-Li175:	.INT	9
-Li158:	.INT	4
-Li82:	.BYT	1
-Li223:	.BYT	'c'
-Li293:	.INT	256
-Li195:	.INT	14
-Li128:	.BYT	','
-Li244:	.INT	25
-Li70:	.INT	2
-Li241:	.INT	24
-Li289:	.INT	512
-Li303:	.INT	5000
-Li115:	.BYT	'\n'
-Li189:	.BYT	't'
-Li167:	.BYT	'E'
-Li247:	.INT	26
-Li253:	.INT	28
-Li218:	.BYT	'i'
-Li110:	.BYT	0
-Li60:	.INT	0
-Li157:	.BYT	'e'
-Li161:	.INT	5
-Li209:	.BYT	'p'
-Li182:	.INT	11
-Li154:	.INT	3
-Li256:	.BYT	'r'
-Li64:	.INT	1
-Li151:	.BYT	'd'
-Li186:	.INT	12
-Li126:	.BYT	32
-Li171:	.BYT	'l'
-Li286:	.INT	1000
-Li164:	.INT	6
-Li178:	.BYT	'm'
-Li185:	.BYT	'n'
-Li204:	.BYT	'u'
-Li148:	.BYT	'A'
-Li193:	.BYT	':'
-Li58:	.INT	0
+Li153:	.INT	4
+Li163:	.INT	7
+Li245:	.INT	27
+Li174:	.INT	10
+Li123:	.BYT	','
+Li190:	.INT	14
+Li156:	.INT	5
+Li242:	.INT	26
+Li251:	.BYT	'r'
+Li146:	.BYT	'd'
+Li236:	.INT	24
+Li110:	.BYT	'\n'
+Li170:	.INT	9
+Li55:	.INT	0
+Li105:	.BYT	0
+Li143:	.BYT	'A'
+Li162:	.BYT	'E'
+Li167:	.INT	8
+Li223:	.BYT	'a'
+Li65:	.INT	2
+Li177:	.INT	11
+Li204:	.BYT	'p'
+Li248:	.INT	28
+Li59:	.INT	1
+Li218:	.BYT	'c'
+Li286:	.BYT	'g'
+Li77:	.BYT	1
+Li159:	.INT	6
+Li194:	.BYT	'D'
+Li152:	.BYT	'e'
+Li277:	.INT	42
+Li53:	.INT	0
+Li181:	.INT	12
+Li285:	.INT	37
+Li121:	.BYT	32
+Li185:	.INT	13
+Li173:	.BYT	'm'
+Li213:	.BYT	'i'
+Li184:	.BYT	't'
+Li199:	.BYT	'u'
+Li180:	.BYT	'n'
+Li188:	.BYT	':'
+Li138:	.INT	100
+Li149:	.INT	3
+Li166:	.BYT	'l'
+Li239:	.INT	25
 ;; functions
 ;; row: :	FUNC	Co4  ;     iTree() {
 Co4:   ADI   R0 #0 ;    iTree() {
-;; row: :	FRAME	this St52 ;     iTree() {
-;; Call function "St52:        iTree() {"
+;; row: :	FRAME	this St47 ;     iTree() {
+;; Call function "St47:        iTree() {"
 ;; Test for overflow
 :   MOV     R10 RSP
 ADI     R10 #-17          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
-;; Create Activation Record and invoke St52
+;; Create Activation Record and invoke St47
 MOV     R10 RFP
 MOV     R15 RSP
 ADI     RSP #-4
@@ -127,7 +129,7 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	CALL	St52  ;     iTree() {
+;; row: :	CALL	St47  ;     iTree() {
 ;; local varibales on the stack    ;     iTree() {
 ;; Temp variables on the stack
 ;; set the stack pointer
@@ -139,8 +141,8 @@ MOV     RFP R15
 MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
-JMP     St52:
-;; row: :	REF	Tv57 Iv2 this; 	root = null;
+JMP     St47:
+;; row: :	REF	Tv52 Iv2 this; 	root = null;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -150,8 +152,8 @@ JMP     St52:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv57 Li58 ; 	root = null;
-	LDR	R3 Li58:	;	root = null;
+;; row: :	MOV	Tv52 Li53 ; 	root = null;
+	LDR	R3 Li53:	;	root = null;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
@@ -178,26 +180,26 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me6  ;     private int fib(int root) {
 Me6:   ADI   R0 #0 ;    private int fib(int root) {
-;; row: :	EQ	Tv61 Pa5 Li60; 	if (root == 0) return 0;
+;; row: :	EQ	Tv56 Pa5 Li55; 	if (root == 0) return 0;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
-	LDR	R4 Li60:	;
+	LDR	R4 Li55:	;
 	CMP	R3 R4	;	if (root == 0) return 0;
-	BRZ	R3 BT339:	
+	BRZ	R3 BT301:	
 	SUB	R3 R3	; false branch
-	JMP	BF340:	
-BT339:	SUB	R3 R3	;True Branch
+	JMP	BF302:	
+BT301:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF340:	MOV	R10 RFP	;
+BF302:	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv61 If62 ; 	if (root == 0) return 0;
+;; row: :	BF	Tv56 If57 ; 	if (root == 0) return 0;
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If62:	;	if (root == 0) return 0;
-;; row: :	RETURN	Li60  ; 	if (root == 0) return 0;
+	BRZ	R3 If57:	;	if (root == 0) return 0;
+;; row: :	RETURN	Li55  ; 	if (root == 0) return 0;
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -206,7 +208,7 @@ MOV     R10 RSP
 CMP     R10 RSB
 BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
-	LDR	R0 Li60:	;
+	LDR	R0 Li55:	;
 STR     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
@@ -215,28 +217,28 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "	if (root == 0) return 0;"
 
 
-;; row: :	JMP	El67  ; 	else if (root == 1) return 1;
-	JMP	El67:	;	else if (root == 1) return 1;
-;; row: If62:	EQ	Tv65 Pa5 Li64; 	else if (root == 1) return 1;
-If62:	MOV	R10 RFP	;
+;; row: :	JMP	El62  ; 	else if (root == 1) return 1;
+	JMP	El62:	;	else if (root == 1) return 1;
+;; row: If57:	EQ	Tv60 Pa5 Li59; 	else if (root == 1) return 1;
+If57:	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
-	LDR	R4 Li64:	;
+	LDR	R4 Li59:	;
 	CMP	R3 R4	;	else if (root == 1) return 1;
-	BRZ	R3 BT341:	
+	BRZ	R3 BT303:	
 	SUB	R3 R3	; false branch
-	JMP	BF342:	
-BT341:	SUB	R3 R3	;True Branch
+	JMP	BF304:	
+BT303:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF342:	MOV	R10 RFP	;
+BF304:	MOV	R10 RFP	;
 	ADI	R10 #-17	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv65 If66 ; 	else if (root == 1) return 1;
+;; row: :	BF	Tv60 If61 ; 	else if (root == 1) return 1;
 	MOV	R10 RFP	;
 	ADI	R10 #-17	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If66:	;	else if (root == 1) return 1;
-;; row: :	RETURN	Li64  ; 	else if (root == 1) return 1;
+	BRZ	R3 If61:	;	else if (root == 1) return 1;
+;; row: :	RETURN	Li59  ; 	else if (root == 1) return 1;
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -245,7 +247,7 @@ MOV     R10 RSP
 CMP     R10 RSB
 BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
-	LDR	R0 Li64:	;
+	LDR	R0 Li59:	;
 STR     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
@@ -254,10 +256,10 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "	else if (root == 1) return 1;"
 
 
-;; row: :	JMP	El67  ; 	else return (fib(root - 1) + fib(root - 2));
-	JMP	El67:	;	else return (fib(root - 1) + fib(root - 2));
-;; row: If66:	SUB	Tv68 Li64 Pa5; 	else return (fib(root - 1) + fib(root - 2));
-If66:	LDR	R4 Li64:	;
+;; row: :	JMP	El62  ; 	else return (fib(root - 1) + fib(root - 2));
+	JMP	El62:	;	else return (fib(root - 1) + fib(root - 2));
+;; row: If61:	SUB	Tv63 Li59 Pa5; 	else return (fib(root - 1) + fib(root - 2));
+If61:	LDR	R4 Li59:	;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
@@ -284,8 +286,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv68  ; 	else return (fib(root - 1) + fib(root - 2));
-;; parameters on the stack (Tv68)  ; 	else return (fib(root - 1) + fib(root - 2));
+;; row: :	PUSH	Tv63  ; 	else return (fib(root - 1) + fib(root - 2));
+;; parameters on the stack (Tv63)  ; 	else return (fib(root - 1) + fib(root - 2));
 	MOV	R10 RFP	;
 	ADI	R10 #-18	;
 	LDR	R1 (R10)	;
@@ -311,13 +313,13 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me6:
-;; row: :	PEEK	Tv69  ; 	else return (fib(root - 1) + fib(root - 2));
+;; row: :	PEEK	Tv64  ; 	else return (fib(root - 1) + fib(root - 2));
 	LDR	R11 (RSP)	;	else return (fib(root - 1) + fib(root - 2));
 	MOV	R10 RFP	;
 	ADI	R10 #-22	;
 	STR	R11 (R10)	;
-;; row: :	SUB	Tv71 Li70 Pa5; 	else return (fib(root - 1) + fib(root - 2));
-	LDR	R4 Li70:	;
+;; row: :	SUB	Tv66 Li65 Pa5; 	else return (fib(root - 1) + fib(root - 2));
+	LDR	R4 Li65:	;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
@@ -344,8 +346,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv71  ; 	else return (fib(root - 1) + fib(root - 2));
-;; parameters on the stack (Tv71)  ; 	else return (fib(root - 1) + fib(root - 2));
+;; row: :	PUSH	Tv66  ; 	else return (fib(root - 1) + fib(root - 2));
+;; parameters on the stack (Tv66)  ; 	else return (fib(root - 1) + fib(root - 2));
 	MOV	R10 RFP	;
 	ADI	R10 #-26	;
 	LDR	R1 (R10)	;
@@ -371,12 +373,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me6:
-;; row: :	PEEK	Tv72  ; 	else return (fib(root - 1) + fib(root - 2));
+;; row: :	PEEK	Tv67  ; 	else return (fib(root - 1) + fib(root - 2));
 	LDR	R11 (RSP)	;	else return (fib(root - 1) + fib(root - 2));
 	MOV	R10 RFP	;
 	ADI	R10 #-30	;
 	STR	R11 (R10)	;
-;; row: :	ADD	Tv73 Tv72 Tv69; 	else return (fib(root - 1) + fib(root - 2));
+;; row: :	ADD	Tv68 Tv67 Tv64; 	else return (fib(root - 1) + fib(root - 2));
 	MOV	R10 RFP	;
 	ADI	R10 #-30	;
 	LDR	R4 (R10)	;
@@ -387,7 +389,7 @@ JMP     Me6:
 	MOV	R10 RFP	;
 	ADI	R10 #-34	;
 	STR	R3 (R10)	;
-;; row: :	RETURN	Tv73  ; 	else return (fib(root - 1) + fib(root - 2));
+;; row: :	RETURN	Tv68  ; 	else return (fib(root - 1) + fib(root - 2));
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -407,10 +409,10 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "	else return (fib(root - 1) + fib(root - 2));"
 
 
-;; row: El67:	RTN	  ;     }
+;; row: El62:	RTN	  ;     }
 ;; return from function
 ;; test for underflow
-El67:	MOV	RSP RFP	;     }
+El62:	MOV	RSP RFP	;     }
 LDR     R15 (RSP)
 MOV     R10 RSP
 CMP     R10 RSB
@@ -424,17 +426,17 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me8  ;     public bool add(int key) {
 Me8:   ADI   R0 #0 ;    public bool add(int key) {
-;; row: :	DIV	Tv74 Li70 Pa7; 	key = key + fib(key/2);
-	LDR	R4 Li70:	;
+;; row: :	DIV	Tv69 Li65 Pa7;     key = key + fib(key/2);
+	LDR	R4 Li65:	;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
-	DIV	R3 R4	;	key = key + fib(key/2);
+	DIV	R3 R4	;    key = key + fib(key/2);
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	STR	R3 (R10)	;
-;; row: :	FRAME	this Me6 ; 	key = key + fib(key/2);
-;; Call function "Me6:    	key = key + fib(key/2);"
+;; row: :	FRAME	this Me6 ;     key = key + fib(key/2);
+;; Call function "Me6:        key = key + fib(key/2);"
 ;; Test for overflow
 :   MOV     R10 RSP
 ADI     R10 #-38          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
@@ -452,15 +454,15 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv74  ; 	key = key + fib(key/2);
-;; parameters on the stack (Tv74)  ; 	key = key + fib(key/2);
+;; row: :	PUSH	Tv69  ;     key = key + fib(key/2);
+;; parameters on the stack (Tv69)  ;     key = key + fib(key/2);
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	CALL	Me6  ; 	key = key + fib(key/2);
-;; local varibales on the stack    ; 	key = key + fib(key/2);
+;; row: :	CALL	Me6  ;     key = key + fib(key/2);
+;; local varibales on the stack    ;     key = key + fib(key/2);
 ;; Temp variables on the stack
 ADI     RSP #-1
 ADI     RSP #-1
@@ -479,30 +481,30 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me6:
-;; row: :	PEEK	Tv75  ; 	key = key + fib(key/2);
-	LDR	R11 (RSP)	;	key = key + fib(key/2);
+;; row: :	PEEK	Tv70  ;     key = key + fib(key/2);
+	LDR	R11 (RSP)	;    key = key + fib(key/2);
 	MOV	R10 RFP	;
 	ADI	R10 #-20	;
 	STR	R11 (R10)	;
-;; row: :	ADD	Tv76 Tv75 Pa7; 	key = key + fib(key/2);
+;; row: :	ADD	Tv71 Tv70 Pa7;     key = key + fib(key/2);
 	MOV	R10 RFP	;
 	ADI	R10 #-20	;
 	LDR	R4 (R10)	;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
-	ADD	R3 R4	;	key = key + fib(key/2);
+	ADD	R3 R4	;    key = key + fib(key/2);
 	MOV	R10 RFP	;
 	ADI	R10 #-24	;
 	STR	R3 (R10)	;
-;; row: :	MOV	Pa7 Tv76 ; 	key = key + fib(key/2);
-	MOV	R10 RFP	;	key = key + fib(key/2);
+;; row: :	MOV	Pa7 Tv71 ;     key = key + fib(key/2);
+	MOV	R10 RFP	;    key = key + fib(key/2);
 	ADI	R10 #-24	;
 	LDR	R3 (R10)	;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv77 Iv2 this; 	if (root == null) {
+;; row: :	REF	Tv72 Iv2 this; 	if (root == null) {
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -512,27 +514,27 @@ JMP     Me6:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-28	;
 	STR	R13 (R10)	;
-;; row: :	EQ	Tv78 Tv77 Li58; 	if (root == null) {
+;; row: :	EQ	Tv73 Tv72 Li53; 	if (root == null) {
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-28	;
 	LDR	R13 (R10)	;
 	LDR	R3 (R13)	;Load to register
-	LDR	R4 Li58:	;
+	LDR	R4 Li53:	;
 	CMP	R3 R4	;	if (root == null) {
-	BRZ	R3 BT343:	
+	BRZ	R3 BT305:	
 	SUB	R3 R3	; false branch
-	JMP	BF344:	
-BT343:	SUB	R3 R3	;True Branch
+	JMP	BF306:	
+BT305:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF344:	MOV	R10 RFP	;
+BF306:	MOV	R10 RFP	;
 	ADI	R10 #-32	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv78 If79 ; 	if (root == null) {
+;; row: :	BF	Tv73 If74 ; 	if (root == null) {
 	MOV	R10 RFP	;
 	ADI	R10 #-32	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If79:	;	if (root == null) {
-;; row: :	REF	Tv80 Iv2 this; 	    root = new iNode(key);
+	BRZ	R3 If74:	;	if (root == null) {
+;; row: :	REF	Tv75 Iv2 this; 	    root = new iNode(key);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -542,7 +544,7 @@ BF344:	MOV	R10 RFP	;
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-33	;
 	STR	R13 (R10)	;
-;; row: :	NEWI	Cl17 Tv81 ; 	    root = new iNode(key);
+;; row: :	NEWI	Cl17 Tv76 ; 	    root = new iNode(key);
 ;; Test for heap overflow
 	MOV     R10 R9
 ADI     R10 #12
@@ -553,7 +555,7 @@ ADI     R9 #12
 	MOV	R10 RFP	;
 	ADI	R10 #-37	;
 	STR	R11 (R10)	;
-;; row: :	FRAME	Tv81 Co22 ; 	    root = new iNode(key);
+;; row: :	FRAME	Tv76 Co22 ; 	    root = new iNode(key);
 ;; Call function "Co22:    	    root = new iNode(key);"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -595,12 +597,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Co22:
-;; row: :	PEEK	Tv81  ; 	    root = new iNode(key);
+;; row: :	PEEK	Tv76  ; 	    root = new iNode(key);
 	LDR	R11 (RSP)	;	    root = new iNode(key);
 	MOV	R10 RFP	;
 	ADI	R10 #-37	;
 	STR	R11 (R10)	;
-;; row: :	MOV	Tv80 Tv81 ; 	    root = new iNode(key);
+;; row: :	MOV	Tv75 Tv76 ; 	    root = new iNode(key);
 	MOV	R10 RFP	;	    root = new iNode(key);
 	ADI	R10 #-37	;
 	LDR	R3 (R10)	;
@@ -608,7 +610,7 @@ JMP     Co22:
 	ADI	R10 #-33	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	RETURN	Li82  ; 	    return true;
+;; row: :	RETURN	Li77  ; 	    return true;
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -617,7 +619,7 @@ MOV     R10 RSP
 CMP     R10 RSB
 BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
-	LDB	R0 Li82:	;
+	LDB	R0 Li77:	;
 STB     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
@@ -626,10 +628,10 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "	    return true;"
 
 
-;; row: :	JMP	El83  ; 	else
-	JMP	El83:	;	else
-;; row: If79:	REF	Tv84 Iv2 this; 	    return insert(key, root);
-If79:	MOV	R10 RFP	;
+;; row: :	JMP	El78  ; 	else
+	JMP	El78:	;	else
+;; row: If74:	REF	Tv79 Iv2 this; 	    return insert(key, root);
+If74:	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
 	SUB	R14 R14
@@ -642,7 +644,7 @@ If79:	MOV	R10 RFP	;
 ;; Call function "Me11:    	    return insert(key, root);"
 ;; Test for overflow
 :   MOV     R10 RSP
-ADI     R10 #-72          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+ADI     R10 #-66          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
 ;; Create Activation Record and invoke Me11
@@ -664,8 +666,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv84  ; 	    return insert(key, root);
-;; parameters on the stack (Tv84)  ; 	    return insert(key, root);
+;; row: :	PUSH	Tv79  ; 	    return insert(key, root);
+;; parameters on the stack (Tv79)  ; 	    return insert(key, root);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-41	;
 	LDR	R13 (R10)	;
@@ -682,18 +684,18 @@ ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-1
 ADI     RSP #-4
+ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
+ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-72
+	ADI	RSP #-66
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -701,12 +703,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me11:
-;; row: :	PEEK	Tv85  ; 	    return insert(key, root);
-	LDR	R11 (RSP)	;	    return insert(key, root);
+;; row: :	PEEK	Tv80  ; 	    return insert(key, root);
+	LDB	R11 (RSP)	;	    return insert(key, root);
 	MOV	R10 RFP	;
 	ADI	R10 #-45	;
-	STR	R11 (R10)	;
-;; row: :	RETURN	Tv85  ; 	    return insert(key, root);
+	STB	R11 (R10)	;
+;; row: :	RETURN	Tv80  ; 	    return insert(key, root);
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -717,8 +719,8 @@ BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
 	MOV	R10 RFP	;
 	ADI	R10 #-45	;
-	LDR	R0 (R10)	;
-STR     R0 (RSP)        ; R0 is whatever the value is for return
+	LDB	R0 (R10)	;
+STB     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
 ADI     R11 #-4         ; now pointing at PFP
@@ -726,10 +728,10 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "	    return insert(key, root);"
 
 
-;; row: El83:	RTN	  ;     }
+;; row: El78:	RTN	  ;     }
 ;; return from function
 ;; test for underflow
-El83:	MOV	RSP RFP	;     }
+El78:	MOV	RSP RFP	;     }
 LDR     R15 (RSP)
 MOV     R10 RSP
 CMP     R10 RSB
@@ -743,7 +745,7 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me11  ;     private bool insert(int key, iNode node) {
 Me11:   ADI   R0 #0 ;    private bool insert(int key, iNode node) {
-;; row: :	REF	Tv86 Iv18 Pa10; 	if (key < node.root)
+;; row: :	REF	Tv81 Iv18 Pa10; 	if (key < node.root)
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
@@ -753,7 +755,7 @@ Me11:   ADI   R0 #0 ;    private bool insert(int key, iNode node) {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-20	;
 	STR	R13 (R10)	;
-;; row: :	LT	Tv87 Pa9 Tv86; 	if (key < node.root)
+;; row: :	LT	Tv82 Pa9 Tv81; 	if (key < node.root)
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
@@ -762,20 +764,20 @@ Me11:   ADI   R0 #0 ;    private bool insert(int key, iNode node) {
 	LDR	R13 (R10)	;
 	LDR	R4 (R13)	;Load to register
 	CMP	R3 R4	;	if (key < node.root)
-	BLT	R3 BT345:	
+	BLT	R3 BT307:	
 	SUB	R3 R3	; false branch
-	JMP	BF346:	
-BT345:	SUB	R3 R3	;True Branch
+	JMP	BF308:	
+BT307:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF346:	MOV	R10 RFP	;
+BF308:	MOV	R10 RFP	;
 	ADI	R10 #-24	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv87 If88 ; 	if (key < node.root)
+;; row: :	BF	Tv82 If83 ; 	if (key < node.root)
 	MOV	R10 RFP	;
 	ADI	R10 #-24	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If88:	;	if (key < node.root)
-;; row: :	REF	Tv89 Iv19 Pa10; 	    if (node.left == null) {
+	BRZ	R3 If83:	;	if (key < node.root)
+;; row: :	REF	Tv84 Iv19 Pa10; 	    if (node.left == null) {
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
@@ -785,27 +787,27 @@ BF346:	MOV	R10 RFP	;
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-25	;
 	STR	R13 (R10)	;
-;; row: :	EQ	Tv90 Tv89 Li58; 	    if (node.left == null) {
+;; row: :	EQ	Tv85 Tv84 Li53; 	    if (node.left == null) {
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-25	;
 	LDR	R13 (R10)	;
 	LDR	R3 (R13)	;Load to register
-	LDR	R4 Li58:	;
+	LDR	R4 Li53:	;
 	CMP	R3 R4	;	    if (node.left == null) {
-	BRZ	R3 BT347:	
+	BRZ	R3 BT309:	
 	SUB	R3 R3	; false branch
-	JMP	BF348:	
-BT347:	SUB	R3 R3	;True Branch
+	JMP	BF310:	
+BT309:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF348:	MOV	R10 RFP	;
+BF310:	MOV	R10 RFP	;
 	ADI	R10 #-29	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv90 If91 ; 	    if (node.left == null) {
+;; row: :	BF	Tv85 If86 ; 	    if (node.left == null) {
 	MOV	R10 RFP	;
 	ADI	R10 #-29	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If91:	;	    if (node.left == null) {
-;; row: :	REF	Tv92 Iv19 Pa10; 		node.left = new iNode(key);
+	BRZ	R3 If86:	;	    if (node.left == null) {
+;; row: :	REF	Tv87 Iv19 Pa10; 		node.left = new iNode(key);
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
@@ -815,7 +817,7 @@ BF348:	MOV	R10 RFP	;
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-30	;
 	STR	R13 (R10)	;
-;; row: :	NEWI	Cl17 Tv93 ; 		node.left = new iNode(key);
+;; row: :	NEWI	Cl17 Tv88 ; 		node.left = new iNode(key);
 ;; Test for heap overflow
 	MOV     R10 R9
 ADI     R10 #12
@@ -826,7 +828,7 @@ ADI     R9 #12
 	MOV	R10 RFP	;
 	ADI	R10 #-34	;
 	STR	R11 (R10)	;
-;; row: :	FRAME	Tv93 Co22 ; 		node.left = new iNode(key);
+;; row: :	FRAME	Tv88 Co22 ; 		node.left = new iNode(key);
 ;; Call function "Co22:    		node.left = new iNode(key);"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -868,12 +870,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Co22:
-;; row: :	PEEK	Tv93  ; 		node.left = new iNode(key);
+;; row: :	PEEK	Tv88  ; 		node.left = new iNode(key);
 	LDR	R11 (RSP)	;		node.left = new iNode(key);
 	MOV	R10 RFP	;
 	ADI	R10 #-34	;
 	STR	R11 (R10)	;
-;; row: :	MOV	Tv92 Tv93 ; 		node.left = new iNode(key);
+;; row: :	MOV	Tv87 Tv88 ; 		node.left = new iNode(key);
 	MOV	R10 RFP	;		node.left = new iNode(key);
 	ADI	R10 #-34	;
 	LDR	R3 (R10)	;
@@ -881,7 +883,7 @@ JMP     Co22:
 	ADI	R10 #-30	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	RETURN	Li82  ; 		return true;
+;; row: :	RETURN	Li77  ; 		return true;
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -890,7 +892,7 @@ MOV     R10 RSP
 CMP     R10 RSB
 BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
-	LDB	R0 Li82:	;
+	LDB	R0 Li77:	;
 STB     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
@@ -899,10 +901,10 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "		return true;"
 
 
-;; row: :	JMP	El94  ; 	    else 
-	JMP	El94:	;	    else 
-;; row: If91:	REF	Tv95 Iv19 Pa10; 		return insert(key, node.left);
-If91:	MOV	R10 RFP	;
+;; row: :	JMP	El89  ; 	    else 
+	JMP	El89:	;	    else 
+;; row: If86:	REF	Tv90 Iv19 Pa10; 		return insert(key, node.left);
+If86:	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
 	SUB	R14 R14
@@ -915,7 +917,7 @@ If91:	MOV	R10 RFP	;
 ;; Call function "Me11:    		return insert(key, node.left);"
 ;; Test for overflow
 :   MOV     R10 RSP
-ADI     R10 #-72          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+ADI     R10 #-66          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
 ;; Create Activation Record and invoke Me11
@@ -937,8 +939,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv95  ; 		return insert(key, node.left);
-;; parameters on the stack (Tv95)  ; 		return insert(key, node.left);
+;; row: :	PUSH	Tv90  ; 		return insert(key, node.left);
+;; parameters on the stack (Tv90)  ; 		return insert(key, node.left);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-38	;
 	LDR	R13 (R10)	;
@@ -955,18 +957,18 @@ ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-1
 ADI     RSP #-4
+ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
+ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-72
+	ADI	RSP #-66
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -974,12 +976,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me11:
-;; row: :	PEEK	Tv96  ; 		return insert(key, node.left);
-	LDR	R11 (RSP)	;		return insert(key, node.left);
+;; row: :	PEEK	Tv91  ; 		return insert(key, node.left);
+	LDB	R11 (RSP)	;		return insert(key, node.left);
 	MOV	R10 RFP	;
 	ADI	R10 #-42	;
-	STR	R11 (R10)	;
-;; row: :	RETURN	Tv96  ; 		return insert(key, node.left);
+	STB	R11 (R10)	;
+;; row: :	RETURN	Tv91  ; 		return insert(key, node.left);
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -990,8 +992,8 @@ BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
 	MOV	R10 RFP	;
 	ADI	R10 #-42	;
-	LDR	R0 (R10)	;
-STR     R0 (RSP)        ; R0 is whatever the value is for return
+	LDB	R0 (R10)	;
+STB     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
 ADI     R11 #-4         ; now pointing at PFP
@@ -999,41 +1001,41 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "		return insert(key, node.left);"
 
 
-;; row: El94:	JMP	El109  ; 	else if (key > node.root)
-El94:	JMP	El109:	;	else if (key > node.root)
-;; row: If88:	REF	Tv98 Iv18 Pa10; 	else if (key > node.root)
-If88:	MOV	R10 RFP	;
+;; row: El89:	JMP	El104  ; 	else if (key > node.root)
+El89:	JMP	El104:	;	else if (key > node.root)
+;; row: If83:	REF	Tv93 Iv18 Pa10; 	else if (key > node.root)
+If83:	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
 	SUB	R14 R14
 	ADI	R14 #0
 	ADD	R13 R14
 	MOV	R10 RFP	;Save Address
-	ADI	R10 #-46	;
+	ADI	R10 #-43	;
 	STR	R13 (R10)	;
-;; row: :	GT	Tv99 Pa9 Tv98; 	else if (key > node.root)
+;; row: :	GT	Tv94 Pa9 Tv93; 	else if (key > node.root)
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
 	MOV	R10 RFP	;Load Address
-	ADI	R10 #-46	;
+	ADI	R10 #-43	;
 	LDR	R13 (R10)	;
 	LDR	R4 (R13)	;Load to register
 	CMP	R3 R4	;	else if (key > node.root)
-	BGT	R3 BT349:	
+	BGT	R3 BT311:	
 	SUB	R3 R3	; false branch
-	JMP	BF350:	
-BT349:	SUB	R3 R3	;True Branch
+	JMP	BF312:	
+BT311:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF350:	MOV	R10 RFP	;
-	ADI	R10 #-50	;
+BF312:	MOV	R10 RFP	;
+	ADI	R10 #-47	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv99 If100 ; 	else if (key > node.root)
+;; row: :	BF	Tv94 If95 ; 	else if (key > node.root)
 	MOV	R10 RFP	;
-	ADI	R10 #-50	;
+	ADI	R10 #-47	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If100:	;	else if (key > node.root)
-;; row: :	REF	Tv101 Iv20 Pa10; 	    if (node.right == null) {
+	BRZ	R3 If95:	;	else if (key > node.root)
+;; row: :	REF	Tv96 Iv20 Pa10; 	    if (node.right == null) {
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
@@ -1041,29 +1043,29 @@ BF350:	MOV	R10 RFP	;
 	ADI	R14 #8
 	ADD	R13 R14
 	MOV	R10 RFP	;Save Address
-	ADI	R10 #-51	;
+	ADI	R10 #-48	;
 	STR	R13 (R10)	;
-;; row: :	EQ	Tv102 Tv101 Li58; 	    if (node.right == null) {
+;; row: :	EQ	Tv97 Tv96 Li53; 	    if (node.right == null) {
 	MOV	R10 RFP	;Load Address
-	ADI	R10 #-51	;
+	ADI	R10 #-48	;
 	LDR	R13 (R10)	;
 	LDR	R3 (R13)	;Load to register
-	LDR	R4 Li58:	;
+	LDR	R4 Li53:	;
 	CMP	R3 R4	;	    if (node.right == null) {
-	BRZ	R3 BT351:	
+	BRZ	R3 BT313:	
 	SUB	R3 R3	; false branch
-	JMP	BF352:	
-BT351:	SUB	R3 R3	;True Branch
+	JMP	BF314:	
+BT313:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF352:	MOV	R10 RFP	;
-	ADI	R10 #-55	;
+BF314:	MOV	R10 RFP	;
+	ADI	R10 #-52	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv102 If103 ; 	    if (node.right == null) {
+;; row: :	BF	Tv97 If98 ; 	    if (node.right == null) {
 	MOV	R10 RFP	;
-	ADI	R10 #-55	;
+	ADI	R10 #-52	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If103:	;	    if (node.right == null) {
-;; row: :	REF	Tv104 Iv20 Pa10; 		node.right = new iNode(key);
+	BRZ	R3 If98:	;	    if (node.right == null) {
+;; row: :	REF	Tv99 Iv20 Pa10; 		node.right = new iNode(key);
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
@@ -1071,9 +1073,9 @@ BF352:	MOV	R10 RFP	;
 	ADI	R14 #8
 	ADD	R13 R14
 	MOV	R10 RFP	;Save Address
-	ADI	R10 #-56	;
+	ADI	R10 #-53	;
 	STR	R13 (R10)	;
-;; row: :	NEWI	Cl17 Tv105 ; 		node.right = new iNode(key);
+;; row: :	NEWI	Cl17 Tv100 ; 		node.right = new iNode(key);
 ;; Test for heap overflow
 	MOV     R10 R9
 ADI     R10 #12
@@ -1082,9 +1084,9 @@ BGT     R10 HOVRFLW:
 MOV     R11 R9
 ADI     R9 #12
 	MOV	R10 RFP	;
-	ADI	R10 #-60	;
+	ADI	R10 #-57	;
 	STR	R11 (R10)	;
-;; row: :	FRAME	Tv105 Co22 ; 		node.right = new iNode(key);
+;; row: :	FRAME	Tv100 Co22 ; 		node.right = new iNode(key);
 ;; Call function "Co22:    		node.right = new iNode(key);"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -1099,7 +1101,7 @@ STR     R10 (RSP)
 ADI     RSP #-4
 ;; this
 	MOV	R10 RFP	;
-	ADI	R10 #-60	;
+	ADI	R10 #-57	;
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
@@ -1126,20 +1128,20 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Co22:
-;; row: :	PEEK	Tv105  ; 		node.right = new iNode(key);
+;; row: :	PEEK	Tv100  ; 		node.right = new iNode(key);
 	LDR	R11 (RSP)	;		node.right = new iNode(key);
 	MOV	R10 RFP	;
-	ADI	R10 #-60	;
+	ADI	R10 #-57	;
 	STR	R11 (R10)	;
-;; row: :	MOV	Tv104 Tv105 ; 		node.right = new iNode(key);
+;; row: :	MOV	Tv99 Tv100 ; 		node.right = new iNode(key);
 	MOV	R10 RFP	;		node.right = new iNode(key);
-	ADI	R10 #-60	;
+	ADI	R10 #-57	;
 	LDR	R3 (R10)	;
 	MOV	R10 RFP	;Load Address
-	ADI	R10 #-56	;
+	ADI	R10 #-53	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	RETURN	Li82  ; 		return true;
+;; row: :	RETURN	Li77  ; 		return true;
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -1148,7 +1150,7 @@ MOV     R10 RSP
 CMP     R10 RSB
 BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
-	LDB	R0 Li82:	;
+	LDB	R0 Li77:	;
 STB     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
@@ -1157,23 +1159,23 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "		return true;"
 
 
-;; row: :	JMP	El106  ; 	    else
-	JMP	El106:	;	    else
-;; row: If103:	REF	Tv107 Iv20 Pa10; 		return insert(key, node.right);
-If103:	MOV	R10 RFP	;
+;; row: :	JMP	El101  ; 	    else
+	JMP	El101:	;	    else
+;; row: If98:	REF	Tv102 Iv20 Pa10; 		return insert(key, node.right);
+If98:	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
 	SUB	R14 R14
 	ADI	R14 #8
 	ADD	R13 R14
 	MOV	R10 RFP	;Save Address
-	ADI	R10 #-64	;
+	ADI	R10 #-61	;
 	STR	R13 (R10)	;
 ;; row: :	FRAME	this Me11 ; 		return insert(key, node.right);
 ;; Call function "Me11:    		return insert(key, node.right);"
 ;; Test for overflow
 :   MOV     R10 RSP
-ADI     R10 #-72          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+ADI     R10 #-66          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
 ;; Create Activation Record and invoke Me11
@@ -1195,10 +1197,10 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv107  ; 		return insert(key, node.right);
-;; parameters on the stack (Tv107)  ; 		return insert(key, node.right);
+;; row: :	PUSH	Tv102  ; 		return insert(key, node.right);
+;; parameters on the stack (Tv102)  ; 		return insert(key, node.right);
 	MOV	R10 RFP	;Load Address
-	ADI	R10 #-64	;
+	ADI	R10 #-61	;
 	LDR	R13 (R10)	;
 	LDR	R1 (R13)	;Load to register
 STR     R1 (RSP)
@@ -1213,18 +1215,18 @@ ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-1
 ADI     RSP #-4
+ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
+ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-72
+	ADI	RSP #-66
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1232,12 +1234,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me11:
-;; row: :	PEEK	Tv108  ; 		return insert(key, node.right);
-	LDR	R11 (RSP)	;		return insert(key, node.right);
+;; row: :	PEEK	Tv103  ; 		return insert(key, node.right);
+	LDB	R11 (RSP)	;		return insert(key, node.right);
 	MOV	R10 RFP	;
-	ADI	R10 #-68	;
-	STR	R11 (R10)	;
-;; row: :	RETURN	Tv108  ; 		return insert(key, node.right);
+	ADI	R10 #-65	;
+	STB	R11 (R10)	;
+;; row: :	RETURN	Tv103  ; 		return insert(key, node.right);
 ;; return from function
 ;; test for underflow
 MOV     RSP RFP
@@ -1247,9 +1249,9 @@ CMP     R10 RSB
 BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
 	MOV	R10 RFP	;
-	ADI	R10 #-68	;
-	LDR	R0 (R10)	;
-STR     R0 (RSP)        ; R0 is whatever the value is for return
+	ADI	R10 #-65	;
+	LDB	R0 (R10)	;
+STB     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
 ADI     R11 #-4         ; now pointing at PFP
@@ -1257,18 +1259,18 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "		return insert(key, node.right);"
 
 
-;; row: El106:	JMP	El109  ; 	else
-El106:	JMP	El109:	;	else
-;; row: If100:	RETURN	Li110  ; 	    return false;
+;; row: El101:	JMP	El104  ; 	else
+El101:	JMP	El104:	;	else
+;; row: If95:	RETURN	Li105  ; 	    return false;
 ;; return from function
 ;; test for underflow
-If100:	MOV	RSP RFP	; 	    return false;
+If95:	MOV	RSP RFP	; 	    return false;
 LDR     R15 (RSP)
 MOV     R10 RSP
 CMP     R10 RSB
 BGT     R10 UDRFLW:     ; oopsy underflow problem
 ;; store the return value
-	LDB	R0 Li110:	;
+	LDB	R0 Li105:	;
 STB     R0 (RSP)        ; R0 is whatever the value is for return
 ;; set previous frame to current frame and return
 MOV     R11 RFP
@@ -1277,10 +1279,10 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "	    return false;"
 
 
-;; row: El109:	RTN	  ;     }
+;; row: El104:	RTN	  ;     }
 ;; return from function
 ;; test for underflow
-El109:	MOV	RSP RFP	;     }
+El104:	MOV	RSP RFP	;     }
 LDR     R15 (RSP)
 MOV     R10 RSP
 CMP     R10 RSB
@@ -1294,7 +1296,7 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me12  ;     public void print() {
 Me12:   ADI   R0 #0 ;    public void print() {
-;; row: :	REF	Tv112 Iv3 this; 	first = true;
+;; row: :	REF	Tv107 Iv3 this; 	first = true;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1304,13 +1306,13 @@ Me12:   ADI   R0 #0 ;    public void print() {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv112 Li82 ; 	first = true;
-	LDB	R3 Li82:	;	first = true;
+;; row: :	MOV	Tv107 Li77 ; 	first = true;
+	LDB	R3 Li77:	;	first = true;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv113 Iv2 this; 	inorder(root);
+;; row: :	REF	Tv108 Iv2 this; 	inorder(root);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1339,8 +1341,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv113  ; 	inorder(root);
-;; parameters on the stack (Tv113)  ; 	inorder(root);
+;; row: :	PUSH	Tv108  ; 	inorder(root);
+;; parameters on the stack (Tv108)  ; 	inorder(root);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-13	;
 	LDR	R13 (R10)	;
@@ -1366,14 +1368,14 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me14:
-;; row: :	PEEK	Tv114  ; 	inorder(root);
+;; row: :	PEEK	Tv109  ; 	inorder(root);
 	LDR	R11 (RSP)	;	inorder(root);
 	MOV	R10 RFP	;
 	ADI	R10 #-17	;
 	STR	R11 (R10)	;
-;; row: :	WRITE	Li115  ; 	cout << ('\n');
-	LDB	R0 Li115:	;
-	TRP	#3	;	cout << ('\n');
+;; row: :	WRITE	Li110  ; 	cout << '\n';
+	LDB	R0 Li110:	;
+	TRP	#3	;	cout << '\n';
 ;; row: :	RTN	  ;     }
 ;; return from function
 ;; test for underflow
@@ -1391,25 +1393,25 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me14  ;     private void inorder(iNode node) {
 Me14:   ADI   R0 #0 ;    private void inorder(iNode node) {
-;; row: :	EQ	Tv116 Pa13 Li58; 	if (node == null) return;
+;; row: :	EQ	Tv111 Pa13 Li53; 	if (node == null) return;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
-	LDR	R4 Li58:	;
+	LDR	R4 Li53:	;
 	CMP	R3 R4	;	if (node == null) return;
-	BRZ	R3 BT353:	
+	BRZ	R3 BT315:	
 	SUB	R3 R3	; false branch
-	JMP	BF354:	
-BT353:	SUB	R3 R3	;True Branch
+	JMP	BF316:	
+BT315:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF354:	MOV	R10 RFP	;
+BF316:	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv116 If117 ; 	if (node == null) return;
+;; row: :	BF	Tv111 If112 ; 	if (node == null) return;
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDB	R3 (R10)	;
-	BRZ	R3 If117:	;	if (node == null) return;
+	BRZ	R3 If112:	;	if (node == null) return;
 ;; row: :	RTN	  ; 	if (node == null) return;
 ;; return from function
 ;; test for underflow
@@ -1425,8 +1427,8 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "	if (node == null) return;"
 
 
-;; row: If117:	REF	Tv118 Iv19 Pa13; 	inorder(node.left);
-If117:	MOV	R10 RFP	;
+;; row: If112:	REF	Tv113 Iv19 Pa13; 	inorder(node.left);
+If112:	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
 	SUB	R14 R14
@@ -1454,8 +1456,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv118  ; 	inorder(node.left);
-;; parameters on the stack (Tv118)  ; 	inorder(node.left);
+;; row: :	PUSH	Tv113  ; 	inorder(node.left);
+;; parameters on the stack (Tv113)  ; 	inorder(node.left);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-17	;
 	LDR	R13 (R10)	;
@@ -1481,7 +1483,7 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me14:
-;; row: :	PEEK	Tv119  ; 	inorder(node.left);
+;; row: :	PEEK	Tv114  ; 	inorder(node.left);
 	LDR	R11 (RSP)	;	inorder(node.left);
 	MOV	R10 RFP	;
 	ADI	R10 #-21	;
@@ -1528,12 +1530,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me16:
-;; row: :	PEEK	Tv120  ; 	visit(node);
+;; row: :	PEEK	Tv115  ; 	visit(node);
 	LDR	R11 (RSP)	;	visit(node);
 	MOV	R10 RFP	;
 	ADI	R10 #-25	;
 	STR	R11 (R10)	;
-;; row: :	REF	Tv121 Iv20 Pa13; 	inorder(node.right);
+;; row: :	REF	Tv116 Iv20 Pa13; 	inorder(node.right);
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
@@ -1562,8 +1564,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv121  ; 	inorder(node.right);
-;; parameters on the stack (Tv121)  ; 	inorder(node.right);
+;; row: :	PUSH	Tv116  ; 	inorder(node.right);
+;; parameters on the stack (Tv116)  ; 	inorder(node.right);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-29	;
 	LDR	R13 (R10)	;
@@ -1589,7 +1591,7 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me14:
-;; row: :	PEEK	Tv122  ; 	inorder(node.right);
+;; row: :	PEEK	Tv117  ; 	inorder(node.right);
 	LDR	R11 (RSP)	;	inorder(node.right);
 	MOV	R10 RFP	;
 	ADI	R10 #-33	;
@@ -1611,7 +1613,7 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me16  ;     private void visit(iNode node) {
 Me16:   ADI   R0 #0 ;    private void visit(iNode node) {
-;; row: :	REF	Tv123 Iv3 this; 	if (first) {
+;; row: :	REF	Tv118 Iv3 this; 	if (first) {
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1621,13 +1623,13 @@ Me16:   ADI   R0 #0 ;    private void visit(iNode node) {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-16	;
 	STR	R13 (R10)	;
-;; row: :	BF	Tv123 If124 ; 	if (first) {
+;; row: :	BF	Tv118 If119 ; 	if (first) {
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
 	LDB	R3 (R13)	;Load to register
-	BRZ	R3 If124:	;	if (first) {
-;; row: :	REF	Tv125 Iv3 this; 	    first = false;
+	BRZ	R3 If119:	;	if (first) {
+;; row: :	REF	Tv120 Iv3 this; 	    first = false;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1637,22 +1639,22 @@ Me16:   ADI   R0 #0 ;    private void visit(iNode node) {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-17	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv125 Li110 ; 	    first = false;
-	LDB	R3 Li110:	;	    first = false;
+;; row: :	MOV	Tv120 Li105 ; 	    first = false;
+	LDB	R3 Li105:	;	    first = false;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-17	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	WRITE	Li126  ; 	    cout << ' ';
-	LDB	R0 Li126:	;
+;; row: :	WRITE	Li121  ; 	    cout << ' ';
+	LDB	R0 Li121:	;
 	TRP	#3	;	    cout << ' ';
-;; row: :	JMP	El127  ; 	else cout << ',';
-	JMP	El127:	;	else cout << ',';
-;; row: If124:	WRITE	Li128  ; 	else cout << ',';
-If124:	LDB	R0 Li128:	;
+;; row: :	JMP	El122  ; 	else cout << ',';
+	JMP	El122:	;	else cout << ',';
+;; row: If119:	WRITE	Li123  ; 	else cout << ',';
+If119:	LDB	R0 Li123:	;
 	TRP	#3	;	else cout << ',';
-;; row: El127:	REF	Tv129 Iv18 Pa15; 	cout << node.root;
-El127:	MOV	R10 RFP	;
+;; row: El122:	REF	Tv124 Iv18 Pa15; 	cout << node.root;
+El122:	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
 	SUB	R14 R14
@@ -1661,7 +1663,7 @@ El127:	MOV	R10 RFP	;
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-18	;
 	STR	R13 (R10)	;
-;; row: :	WRITE	Tv129  ; 	cout << node.root;
+;; row: :	WRITE	Tv124  ; 	cout << node.root;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-18	;
 	LDR	R13 (R10)	;
@@ -1682,9 +1684,9 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "    }"
 
 
-;; row: :	FUNC	St52  ; }
-St52:   ADI   R0 #0 ;}
-;; row: :	REF	Tv54 Iv2 this;     private iNode root;
+;; row: :	FUNC	St47  ; }
+St47:   ADI   R0 #0 ;}
+;; row: :	REF	Tv49 Iv2 this;     private iNode root;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1694,7 +1696,7 @@ St52:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv56 Iv3 this;     private bool first;
+;; row: :	REF	Tv51 Iv3 this;     private bool first;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1721,14 +1723,14 @@ JMR     R15             ; go back "}"
 
 ;; row: :	FUNC	Co22  ;     iNode(int key) {
 Co22:   ADI   R0 #0 ;    iNode(int key) {
-;; row: :	FRAME	this St130 ;     iNode(int key) {
-;; Call function "St130:        iNode(int key) {"
+;; row: :	FRAME	this St125 ;     iNode(int key) {
+;; Call function "St125:        iNode(int key) {"
 ;; Test for overflow
 :   MOV     R10 RSP
 ADI     R10 #-24          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
-;; Create Activation Record and invoke St130
+;; Create Activation Record and invoke St125
 MOV     R10 RFP
 MOV     R15 RSP
 ADI     RSP #-4
@@ -1740,7 +1742,7 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	CALL	St130  ;     iNode(int key) {
+;; row: :	CALL	St125  ;     iNode(int key) {
 ;; local varibales on the stack    ;     iNode(int key) {
 ;; Temp variables on the stack
 ;; set the stack pointer
@@ -1752,8 +1754,8 @@ MOV     RFP R15
 MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
-JMP     St130:
-;; row: :	REF	Tv134 Iv18 this; 	root = key;
+JMP     St125:
+;; row: :	REF	Tv129 Iv18 this; 	root = key;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1763,7 +1765,7 @@ JMP     St130:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-16	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv134 Pa21 ; 	root = key;
+;; row: :	MOV	Tv129 Pa21 ; 	root = key;
 	MOV	R10 RFP	;	root = key;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
@@ -1771,7 +1773,7 @@ JMP     St130:
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv135 Iv19 this; 	left = null;
+;; row: :	REF	Tv130 Iv19 this; 	left = null;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1781,13 +1783,13 @@ JMP     St130:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-20	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv135 Li58 ; 	left = null;
-	LDR	R3 Li58:	;	left = null;
+;; row: :	MOV	Tv130 Li53 ; 	left = null;
+	LDR	R3 Li53:	;	left = null;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-20	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv136 Iv20 this; 	right = null;
+;; row: :	REF	Tv131 Iv20 this; 	right = null;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1797,8 +1799,8 @@ JMP     St130:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-24	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv136 Li58 ; 	right = null;
-	LDR	R3 Li58:	;	right = null;
+;; row: :	MOV	Tv131 Li53 ; 	right = null;
+	LDR	R3 Li53:	;	right = null;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-24	;
 	LDR	R13 (R10)	;
@@ -1823,9 +1825,9 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "    }"
 
 
-;; row: :	FUNC	St130  ; }
-St130:   ADI   R0 #0 ;}
-;; row: :	REF	Tv131 Iv18 this;     public int root;
+;; row: :	FUNC	St125  ; }
+St125:   ADI   R0 #0 ;}
+;; row: :	REF	Tv126 Iv18 this;     public int root;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1835,7 +1837,7 @@ St130:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv132 Iv19 this;     public iNode left;
+;; row: :	REF	Tv127 Iv19 this;     public iNode left;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1845,7 +1847,7 @@ St130:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-16	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv133 Iv20 this;     public iNode right;
+;; row: :	REF	Tv128 Iv20 this;     public iNode right;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1872,14 +1874,14 @@ JMR     R15             ; go back "}"
 
 ;; row: :	FUNC	Co27  ;     Message() {
 Co27:   ADI   R0 #0 ;    Message() {
-;; row: :	FRAME	this St137 ;     Message() {
-;; Call function "St137:        Message() {"
+;; row: :	FRAME	this St132 ;     Message() {
+;; Call function "St132:        Message() {"
 ;; Test for overflow
 :   MOV     R10 RSP
 ADI     R10 #-21          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
-;; Create Activation Record and invoke St137
+;; Create Activation Record and invoke St132
 MOV     R10 RFP
 MOV     R15 RSP
 ADI     RSP #-4
@@ -1891,7 +1893,7 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	CALL	St137  ;     Message() {
+;; row: :	CALL	St132  ;     Message() {
 ;; local varibales on the stack    ;     Message() {
 ;; Temp variables on the stack
 ;; set the stack pointer
@@ -1903,8 +1905,8 @@ MOV     RFP R15
 MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
-JMP     St137:
-;; row: :	REF	Tv142 Iv24 this;     	msg = new char[100];
+JMP     St132:
+;; row: :	REF	Tv137 Iv24 this;     	msg = new char[100];
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1914,15 +1916,15 @@ JMP     St137:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	MUL	Tv145 1 Li143;     	msg = new char[100];
+;; row: :	MUL	Tv140 1 Li138;     	msg = new char[100];
 	SUB	R4 R4	;    	msg = new char[100];
 	ADI	R4 #1	;    	msg = new char[100];
-	LDR	R3 Li143:	;
+	LDR	R3 Li138:	;
 	MUL	R3 R4	;    	msg = new char[100];
 	MOV	R10 RFP	;
 	ADI	R10 #-17	;
 	STR	R3 (R10)	;
-;; row: :	NEW	Tv145 Tv144 ;     	msg = new char[100];
+;; row: :	NEW	Tv140 Tv139 ;     	msg = new char[100];
 	MOV	R10 RFP	;
 	ADI	R10 #-17	;
 	LDR	R3 (R10)	;
@@ -1936,7 +1938,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-13	;
 	STR	R11 (R10)	;
-;; row: :	MOV	Tv142 Tv144 ;     	msg = new char[100];
+;; row: :	MOV	Tv137 Tv139 ;     	msg = new char[100];
 	MOV	R10 RFP	;    	msg = new char[100];
 	ADI	R10 #-13	;
 	LDR	R3 (R10)	;
@@ -1944,7 +1946,7 @@ ADD     R9 R3
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv146 Iv24 this; 	msg[0] = 'A';
+;; row: :	REF	Tv141 Iv24 this; 	msg[0] = 'A';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1954,12 +1956,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-21	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv147 Li60 Tv146; 	msg[0] = 'A';
+;; row: :	AEF	Tv142 Li55 Tv141; 	msg[0] = 'A';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-21	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li60:	;
+	LDR	R14 Li55:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -1967,13 +1969,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-22	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv147 Li148 ; 	msg[0] = 'A';
-	LDB	R3 Li148:	;	msg[0] = 'A';
+;; row: :	MOV	Tv142 Li143 ; 	msg[0] = 'A';
+	LDB	R3 Li143:	;	msg[0] = 'A';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-22	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv149 Iv24 this; 	msg[1] = 'd';
+;; row: :	REF	Tv144 Iv24 this; 	msg[1] = 'd';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -1983,12 +1985,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-23	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv150 Li64 Tv149; 	msg[1] = 'd';
+;; row: :	AEF	Tv145 Li59 Tv144; 	msg[1] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-23	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li64:	;
+	LDR	R14 Li59:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -1996,13 +1998,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-24	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv150 Li151 ; 	msg[1] = 'd';
-	LDB	R3 Li151:	;	msg[1] = 'd';
+;; row: :	MOV	Tv145 Li146 ; 	msg[1] = 'd';
+	LDB	R3 Li146:	;	msg[1] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-24	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv152 Iv24 this; 	msg[2] = 'd';
+;; row: :	REF	Tv147 Iv24 this; 	msg[2] = 'd';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2012,12 +2014,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-25	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv153 Li70 Tv152; 	msg[2] = 'd';
+;; row: :	AEF	Tv148 Li65 Tv147; 	msg[2] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-25	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li70:	;
+	LDR	R14 Li65:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2025,13 +2027,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-26	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv153 Li151 ; 	msg[2] = 'd';
-	LDB	R3 Li151:	;	msg[2] = 'd';
+;; row: :	MOV	Tv148 Li146 ; 	msg[2] = 'd';
+	LDB	R3 Li146:	;	msg[2] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-26	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv155 Iv24 this; 	msg[3] = 'e';
+;; row: :	REF	Tv150 Iv24 this; 	msg[3] = 'e';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2041,12 +2043,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-27	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv156 Li154 Tv155; 	msg[3] = 'e';
+;; row: :	AEF	Tv151 Li149 Tv150; 	msg[3] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-27	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li154:	;
+	LDR	R14 Li149:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2054,13 +2056,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-28	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv156 Li157 ; 	msg[3] = 'e';
-	LDB	R3 Li157:	;	msg[3] = 'e';
+;; row: :	MOV	Tv151 Li152 ; 	msg[3] = 'e';
+	LDB	R3 Li152:	;	msg[3] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-28	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv159 Iv24 this; 	msg[4] = 'd';
+;; row: :	REF	Tv154 Iv24 this; 	msg[4] = 'd';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2070,12 +2072,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-29	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv160 Li158 Tv159; 	msg[4] = 'd';
+;; row: :	AEF	Tv155 Li153 Tv154; 	msg[4] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-29	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li158:	;
+	LDR	R14 Li153:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2083,13 +2085,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-30	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv160 Li151 ; 	msg[4] = 'd';
-	LDB	R3 Li151:	;	msg[4] = 'd';
+;; row: :	MOV	Tv155 Li146 ; 	msg[4] = 'd';
+	LDB	R3 Li146:	;	msg[4] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-30	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv162 Iv24 this; 	msg[5] = ' ';
+;; row: :	REF	Tv157 Iv24 this; 	msg[5] = ' ';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2099,12 +2101,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-31	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv163 Li161 Tv162; 	msg[5] = ' ';
+;; row: :	AEF	Tv158 Li156 Tv157; 	msg[5] = ' ';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-31	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li161:	;
+	LDR	R14 Li156:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2112,13 +2114,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-32	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv163 Li126 ; 	msg[5] = ' ';
-	LDB	R3 Li126:	;	msg[5] = ' ';
+;; row: :	MOV	Tv158 Li121 ; 	msg[5] = ' ';
+	LDB	R3 Li121:	;	msg[5] = ' ';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-32	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv165 Iv24 this; 	msg[6] = 'E';
+;; row: :	REF	Tv160 Iv24 this; 	msg[6] = 'E';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2128,12 +2130,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-33	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv166 Li164 Tv165; 	msg[6] = 'E';
+;; row: :	AEF	Tv161 Li159 Tv160; 	msg[6] = 'E';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-33	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li164:	;
+	LDR	R14 Li159:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2141,13 +2143,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-34	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv166 Li167 ; 	msg[6] = 'E';
-	LDB	R3 Li167:	;	msg[6] = 'E';
+;; row: :	MOV	Tv161 Li162 ; 	msg[6] = 'E';
+	LDB	R3 Li162:	;	msg[6] = 'E';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-34	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv169 Iv24 this; 	msg[7] = 'l';
+;; row: :	REF	Tv164 Iv24 this; 	msg[7] = 'l';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2157,12 +2159,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-35	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv170 Li168 Tv169; 	msg[7] = 'l';
+;; row: :	AEF	Tv165 Li163 Tv164; 	msg[7] = 'l';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-35	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li168:	;
+	LDR	R14 Li163:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2170,13 +2172,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-36	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv170 Li171 ; 	msg[7] = 'l';
-	LDB	R3 Li171:	;	msg[7] = 'l';
+;; row: :	MOV	Tv165 Li166 ; 	msg[7] = 'l';
+	LDB	R3 Li166:	;	msg[7] = 'l';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-36	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv173 Iv24 this; 	msg[8] = 'e';
+;; row: :	REF	Tv168 Iv24 this; 	msg[8] = 'e';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2186,12 +2188,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-37	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv174 Li172 Tv173; 	msg[8] = 'e';
+;; row: :	AEF	Tv169 Li167 Tv168; 	msg[8] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-37	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li172:	;
+	LDR	R14 Li167:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2199,13 +2201,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-38	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv174 Li157 ; 	msg[8] = 'e';
-	LDB	R3 Li157:	;	msg[8] = 'e';
+;; row: :	MOV	Tv169 Li152 ; 	msg[8] = 'e';
+	LDB	R3 Li152:	;	msg[8] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-38	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv176 Iv24 this; 	msg[9] = 'm';
+;; row: :	REF	Tv171 Iv24 this; 	msg[9] = 'm';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2215,12 +2217,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-39	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv177 Li175 Tv176; 	msg[9] = 'm';
+;; row: :	AEF	Tv172 Li170 Tv171; 	msg[9] = 'm';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-39	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li175:	;
+	LDR	R14 Li170:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2228,13 +2230,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-40	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv177 Li178 ; 	msg[9] = 'm';
-	LDB	R3 Li178:	;	msg[9] = 'm';
+;; row: :	MOV	Tv172 Li173 ; 	msg[9] = 'm';
+	LDB	R3 Li173:	;	msg[9] = 'm';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-40	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv180 Iv24 this; 	msg[10] = 'e';
+;; row: :	REF	Tv175 Iv24 this; 	msg[10] = 'e';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2244,12 +2246,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-41	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv181 Li179 Tv180; 	msg[10] = 'e';
+;; row: :	AEF	Tv176 Li174 Tv175; 	msg[10] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-41	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li179:	;
+	LDR	R14 Li174:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2257,13 +2259,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-42	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv181 Li157 ; 	msg[10] = 'e';
-	LDB	R3 Li157:	;	msg[10] = 'e';
+;; row: :	MOV	Tv176 Li152 ; 	msg[10] = 'e';
+	LDB	R3 Li152:	;	msg[10] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-42	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv183 Iv24 this; 	msg[11] = 'n';
+;; row: :	REF	Tv178 Iv24 this; 	msg[11] = 'n';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2273,12 +2275,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-43	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv184 Li182 Tv183; 	msg[11] = 'n';
+;; row: :	AEF	Tv179 Li177 Tv178; 	msg[11] = 'n';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-43	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li182:	;
+	LDR	R14 Li177:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2286,13 +2288,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-44	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv184 Li185 ; 	msg[11] = 'n';
-	LDB	R3 Li185:	;	msg[11] = 'n';
+;; row: :	MOV	Tv179 Li180 ; 	msg[11] = 'n';
+	LDB	R3 Li180:	;	msg[11] = 'n';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-44	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv187 Iv24 this; 	msg[12] = 't';
+;; row: :	REF	Tv182 Iv24 this; 	msg[12] = 't';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2302,12 +2304,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-45	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv188 Li186 Tv187; 	msg[12] = 't';
+;; row: :	AEF	Tv183 Li181 Tv182; 	msg[12] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-45	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li186:	;
+	LDR	R14 Li181:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2315,13 +2317,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-46	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv188 Li189 ; 	msg[12] = 't';
-	LDB	R3 Li189:	;	msg[12] = 't';
+;; row: :	MOV	Tv183 Li184 ; 	msg[12] = 't';
+	LDB	R3 Li184:	;	msg[12] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-46	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv191 Iv24 this; 	msg[13] = ':';
+;; row: :	REF	Tv186 Iv24 this; 	msg[13] = ':';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2331,12 +2333,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-47	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv192 Li190 Tv191; 	msg[13] = ':';
+;; row: :	AEF	Tv187 Li185 Tv186; 	msg[13] = ':';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-47	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li190:	;
+	LDR	R14 Li185:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2344,13 +2346,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-48	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv192 Li193 ; 	msg[13] = ':';
-	LDB	R3 Li193:	;	msg[13] = ':';
+;; row: :	MOV	Tv187 Li188 ; 	msg[13] = ':';
+	LDB	R3 Li188:	;	msg[13] = ':';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-48	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv194 Iv25 this; 	i = 14;
+;; row: :	REF	Tv189 Iv25 this; 	i = 14;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2360,13 +2362,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-49	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv194 Li195 ; 	i = 14;
-	LDR	R3 Li195:	;	i = 14;
+;; row: :	MOV	Tv189 Li190 ; 	i = 14;
+	LDR	R3 Li190:	;	i = 14;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-49	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv196 Iv25 this; 	msg[i] = 'D';
+;; row: :	REF	Tv191 Iv25 this; 	msg[i] = 'D';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2376,7 +2378,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-53	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv197 Iv24 this; 	msg[i] = 'D';
+;; row: :	REF	Tv192 Iv24 this; 	msg[i] = 'D';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2386,7 +2388,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-57	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv198 Tv196 Tv197; 	msg[i] = 'D';
+;; row: :	AEF	Tv193 Tv191 Tv192; 	msg[i] = 'D';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-57	;
 	LDR	R13 (R10)	;
@@ -2402,13 +2404,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-58	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv198 Li199 ; 	msg[i] = 'D';
-	LDB	R3 Li199:	;	msg[i] = 'D';
+;; row: :	MOV	Tv193 Li194 ; 	msg[i] = 'D';
+	LDB	R3 Li194:	;	msg[i] = 'D';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-58	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv200 Iv25 this; 	msg[i+1] = 'u';
+;; row: :	REF	Tv195 Iv25 this; 	msg[i+1] = 'u';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2418,8 +2420,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-59	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv201 Li64 Tv200; 	msg[i+1] = 'u';
-	LDR	R4 Li64:	;
+;; row: :	ADD	Tv196 Li59 Tv195; 	msg[i+1] = 'u';
+	LDR	R4 Li59:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-59	;
 	LDR	R13 (R10)	;
@@ -2428,7 +2430,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-63	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv202 Iv24 this; 	msg[i+1] = 'u';
+;; row: :	REF	Tv197 Iv24 this; 	msg[i+1] = 'u';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2438,7 +2440,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-67	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv203 Tv201 Tv202; 	msg[i+1] = 'u';
+;; row: :	AEF	Tv198 Tv196 Tv197; 	msg[i+1] = 'u';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-67	;
 	LDR	R13 (R10)	;
@@ -2453,13 +2455,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-68	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv203 Li204 ; 	msg[i+1] = 'u';
-	LDB	R3 Li204:	;	msg[i+1] = 'u';
+;; row: :	MOV	Tv198 Li199 ; 	msg[i+1] = 'u';
+	LDB	R3 Li199:	;	msg[i+1] = 'u';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-68	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv205 Iv25 this; 	msg[i+2] = 'p';
+;; row: :	REF	Tv200 Iv25 this; 	msg[i+2] = 'p';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2469,8 +2471,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-69	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv206 Li70 Tv205; 	msg[i+2] = 'p';
-	LDR	R4 Li70:	;
+;; row: :	ADD	Tv201 Li65 Tv200; 	msg[i+2] = 'p';
+	LDR	R4 Li65:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-69	;
 	LDR	R13 (R10)	;
@@ -2479,7 +2481,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-73	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv207 Iv24 this; 	msg[i+2] = 'p';
+;; row: :	REF	Tv202 Iv24 this; 	msg[i+2] = 'p';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2489,7 +2491,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-77	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv208 Tv206 Tv207; 	msg[i+2] = 'p';
+;; row: :	AEF	Tv203 Tv201 Tv202; 	msg[i+2] = 'p';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-77	;
 	LDR	R13 (R10)	;
@@ -2504,13 +2506,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-78	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv208 Li209 ; 	msg[i+2] = 'p';
-	LDB	R3 Li209:	;	msg[i+2] = 'p';
+;; row: :	MOV	Tv203 Li204 ; 	msg[i+2] = 'p';
+	LDB	R3 Li204:	;	msg[i+2] = 'p';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-78	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv210 Iv25 this; 	msg[i+3] = 'l';
+;; row: :	REF	Tv205 Iv25 this; 	msg[i+3] = 'l';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2520,8 +2522,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-79	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv211 Li154 Tv210; 	msg[i+3] = 'l';
-	LDR	R4 Li154:	;
+;; row: :	ADD	Tv206 Li149 Tv205; 	msg[i+3] = 'l';
+	LDR	R4 Li149:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-79	;
 	LDR	R13 (R10)	;
@@ -2530,7 +2532,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-83	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv212 Iv24 this; 	msg[i+3] = 'l';
+;; row: :	REF	Tv207 Iv24 this; 	msg[i+3] = 'l';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2540,7 +2542,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-87	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv213 Tv211 Tv212; 	msg[i+3] = 'l';
+;; row: :	AEF	Tv208 Tv206 Tv207; 	msg[i+3] = 'l';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-87	;
 	LDR	R13 (R10)	;
@@ -2555,13 +2557,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-88	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv213 Li171 ; 	msg[i+3] = 'l';
-	LDB	R3 Li171:	;	msg[i+3] = 'l';
+;; row: :	MOV	Tv208 Li166 ; 	msg[i+3] = 'l';
+	LDB	R3 Li166:	;	msg[i+3] = 'l';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-88	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv214 Iv25 this; 	msg[i+4] = 'i';
+;; row: :	REF	Tv209 Iv25 this; 	msg[i+4] = 'i';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2571,8 +2573,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-89	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv215 Li158 Tv214; 	msg[i+4] = 'i';
-	LDR	R4 Li158:	;
+;; row: :	ADD	Tv210 Li153 Tv209; 	msg[i+4] = 'i';
+	LDR	R4 Li153:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-89	;
 	LDR	R13 (R10)	;
@@ -2581,7 +2583,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-93	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv216 Iv24 this; 	msg[i+4] = 'i';
+;; row: :	REF	Tv211 Iv24 this; 	msg[i+4] = 'i';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2591,7 +2593,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-97	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv217 Tv215 Tv216; 	msg[i+4] = 'i';
+;; row: :	AEF	Tv212 Tv210 Tv211; 	msg[i+4] = 'i';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-97	;
 	LDR	R13 (R10)	;
@@ -2606,13 +2608,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-98	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv217 Li218 ; 	msg[i+4] = 'i';
-	LDB	R3 Li218:	;	msg[i+4] = 'i';
+;; row: :	MOV	Tv212 Li213 ; 	msg[i+4] = 'i';
+	LDB	R3 Li213:	;	msg[i+4] = 'i';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-98	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv219 Iv25 this; 	msg[i+5] = 'c';
+;; row: :	REF	Tv214 Iv25 this; 	msg[i+5] = 'c';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2622,8 +2624,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-99	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv220 Li161 Tv219; 	msg[i+5] = 'c';
-	LDR	R4 Li161:	;
+;; row: :	ADD	Tv215 Li156 Tv214; 	msg[i+5] = 'c';
+	LDR	R4 Li156:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-99	;
 	LDR	R13 (R10)	;
@@ -2632,7 +2634,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-103	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv221 Iv24 this; 	msg[i+5] = 'c';
+;; row: :	REF	Tv216 Iv24 this; 	msg[i+5] = 'c';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2642,7 +2644,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-107	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv222 Tv220 Tv221; 	msg[i+5] = 'c';
+;; row: :	AEF	Tv217 Tv215 Tv216; 	msg[i+5] = 'c';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-107	;
 	LDR	R13 (R10)	;
@@ -2657,13 +2659,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-108	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv222 Li223 ; 	msg[i+5] = 'c';
-	LDB	R3 Li223:	;	msg[i+5] = 'c';
+;; row: :	MOV	Tv217 Li218 ; 	msg[i+5] = 'c';
+	LDB	R3 Li218:	;	msg[i+5] = 'c';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-108	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv224 Iv25 this; 	msg[i+6] = 'a';
+;; row: :	REF	Tv219 Iv25 this; 	msg[i+6] = 'a';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2673,8 +2675,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-109	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv225 Li164 Tv224; 	msg[i+6] = 'a';
-	LDR	R4 Li164:	;
+;; row: :	ADD	Tv220 Li159 Tv219; 	msg[i+6] = 'a';
+	LDR	R4 Li159:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-109	;
 	LDR	R13 (R10)	;
@@ -2683,7 +2685,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-113	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv226 Iv24 this; 	msg[i+6] = 'a';
+;; row: :	REF	Tv221 Iv24 this; 	msg[i+6] = 'a';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2693,7 +2695,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-117	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv227 Tv225 Tv226; 	msg[i+6] = 'a';
+;; row: :	AEF	Tv222 Tv220 Tv221; 	msg[i+6] = 'a';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-117	;
 	LDR	R13 (R10)	;
@@ -2708,13 +2710,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-118	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv227 Li228 ; 	msg[i+6] = 'a';
-	LDB	R3 Li228:	;	msg[i+6] = 'a';
+;; row: :	MOV	Tv222 Li223 ; 	msg[i+6] = 'a';
+	LDB	R3 Li223:	;	msg[i+6] = 'a';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-118	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv229 Iv25 this; 	msg[i+7] = 't';
+;; row: :	REF	Tv224 Iv25 this; 	msg[i+7] = 't';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2724,8 +2726,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-119	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv230 Li168 Tv229; 	msg[i+7] = 't';
-	LDR	R4 Li168:	;
+;; row: :	ADD	Tv225 Li163 Tv224; 	msg[i+7] = 't';
+	LDR	R4 Li163:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-119	;
 	LDR	R13 (R10)	;
@@ -2734,7 +2736,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-123	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv231 Iv24 this; 	msg[i+7] = 't';
+;; row: :	REF	Tv226 Iv24 this; 	msg[i+7] = 't';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2744,7 +2746,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-127	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv232 Tv230 Tv231; 	msg[i+7] = 't';
+;; row: :	AEF	Tv227 Tv225 Tv226; 	msg[i+7] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-127	;
 	LDR	R13 (R10)	;
@@ -2759,13 +2761,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-128	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv232 Li189 ; 	msg[i+7] = 't';
-	LDB	R3 Li189:	;	msg[i+7] = 't';
+;; row: :	MOV	Tv227 Li184 ; 	msg[i+7] = 't';
+	LDB	R3 Li184:	;	msg[i+7] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-128	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv233 Iv25 this; 	msg[i+8] = 'e';
+;; row: :	REF	Tv228 Iv25 this; 	msg[i+8] = 'e';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2775,8 +2777,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-129	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv234 Li172 Tv233; 	msg[i+8] = 'e';
-	LDR	R4 Li172:	;
+;; row: :	ADD	Tv229 Li167 Tv228; 	msg[i+8] = 'e';
+	LDR	R4 Li167:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-129	;
 	LDR	R13 (R10)	;
@@ -2785,7 +2787,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-133	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv235 Iv24 this; 	msg[i+8] = 'e';
+;; row: :	REF	Tv230 Iv24 this; 	msg[i+8] = 'e';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2795,7 +2797,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-137	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv236 Tv234 Tv235; 	msg[i+8] = 'e';
+;; row: :	AEF	Tv231 Tv229 Tv230; 	msg[i+8] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-137	;
 	LDR	R13 (R10)	;
@@ -2810,13 +2812,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-138	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv236 Li157 ; 	msg[i+8] = 'e';
-	LDB	R3 Li157:	;	msg[i+8] = 'e';
+;; row: :	MOV	Tv231 Li152 ; 	msg[i+8] = 'e';
+	LDB	R3 Li152:	;	msg[i+8] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-138	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv237 Iv25 this; 	msg[i+9] = 'm';
+;; row: :	REF	Tv232 Iv25 this; 	msg[i+9] = 'm';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2826,8 +2828,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-139	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv238 Li175 Tv237; 	msg[i+9] = 'm';
-	LDR	R4 Li175:	;
+;; row: :	ADD	Tv233 Li170 Tv232; 	msg[i+9] = 'm';
+	LDR	R4 Li170:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-139	;
 	LDR	R13 (R10)	;
@@ -2836,7 +2838,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;
 	ADI	R10 #-143	;
 	STR	R3 (R10)	;
-;; row: :	REF	Tv239 Iv24 this; 	msg[i+9] = 'm';
+;; row: :	REF	Tv234 Iv24 this; 	msg[i+9] = 'm';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2846,7 +2848,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-147	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv240 Tv238 Tv239; 	msg[i+9] = 'm';
+;; row: :	AEF	Tv235 Tv233 Tv234; 	msg[i+9] = 'm';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-147	;
 	LDR	R13 (R10)	;
@@ -2861,13 +2863,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-148	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv240 Li178 ; 	msg[i+9] = 'm';
-	LDB	R3 Li178:	;	msg[i+9] = 'm';
+;; row: :	MOV	Tv235 Li173 ; 	msg[i+9] = 'm';
+	LDB	R3 Li173:	;	msg[i+9] = 'm';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-148	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv242 Iv24 this; 	msg[24] = 'E';
+;; row: :	REF	Tv237 Iv24 this; 	msg[24] = 'E';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2877,12 +2879,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-149	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv243 Li241 Tv242; 	msg[24] = 'E';
+;; row: :	AEF	Tv238 Li236 Tv237; 	msg[24] = 'E';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-149	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li241:	;
+	LDR	R14 Li236:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2890,13 +2892,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-150	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv243 Li167 ; 	msg[24] = 'E';
-	LDB	R3 Li167:	;	msg[24] = 'E';
+;; row: :	MOV	Tv238 Li162 ; 	msg[24] = 'E';
+	LDB	R3 Li162:	;	msg[24] = 'E';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-150	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv245 Iv24 this; 	msg[25] = 'n';
+;; row: :	REF	Tv240 Iv24 this; 	msg[25] = 'n';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2906,12 +2908,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-151	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv246 Li244 Tv245; 	msg[25] = 'n';
+;; row: :	AEF	Tv241 Li239 Tv240; 	msg[25] = 'n';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-151	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li244:	;
+	LDR	R14 Li239:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2919,13 +2921,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-152	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv246 Li185 ; 	msg[25] = 'n';
-	LDB	R3 Li185:	;	msg[25] = 'n';
+;; row: :	MOV	Tv241 Li180 ; 	msg[25] = 'n';
+	LDB	R3 Li180:	;	msg[25] = 'n';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-152	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv248 Iv24 this; 	msg[26] = 't';
+;; row: :	REF	Tv243 Iv24 this; 	msg[26] = 't';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2935,12 +2937,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-153	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv249 Li247 Tv248; 	msg[26] = 't';
+;; row: :	AEF	Tv244 Li242 Tv243; 	msg[26] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-153	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li247:	;
+	LDR	R14 Li242:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2948,13 +2950,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-154	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv249 Li189 ; 	msg[26] = 't';
-	LDB	R3 Li189:	;	msg[26] = 't';
+;; row: :	MOV	Tv244 Li184 ; 	msg[26] = 't';
+	LDB	R3 Li184:	;	msg[26] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-154	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv251 Iv24 this; 	msg[27] = 'e';
+;; row: :	REF	Tv246 Iv24 this; 	msg[27] = 'e';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2964,12 +2966,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-155	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv252 Li250 Tv251; 	msg[27] = 'e';
+;; row: :	AEF	Tv247 Li245 Tv246; 	msg[27] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-155	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li250:	;
+	LDR	R14 Li245:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -2977,13 +2979,13 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-156	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv252 Li157 ; 	msg[27] = 'e';
-	LDB	R3 Li157:	;	msg[27] = 'e';
+;; row: :	MOV	Tv247 Li152 ; 	msg[27] = 'e';
+	LDB	R3 Li152:	;	msg[27] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-156	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv254 Iv24 this; 	msg[28] = 'r';
+;; row: :	REF	Tv249 Iv24 this; 	msg[28] = 'r';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -2993,12 +2995,12 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-157	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv255 Li253 Tv254; 	msg[28] = 'r';
+;; row: :	AEF	Tv250 Li248 Tv249; 	msg[28] = 'r';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-157	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li253:	;
+	LDR	R14 Li248:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -3006,8 +3008,8 @@ ADD     R9 R3
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-158	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv255 Li256 ; 	msg[28] = 'r';
-	LDB	R3 Li256:	;	msg[28] = 'r';
+;; row: :	MOV	Tv250 Li251 ; 	msg[28] = 'r';
+	LDB	R3 Li251:	;	msg[28] = 'r';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-158	;
 	LDR	R13 (R10)	;
@@ -3034,29 +3036,29 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me30  ;     private void print(int i, int end) {
 Me30:   ADI   R0 #0 ;    private void print(int i, int end) {
-;; row: Wh257:	LTE	Tv258 Pa28 Pa29; 	while (i <= end) {
-Wh257:	MOV	R10 RFP	;
+;; row: Wh252:	LTE	Tv253 Pa28 Pa29; 	while (i <= end) {
+Wh252:	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	LDR	R4 (R10)	;
 	CMP	R3 R4	;	while (i <= end) {
-	BLT	R3 BT355:	
-	BRZ	R3 BT355:	
+	BLT	R3 BT317:	
+	BRZ	R3 BT317:	
 	SUB	R3 R3	; false branch
-	JMP	BF356:	
-BT355:	SUB	R3 R3	;True Branch
+	JMP	BF318:	
+BT317:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF356:	MOV	R10 RFP	;
+BF318:	MOV	R10 RFP	;
 	ADI	R10 #-20	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv258 En259 ; 	while (i <= end) {
+;; row: :	BF	Tv253 En254 ; 	while (i <= end) {
 	MOV	R10 RFP	;
 	ADI	R10 #-20	;
 	LDB	R3 (R10)	;
-	BRZ	R3 En259:	;	while (i <= end) {
-;; row: :	REF	Tv260 Iv24 this; 	    cout << msg[i];
+	BRZ	R3 En254:	;	while (i <= end) {
+;; row: :	REF	Tv255 Iv24 this; 	    cout << msg[i];
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3066,7 +3068,7 @@ BF356:	MOV	R10 RFP	;
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-21	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv261 Pa28 Tv260; 	    cout << msg[i];
+;; row: :	AEF	Tv256 Pa28 Tv255; 	    cout << msg[i];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-21	;
 	LDR	R13 (R10)	;
@@ -3081,14 +3083,14 @@ BF356:	MOV	R10 RFP	;
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-22	;
 	STR	R13 (R10)	;
-;; row: :	WRITE	Tv261  ; 	    cout << msg[i];
+;; row: :	WRITE	Tv256  ; 	    cout << msg[i];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-22	;
 	LDR	R13 (R10)	;
 	LDB	R0 (R13)	;Load to register
 	TRP	#3	;	    cout << msg[i];
-;; row: :	ADD	Tv262 Li64 Pa28; 	    i = i + 1;
-	LDR	R4 Li64:	;
+;; row: :	ADD	Tv257 Li59 Pa28; 	    i = i + 1;
+	LDR	R4 Li59:	;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
@@ -3096,19 +3098,19 @@ BF356:	MOV	R10 RFP	;
 	MOV	R10 RFP	;
 	ADI	R10 #-23	;
 	STR	R3 (R10)	;
-;; row: :	MOV	Pa28 Tv262 ; 	    i = i + 1;
+;; row: :	MOV	Pa28 Tv257 ; 	    i = i + 1;
 	MOV	R10 RFP	;	    i = i + 1;
 	ADI	R10 #-23	;
 	LDR	R3 (R10)	;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	STR	R3 (R10)	;
-;; row: :	JMP	Wh257  ;     }	
-	JMP	Wh257:	;    }	
-;; row: En259:	RTN	  ;     }	
+;; row: :	JMP	Wh252  ;     }	
+	JMP	Wh252:	;    }	
+;; row: En254:	RTN	  ;     }	
 ;; return from function
 ;; test for underflow
-En259:	MOV	RSP RFP	;     }	
+En254:	MOV	RSP RFP	;     }	
 LDR     R15 (RSP)
 MOV     R10 RSP
 CMP     R10 RSB
@@ -3141,14 +3143,14 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li60  ; 	print(0, 13);
-;; parameters on the stack (Li60)  ; 	print(0, 13);
-	LDR	R1 Li60:	;
+;; row: :	PUSH	Li55  ; 	print(0, 13);
+;; parameters on the stack (Li55)  ; 	print(0, 13);
+	LDR	R1 Li55:	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li190  ; 	print(0, 13);
-;; parameters on the stack (Li190)  ; 	print(0, 13);
-	LDR	R1 Li190:	;
+;; row: :	PUSH	Li185  ; 	print(0, 13);
+;; parameters on the stack (Li185)  ; 	print(0, 13);
+	LDR	R1 Li185:	;
 STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(0, 13);
@@ -3168,7 +3170,7 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me30:
-;; row: :	PEEK	Tv263  ; 	print(0, 13);
+;; row: :	PEEK	Tv258  ; 	print(0, 13);
 	LDR	R11 (RSP)	;	print(0, 13);
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
@@ -3178,8 +3180,8 @@ JMP     Me30:
 	ADI	R10 #-12	;
 	LDR	R0 (R10)	;
 	TRP	#1	;	cout << elm;
-;; row: :	WRITE	Li115  ; 	cout << '\n';
-	LDB	R0 Li115:	;
+;; row: :	WRITE	Li110  ; 	cout << '\n';
+	LDB	R0 Li110:	;
 	TRP	#3	;	cout << '\n';
 ;; row: :	RTN	  ;     }
 ;; return from function
@@ -3198,7 +3200,7 @@ JMR     R15             ; go back "    }"
 
 ;; row: :	FUNC	Me34  ;     public bool msg2(int elm) {
 Me34:   ADI   R0 #0 ;    public bool msg2(int elm) {
-;; row: :	REF	Tv264 Iv25 this; 	i = 14;
+;; row: :	REF	Tv259 Iv25 this; 	i = 14;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3208,13 +3210,13 @@ Me34:   ADI   R0 #0 ;    public bool msg2(int elm) {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-16	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv264 Li195 ; 	i = 14;
-	LDR	R3 Li195:	;	i = 14;
+;; row: :	MOV	Tv259 Li190 ; 	i = 14;
+	LDR	R3 Li190:	;	i = 14;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv265 Iv26 this; 	end = (i + 8);
+;; row: :	REF	Tv260 Iv26 this; 	end = (i + 8);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3224,7 +3226,7 @@ Me34:   ADI   R0 #0 ;    public bool msg2(int elm) {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-20	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv266 Iv25 this; 	end = (i + 8);
+;; row: :	REF	Tv261 Iv25 this; 	end = (i + 8);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3234,8 +3236,8 @@ Me34:   ADI   R0 #0 ;    public bool msg2(int elm) {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-24	;
 	STR	R13 (R10)	;
-;; row: :	ADD	Tv267 Li172 Tv266; 	end = (i + 8);
-	LDR	R4 Li172:	;
+;; row: :	ADD	Tv262 Li167 Tv261; 	end = (i + 8);
+	LDR	R4 Li167:	;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-24	;
 	LDR	R13 (R10)	;
@@ -3244,7 +3246,7 @@ Me34:   ADI   R0 #0 ;    public bool msg2(int elm) {
 	MOV	R10 RFP	;
 	ADI	R10 #-28	;
 	STR	R3 (R10)	;
-;; row: :	MOV	Tv265 Tv267 ; 	end = (i + 8);
+;; row: :	MOV	Tv260 Tv262 ; 	end = (i + 8);
 	MOV	R10 RFP	;	end = (i + 8);
 	ADI	R10 #-28	;
 	LDR	R3 (R10)	;
@@ -3252,7 +3254,7 @@ Me34:   ADI   R0 #0 ;    public bool msg2(int elm) {
 	ADI	R10 #-20	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv268 Iv25 this; 	print(i, end);
+;; row: :	REF	Tv263 Iv25 this; 	print(i, end);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3262,7 +3264,7 @@ Me34:   ADI   R0 #0 ;    public bool msg2(int elm) {
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-32	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv269 Iv26 this; 	print(i, end);
+;; row: :	REF	Tv264 Iv26 this; 	print(i, end);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3291,16 +3293,16 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv268  ; 	print(i, end);
-;; parameters on the stack (Tv268)  ; 	print(i, end);
+;; row: :	PUSH	Tv263  ; 	print(i, end);
+;; parameters on the stack (Tv263)  ; 	print(i, end);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-32	;
 	LDR	R13 (R10)	;
 	LDR	R1 (R13)	;Load to register
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv269  ; 	print(i, end);
-;; parameters on the stack (Tv269)  ; 	print(i, end);
+;; row: :	PUSH	Tv264  ; 	print(i, end);
+;; parameters on the stack (Tv264)  ; 	print(i, end);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-36	;
 	LDR	R13 (R10)	;
@@ -3324,12 +3326,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me30:
-;; row: :	PEEK	Tv270  ; 	print(i, end);
+;; row: :	PEEK	Tv265  ; 	print(i, end);
 	LDR	R11 (RSP)	;	print(i, end);
 	MOV	R10 RFP	;
 	ADI	R10 #-40	;
 	STR	R11 (R10)	;
-;; row: :	REF	Tv271 Iv24 this; 	cout << msg[5];
+;; row: :	REF	Tv266 Iv24 this; 	cout << msg[5];
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3339,12 +3341,12 @@ JMP     Me30:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-44	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv272 Li161 Tv271; 	cout << msg[5];
+;; row: :	AEF	Tv267 Li156 Tv266; 	cout << msg[5];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-44	;
 	LDR	R13 (R10)	;
 	LDR	R13 (R13)
-	LDR	R14 Li161:	;
+	LDR	R14 Li156:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
@@ -3352,7 +3354,7 @@ JMP     Me30:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-45	;
 	STR	R13 (R10)	;
-;; row: :	WRITE	Tv272  ; 	cout << msg[5];
+;; row: :	WRITE	Tv267  ; 	cout << msg[5];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-45	;
 	LDR	R13 (R10)	;
@@ -3377,14 +3379,14 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li164  ; 	print(6, 13);
-;; parameters on the stack (Li164)  ; 	print(6, 13);
-	LDR	R1 Li164:	;
+;; row: :	PUSH	Li159  ; 	print(6, 13);
+;; parameters on the stack (Li159)  ; 	print(6, 13);
+	LDR	R1 Li159:	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li190  ; 	print(6, 13);
-;; parameters on the stack (Li190)  ; 	print(6, 13);
-	LDR	R1 Li190:	;
+;; row: :	PUSH	Li185  ; 	print(6, 13);
+;; parameters on the stack (Li185)  ; 	print(6, 13);
+	LDR	R1 Li185:	;
 STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(6, 13);
@@ -3404,7 +3406,7 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me30:
-;; row: :	PEEK	Tv273  ; 	print(6, 13);
+;; row: :	PEEK	Tv268  ; 	print(6, 13);
 	LDR	R11 (RSP)	;	print(6, 13);
 	MOV	R10 RFP	;
 	ADI	R10 #-46	;
@@ -3414,8 +3416,8 @@ JMP     Me30:
 	ADI	R10 #-12	;
 	LDR	R0 (R10)	;
 	TRP	#1	;	cout << elm;
-;; row: :	WRITE	Li115  ; 	cout << '\n';
-	LDB	R0 Li115:	;
+;; row: :	WRITE	Li110  ; 	cout << '\n';
+	LDB	R0 Li110:	;
 	TRP	#3	;	cout << '\n';
 ;; row: :	RTN	  ;     }
 ;; return from function
@@ -3453,14 +3455,14 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li241  ; 	print(24, 28);
-;; parameters on the stack (Li241)  ; 	print(24, 28);
-	LDR	R1 Li241:	;
+;; row: :	PUSH	Li236  ; 	print(24, 28);
+;; parameters on the stack (Li236)  ; 	print(24, 28);
+	LDR	R1 Li236:	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li253  ; 	print(24, 28);
-;; parameters on the stack (Li253)  ; 	print(24, 28);
-	LDR	R1 Li253:	;
+;; row: :	PUSH	Li248  ; 	print(24, 28);
+;; parameters on the stack (Li248)  ; 	print(24, 28);
+	LDR	R1 Li248:	;
 STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(24, 28);
@@ -3480,12 +3482,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me30:
-;; row: :	PEEK	Tv274  ; 	print(24, 28);
+;; row: :	PEEK	Tv269  ; 	print(24, 28);
 	LDR	R11 (RSP)	;	print(24, 28);
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	STR	R11 (R10)	;
-;; row: :	REF	Tv275 Iv25 this; 	i = 5;
+;; row: :	REF	Tv270 Iv25 this; 	i = 5;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3495,13 +3497,13 @@ JMP     Me30:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-16	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv275 Li161 ; 	i = 5;
-	LDR	R3 Li161:	;	i = 5;
+;; row: :	MOV	Tv270 Li156 ; 	i = 5;
+	LDR	R3 Li156:	;	i = 5;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv276 Iv25 this; 	print(i, i);
+;; row: :	REF	Tv271 Iv25 this; 	print(i, i);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3511,7 +3513,7 @@ JMP     Me30:
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-20	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv277 Iv25 this; 	print(i, i);
+;; row: :	REF	Tv272 Iv25 this; 	print(i, i);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3540,16 +3542,16 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv276  ; 	print(i, i);
-;; parameters on the stack (Tv276)  ; 	print(i, i);
+;; row: :	PUSH	Tv271  ; 	print(i, i);
+;; parameters on the stack (Tv271)  ; 	print(i, i);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-20	;
 	LDR	R13 (R10)	;
 	LDR	R1 (R13)	;Load to register
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Tv277  ; 	print(i, i);
-;; parameters on the stack (Tv277)  ; 	print(i, i);
+;; row: :	PUSH	Tv272  ; 	print(i, i);
+;; parameters on the stack (Tv272)  ; 	print(i, i);
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-24	;
 	LDR	R13 (R10)	;
@@ -3573,7 +3575,7 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me30:
-;; row: :	PEEK	Tv278  ; 	print(i, i);
+;; row: :	PEEK	Tv273  ; 	print(i, i);
 	LDR	R11 (RSP)	;	print(i, i);
 	MOV	R10 RFP	;
 	ADI	R10 #-28	;
@@ -3597,14 +3599,14 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li164  ; 	print(6, 13);
-;; parameters on the stack (Li164)  ; 	print(6, 13);
-	LDR	R1 Li164:	;
+;; row: :	PUSH	Li159  ; 	print(6, 13);
+;; parameters on the stack (Li159)  ; 	print(6, 13);
+	LDR	R1 Li159:	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Li190  ; 	print(6, 13);
-;; parameters on the stack (Li190)  ; 	print(6, 13);
-	LDR	R1 Li190:	;
+;; row: :	PUSH	Li185  ; 	print(6, 13);
+;; parameters on the stack (Li185)  ; 	print(6, 13);
+	LDR	R1 Li185:	;
 STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(6, 13);
@@ -3624,7 +3626,7 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me30:
-;; row: :	PEEK	Tv279  ; 	print(6, 13);
+;; row: :	PEEK	Tv274  ; 	print(6, 13);
 	LDR	R11 (RSP)	;	print(6, 13);
 	MOV	R10 RFP	;
 	ADI	R10 #-32	;
@@ -3644,9 +3646,9 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "    }"
 
 
-;; row: :	FUNC	St137  ; }
-St137:   ADI   R0 #0 ;}
-;; row: :	REF	Tv139 Iv24 this;     private char msg[];
+;; row: :	FUNC	St132  ; }
+St132:   ADI   R0 #0 ;}
+;; row: :	REF	Tv134 Iv24 this;     private char msg[];
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3656,7 +3658,7 @@ St137:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv140 Iv25 this;     private int i;
+;; row: :	REF	Tv135 Iv25 this;     private int i;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3666,7 +3668,7 @@ St137:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-13	;
 	STR	R13 (R10)	;
-;; row: :	REF	Tv141 Iv26 this;     private int end;
+;; row: :	REF	Tv136 Iv26 this;     private int end;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3691,16 +3693,16 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "}"
 
 
-;; row: :	FUNC	Co42  ;     Syntax(int j, char d) {
-Co42:   ADI   R0 #0 ;    Syntax(int j, char d) {
-;; row: :	FRAME	this St280 ;     Syntax(int j, char d) {
-;; Call function "St280:        Syntax(int j, char d) {"
+;; row: :	FUNC	Co41  ;       Butterfly(int age, char type) {
+Co41:   ADI   R0 #0 ;      Butterfly(int age, char type) {
+;; row: :	FRAME	this St275 ;       Butterfly(int age, char type) {
+;; Call function "St275:          Butterfly(int age, char type) {"
 ;; Test for overflow
 :   MOV     R10 RSP
-ADI     R10 #-18          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+ADI     R10 #-17          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
-;; Create Activation Record and invoke St280
+;; Create Activation Record and invoke St275
 MOV     R10 RFP
 MOV     R15 RSP
 ADI     RSP #-4
@@ -3712,55 +3714,37 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	CALL	St280  ;     Syntax(int j, char d) {
-;; local varibales on the stack    ;     Syntax(int j, char d) {
+;; row: :	CALL	St275  ;       Butterfly(int age, char type) {
+;; local varibales on the stack    ;       Butterfly(int age, char type) {
 ;; Temp variables on the stack
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-18
+	ADI	RSP #-17
 ;; set the frame pointer
 MOV     RFP R15
+        TRP #99
 ;; set the return address and jump
 MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
-JMP     St280:
-;; row: :	REF	Tv284 Iv37 this;          i = j;
+JMP     St275:
+        TRP     #99
+;; row: :	WRITE	Pa39  ;           cout << age;
 	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-17	;
-	STR	R13 (R10)	;
-;; row: :	MOV	Tv284 Pa40 ;          i = j;
-	MOV	R10 RFP	;         i = j;
 	ADI	R10 #-12	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-17	;
-	LDR	R13 (R10)	;
-	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv285 Iv38 this;          c = d;
+	LDR	R0 (R10)	;
+	TRP	#1	;          cout << age;
+;; row: :	WRITE	Li110  ;           cout << '\n';
+	LDB	R0 Li110:	;
+	TRP	#3	;          cout << '\n';
+;; row: :	WRITE	Pa40  ; 	  cout << type;
 	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #4
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-21	;
-	STR	R13 (R10)	;
-;; row: :	MOV	Tv285 Pa41 ;          c = d;
-	MOV	R10 RFP	;         c = d;
 	ADI	R10 #-16	;
-	LDB	R3 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-21	;
-	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
+	LDB	R0 (R10)	;
+	TRP	#3	;	  cout << type;
+;; row: :	WRITE	Li110  ;           cout << '\n';
+	LDB	R0 Li110:	;
+	TRP	#3	;          cout << '\n';
 ;; row: :	RETURN	this  ;       }
 ;; return from function
 ;; test for underflow
@@ -3781,141 +3765,28 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "      }"
 
 
-;; row: :	FUNC	Me43  ;       public void checkit() {
-Me43:   ADI   R0 #0 ;      public void checkit() {
-;; row: :	MUL	Tv288 1 Li286;          char cc[] = new char[1000];
-	SUB	R4 R4	;         char cc[] = new char[1000];
-	ADI	R4 #1	;         char cc[] = new char[1000];
-	LDR	R3 Li286:	;
-	MUL	R3 R4	;         char cc[] = new char[1000];
+;; row: :	FUNC	Me42  ;       public void nest() {
+Me42:   ADI   R0 #0 ;      public void nest() {
+;; row: :	REF	Tv279 Iv37 this;           cout << age;
 	MOV	R10 RFP	;
-	ADI	R10 #-28	;
-	STR	R3 (R10)	;
-;; row: :	NEW	Tv288 Tv287 ;          char cc[] = new char[1000];
-	MOV	R10 RFP	;
-	ADI	R10 #-28	;
-	LDR	R3 (R10)	;
-;; Test for heap overflow
-MOV     R10 R9
-ADD     R10 R3
-CMP     R10 RSL
-BGT     R10 HOVRFLW:
-MOV     R11 R9
-ADD     R9 R3
-	MOV	R10 RFP	;
-	ADI	R10 #-24	;
-	STR	R11 (R10)	;
-;; row: :	MOV	Lv44 Tv287 ;          char cc[] = new char[1000];
-	MOV	R10 RFP	;         char cc[] = new char[1000];
-	ADI	R10 #-24	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;
-	ADI	R10 #-12	;
-	STR	R3 (R10)	;
-;; row: :	MUL	Tv291 4 Li289; 	 int  ii[] = new int[512];
-	SUB	R4 R4	;	 int  ii[] = new int[512];
-	ADI	R4 #4	;	 int  ii[] = new int[512];
-	LDR	R3 Li289:	;
-	MUL	R3 R4	;	 int  ii[] = new int[512];
-	MOV	R10 RFP	;
-	ADI	R10 #-36	;
-	STR	R3 (R10)	;
-;; row: :	NEW	Tv291 Tv290 ; 	 int  ii[] = new int[512];
-	MOV	R10 RFP	;
-	ADI	R10 #-36	;
-	LDR	R3 (R10)	;
-;; Test for heap overflow
-MOV     R10 R9
-ADD     R10 R3
-CMP     R10 RSL
-BGT     R10 HOVRFLW:
-MOV     R11 R9
-ADD     R9 R3
-	MOV	R10 RFP	;
-	ADI	R10 #-32	;
-	STR	R11 (R10)	;
-;; row: :	MOV	Lv45 Tv290 ; 	 int  ii[] = new int[512];
-	MOV	R10 RFP	;	 int  ii[] = new int[512];
-	ADI	R10 #-32	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;
-	ADI	R10 #-16	;
-	STR	R3 (R10)	;
-;; row: :	MUL	Tv295 4 Li293; 	 Syntax ss[] = new Syntax[256];
-	SUB	R4 R4	;	 Syntax ss[] = new Syntax[256];
-	ADI	R4 #4	;	 Syntax ss[] = new Syntax[256];
-	LDR	R3 Li293:	;
-	MUL	R3 R4	;	 Syntax ss[] = new Syntax[256];
-	MOV	R10 RFP	;
-	ADI	R10 #-44	;
-	STR	R3 (R10)	;
-;; row: :	NEW	Tv295 Tv294 ; 	 Syntax ss[] = new Syntax[256];
-	MOV	R10 RFP	;
-	ADI	R10 #-44	;
-	LDR	R3 (R10)	;
-;; Test for heap overflow
-MOV     R10 R9
-ADD     R10 R3
-CMP     R10 RSL
-BGT     R10 HOVRFLW:
-MOV     R11 R9
-ADD     R9 R3
-	MOV	R10 RFP	;
-	ADI	R10 #-40	;
-	STR	R11 (R10)	;
-;; row: :	MOV	Lv46 Tv294 ; 	 Syntax ss[] = new Syntax[256];
-	MOV	R10 RFP	;	 Syntax ss[] = new Syntax[256];
-	ADI	R10 #-40	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;
-	ADI	R10 #-20	;
-	STR	R3 (R10)	;
-;; row: :	AEF	Tv296 Li64 Lv44; 	 cc[1] = cc[2]; // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-12	;
+	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
-	LDR	R14 Li64:	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
+	SUB	R14 R14
+	ADI	R14 #0
 	ADD	R13 R14
 	MOV	R10 RFP	;Save Address
-	ADI	R10 #-48	;
+	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	AEF	Tv297 Li70 Lv44; 	 cc[1] = cc[2]; // yes
+;; row: :	WRITE	Tv279  ;           cout << age;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
-	LDR	R14 Li70:	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-49	;
-	STR	R13 (R10)	;
-;; row: :	MOV	Tv296 Tv297 ; 	 cc[1] = cc[2]; // yes
-	MOV	R10 RFP	;	 cc[1] = cc[2]; // yes
-	ADI	R10 #-49	;
-	LDR	R13 (R10)	;
-	LDB	R3 (R13)	;Load to register
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-48	;
-	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
-;; row: :	AEF	Tv298 Li179 Lv44; 	 cc[10] = c;     // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-12	;
-	LDR	R13 (R10)	;
-	LDR	R14 Li179:	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-50	;
-	STR	R13 (R10)	;
-;; row: :	REF	Tv299 Iv38 this; 	 cc[10] = c;     // yes
+	LDR	R0 (R13)	;Load to register
+	TRP	#1	;          cout << age;
+;; row: :	WRITE	Li110  ;           cout << '\n';
+	LDB	R0 Li110:	;
+	TRP	#3	;          cout << '\n';
+;; row: :	REF	Tv280 Iv38 this; 	  cout << type;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -3923,468 +3794,17 @@ ADD     R9 R3
 	ADI	R14 #4
 	ADD	R13 R14
 	MOV	R10 RFP	;Save Address
-	ADI	R10 #-51	;
+	ADI	R10 #-16	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv298 Tv299 ; 	 cc[10] = c;     // yes
-	MOV	R10 RFP	;	 cc[10] = c;     // yes
-	ADI	R10 #-51	;
-	LDR	R13 (R10)	;
-	LDB	R3 (R13)	;Load to register
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-50	;
-	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
-;; row: :	AEF	Tv300 Li158 Lv45; 	 ii[4] = 5 + i;
+;; row: :	WRITE	Tv280  ; 	  cout << type;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
-	LDR	R14 Li158:	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-52	;
-	STR	R13 (R10)	;
-;; row: :	REF	Tv301 Iv37 this; 	 ii[4] = 5 + i;
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-56	;
-	STR	R13 (R10)	;
-;; row: :	ADD	Tv302 Tv301 Li161; 	 ii[4] = 5 + i;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-56	;
-	LDR	R13 (R10)	;
-	LDR	R4 (R13)	;Load to register
-	LDR	R3 Li161:	;
-	ADD	R3 R4	;	 ii[4] = 5 + i;
-	MOV	R10 RFP	;
-	ADI	R10 #-60	;
-	STR	R3 (R10)	;
-;; row: :	MOV	Tv300 Tv302 ; 	 ii[4] = 5 + i;
-	MOV	R10 RFP	;	 ii[4] = 5 + i;
-	ADI	R10 #-60	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-52	;
-	LDR	R13 (R10)	;
-	STR	R3 (R13)	;Save from Register
-;; row: :	AEF	Tv304 Li303 Lv45; 	 ii[5000] = 5 + i; // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-16	;
-	LDR	R13 (R10)	;
-	LDR	R14 Li303:	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-64	;
-	STR	R13 (R10)	;
-;; row: :	REF	Tv305 Iv37 this; 	 ii[5000] = 5 + i; // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-68	;
-	STR	R13 (R10)	;
-;; row: :	ADD	Tv306 Tv305 Li161; 	 ii[5000] = 5 + i; // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-68	;
-	LDR	R13 (R10)	;
-	LDR	R4 (R13)	;Load to register
-	LDR	R3 Li161:	;
-	ADD	R3 R4	;	 ii[5000] = 5 + i; // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-72	;
-	STR	R3 (R10)	;
-;; row: :	MOV	Tv304 Tv306 ; 	 ii[5000] = 5 + i; // yes
-	MOV	R10 RFP	;	 ii[5000] = 5 + i; // yes
-	ADI	R10 #-72	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-64	;
-	LDR	R13 (R10)	;
-	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv307 Iv37 this; 	 i = ii[0];  // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-76	;
-	STR	R13 (R10)	;
-;; row: :	AEF	Tv308 Li60 Lv45; 	 i = ii[0];  // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-16	;
-	LDR	R13 (R10)	;
-	LDR	R14 Li60:	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-80	;
-	STR	R13 (R10)	;
-;; row: :	MOV	Tv307 Tv308 ; 	 i = ii[0];  // yes
-	MOV	R10 RFP	;	 i = ii[0];  // yes
-	ADI	R10 #-80	;
-	LDR	R13 (R10)	;
-	LDR	R3 (R13)	;Load to register
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-76	;
-	LDR	R13 (R10)	;
-	STR	R3 (R13)	;Save from Register
-;; row: :	AEF	Tv309 Li60 Lv46; 	 ss[0] = new Syntax(7, 'c');
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-20	;
-	LDR	R13 (R10)	;
-	LDR	R14 Li60:	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-84	;
-	STR	R13 (R10)	;
-;; row: :	NEWI	Cl36 Tv310 ; 	 ss[0] = new Syntax(7, 'c');
-;; Test for heap overflow
-	MOV     R10 R9
-ADI     R10 #6
-CMP     R10 RSL
-BGT     R10 HOVRFLW:
-MOV     R11 R9
-ADI     R9 #6
-	MOV	R10 RFP	;
-	ADI	R10 #-88	;
-	STR	R11 (R10)	;
-;; row: :	FRAME	Tv310 Co42 ; 	 ss[0] = new Syntax(7, 'c');
-;; Call function "Co42:    	 ss[0] = new Syntax(7, 'c');"
-;; Test for overflow
-:   MOV     R10 RSP
-ADI     R10 #-22          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
-CMP     R10 RSL
-BLT     R10 OVRFLW:
-;; Create Activation Record and invoke Co42
-MOV     R10 RFP
-MOV     R15 RSP
-ADI     RSP #-4
-STR     R10 (RSP)
-ADI     RSP #-4
-;; this
-	MOV	R10 RFP	;
-	ADI	R10 #-88	;
-	LDR	R1 (R10)	;
-STR     R1 (RSP)
-ADI     RSP #-4
-;; row: :	PUSH	Li168  ; 	 ss[0] = new Syntax(7, 'c');
-;; parameters on the stack (Li168)  ; 	 ss[0] = new Syntax(7, 'c');
-	LDR	R1 Li168:	;
-STR     R1 (RSP)
-ADI     RSP #-4
-;; row: :	PUSH	Li223  ; 	 ss[0] = new Syntax(7, 'c');
-;; parameters on the stack (Li223)  ; 	 ss[0] = new Syntax(7, 'c');
-	LDB	R1 Li223:	;
-STB     R1 (RSP)
-ADI     RSP #-1
-;; row: :	CALL	Co42  ; 	 ss[0] = new Syntax(7, 'c');
-;; local varibales on the stack    ; 	 ss[0] = new Syntax(7, 'c');
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-1
-;; set the stack pointer
-	MOV	RSP R15
-	ADI	RSP #-22
-;; set the frame pointer
-MOV     RFP R15
-;; set the return address and jump
-MOV     R10 RPC         ; PC already at next instruction
-ADI     R10 #12
-STR     R10 (RFP)
-JMP     Co42:
-;; row: :	PEEK	Tv310  ; 	 ss[0] = new Syntax(7, 'c');
-	LDR	R11 (RSP)	;	 ss[0] = new Syntax(7, 'c');
-	MOV	R10 RFP	;
-	ADI	R10 #-88	;
-	STR	R11 (R10)	;
-;; row: :	MOV	Tv309 Tv310 ; 	 ss[0] = new Syntax(7, 'c');
-	MOV	R10 RFP	;	 ss[0] = new Syntax(7, 'c');
-	ADI	R10 #-88	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-84	;
-	LDR	R13 (R10)	;
-	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv311 Iv37 this; 	 ss[i] = ss[i+1]; // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-92	;
-	STR	R13 (R10)	;
-;; row: :	AEF	Tv312 Tv311 Lv46; 	 ss[i] = ss[i+1]; // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-20	;
-	LDR	R13 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-92	;
-	LDR	R13 (R10)	;
-	LDR	R14 (R13)	;Load to register
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-96	;
-	STR	R13 (R10)	;
-;; row: :	REF	Tv313 Iv37 this; 	 ss[i] = ss[i+1]; // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-100	;
-	STR	R13 (R10)	;
-;; row: :	ADD	Tv314 Li64 Tv313; 	 ss[i] = ss[i+1]; // yes
-	LDR	R4 Li64:	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-100	;
-	LDR	R13 (R10)	;
-	LDR	R3 (R13)	;Load to register
-	ADD	R3 R4	;	 ss[i] = ss[i+1]; // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-104	;
-	STR	R3 (R10)	;
-;; row: :	AEF	Tv315 Tv314 Lv46; 	 ss[i] = ss[i+1]; // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-20	;
-	LDR	R13 (R10)	;
-	MOV	R10 RFP	;
-	ADI	R10 #-104	;
-	LDR	R14 (R10)	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-108	;
-	STR	R13 (R10)	;
-;; row: :	MOV	Tv312 Tv315 ; 	 ss[i] = ss[i+1]; // yes
-	MOV	R10 RFP	;	 ss[i] = ss[i+1]; // yes
-	ADI	R10 #-108	;
-	LDR	R13 (R10)	;
-	LDR	R3 (R13)	;Load to register
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-96	;
-	LDR	R13 (R10)	;
-	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv316 Iv37 this; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-112	;
-	STR	R13 (R10)	;
-;; row: :	DIV	Tv317 Li154 Li168; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	LDR	R4 Li154:	;
-	LDR	R3 Li168:	;
-	DIV	R3 R4	;	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-116	;
-	STR	R3 (R10)	;
-;; row: :	ADD	Tv318 Tv317 Tv316; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-116	;
-	LDR	R4 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-112	;
-	LDR	R13 (R10)	;
-	LDR	R3 (R13)	;Load to register
-	ADD	R3 R4	;	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-120	;
-	STR	R3 (R10)	;
-;; row: :	AEF	Tv319 Tv318 Lv46; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-20	;
-	LDR	R13 (R10)	;
-	MOV	R10 RFP	;
-	ADI	R10 #-120	;
-	LDR	R14 (R10)	;
-	SUB	R12 R12
-	ADI	R12 #4
-	MUL	R14 R12
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-124	;
-	STR	R13 (R10)	;
-;; row: :	REF	Tv320 Iv37 this; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #0
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-128	;
-	STR	R13 (R10)	;
-;; row: :	REF	Tv321 Iv38 this; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #4
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-132	;
-	STR	R13 (R10)	;
-;; row: :	NEWI	Cl36 Tv322 ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-;; Test for heap overflow
-	MOV     R10 R9
-ADI     R10 #6
-CMP     R10 RSL
-BGT     R10 HOVRFLW:
-MOV     R11 R9
-ADI     R9 #6
-	MOV	R10 RFP	;
-	ADI	R10 #-133	;
-	STR	R11 (R10)	;
-;; row: :	FRAME	Tv322 Co42 ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-;; Call function "Co42:    	 ss[i+7/3] = new Syntax(i, c); // yes"
-;; Test for overflow
-:   MOV     R10 RSP
-ADI     R10 #-22          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
-CMP     R10 RSL
-BLT     R10 OVRFLW:
-;; Create Activation Record and invoke Co42
-MOV     R10 RFP
-MOV     R15 RSP
-ADI     RSP #-4
-STR     R10 (RSP)
-ADI     RSP #-4
-;; this
-	MOV	R10 RFP	;
-	ADI	R10 #-133	;
-	LDR	R1 (R10)	;
-STR     R1 (RSP)
-ADI     RSP #-4
-;; row: :	PUSH	Tv320  ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-;; parameters on the stack (Tv320)  ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-128	;
-	LDR	R13 (R10)	;
-	LDR	R1 (R13)	;Load to register
-STR     R1 (RSP)
-ADI     RSP #-4
-;; row: :	PUSH	Tv321  ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-;; parameters on the stack (Tv321)  ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-132	;
-	LDR	R13 (R10)	;
-	LDB	R1 (R13)	;Load to register
-STB     R1 (RSP)
-ADI     RSP #-1
-;; row: :	CALL	Co42  ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-;; local varibales on the stack    ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-1
-;; set the stack pointer
-	MOV	RSP R15
-	ADI	RSP #-22
-;; set the frame pointer
-MOV     RFP R15
-;; set the return address and jump
-MOV     R10 RPC         ; PC already at next instruction
-ADI     R10 #12
-STR     R10 (RFP)
-JMP     Co42:
-;; row: :	PEEK	Tv322  ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	LDR	R11 (RSP)	;	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;
-	ADI	R10 #-133	;
-	STR	R11 (R10)	;
-;; row: :	MOV	Tv319 Tv322 ; 	 ss[i+7/3] = new Syntax(i, c); // yes
-	MOV	R10 RFP	;	 ss[i+7/3] = new Syntax(i, c); // yes
-	ADI	R10 #-133	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-124	;
-	LDR	R13 (R10)	;
-	STR	R3 (R13)	;Save from Register
-;; row: :	RTN	  ;       } 
-;; return from function
-;; test for underflow
-MOV     RSP RFP
-LDR     R15 (RSP)
-MOV     R10 RSP
-CMP     R10 RSB
-BGT     R10 UDRFLW:     ; oopsy underflow problem
-;; set previous frame to current frame and return
-MOV     R11 RFP
-ADI     R11 #-4         ; now pointing at PFP
-LDR     RFP (R11)       ; make FP = PFP
-JMR     R15             ; go back "      } "
-
-
-;; row: :	FUNC	Me48  ;       public int which(int i) {
-Me48:   ADI   R0 #0 ;      public int which(int i) {
-;; row: :	MUL	Tv323 Pa47 Pa47;          i = i * i;
-	MOV	R10 RFP	;
-	ADI	R10 #-12	;
-	LDR	R4 (R10)	;
-	MOV	R10 RFP	;
-	ADI	R10 #-12	;
-	LDR	R3 (R10)	;
-	MUL	R3 R4	;         i = i * i;
-	MOV	R10 RFP	;
-	ADI	R10 #-16	;
-	STR	R3 (R10)	;
-;; row: :	MOV	Pa47 Tv323 ;          i = i * i;
-	MOV	R10 RFP	;         i = i * i;
-	ADI	R10 #-16	;
-	LDR	R3 (R10)	;
-	MOV	R10 RFP	;
-	ADI	R10 #-12	;
-	STR	R3 (R10)	;
-;; row: :	RETURN	Pa47  ; 	 return i;
-;; return from function
-;; test for underflow
-MOV     RSP RFP
-LDR     R15 (RSP)
-MOV     R10 RSP
-CMP     R10 RSB
-BGT     R10 UDRFLW:     ; oopsy underflow problem
-;; store the return value
-	MOV	R10 RFP	;
-	ADI	R10 #-12	;
-	LDR	R0 (R10)	;
-STR     R0 (RSP)        ; R0 is whatever the value is for return
-;; set previous frame to current frame and return
-MOV     R11 RFP
-ADI     R11 #-4         ; now pointing at PFP
-LDR     RFP (R11)       ; make FP = PFP
-JMR     R15             ; go back "	 return i;"
-
-
+	LDB	R0 (R13)	;Load to register
+	TRP	#3	;	  cout << type;
+;; row: :	WRITE	Li110  ;           cout << '\n';
+	LDB	R0 Li110:	;
+	TRP	#3	;          cout << '\n';
 ;; row: :	RTN	  ;       }
 ;; return from function
 ;; test for underflow
@@ -4400,9 +3820,9 @@ LDR     RFP (R11)       ; make FP = PFP
 JMR     R15             ; go back "      }"
 
 
-;; row: :	FUNC	St280  ; }
-St280:   ADI   R0 #0 ;}
-;; row: :	REF	Tv281 Iv37 this;       private int i = 7;
+;; row: :	FUNC	St275  ; }
+St275:   ADI   R0 #0 ;}
+;; row: :	REF	Tv276 Iv37 this;       private int age = 42;
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -4412,13 +3832,13 @@ St280:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-12	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv281 Li168 ;       private int i = 7;
-	LDR	R3 Li168:	;      private int i = 7;
+;; row: :	MOV	Tv276 Li277 ;       private int age = 42;
+	LDR	R3 Li277:	;      private int age = 42;
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
 	STR	R3 (R13)	;Save from Register
-;; row: :	REF	Tv282 Iv38 this;       private char c = 'a';
+;; row: :	REF	Tv278 Iv38 this;       private char type = 'm';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
 	LDR	R13 (R10)	;
@@ -4428,26 +3848,10 @@ St280:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-16	;
 	STR	R13 (R10)	;
-;; row: :	MOV	Tv282 Li228 ;       private char c = 'a';
-	LDB	R3 Li228:	;      private char c = 'a';
+;; row: :	MOV	Tv278 Li173 ;       private char type = 'm';
+	LDB	R3 Li173:	;      private char type = 'm';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-16	;
-	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
-;; row: :	REF	Tv283 Iv39 this;       private bool b = false;
-	MOV	R10 RFP	;
-	ADI	R10 #-8	;
-	LDR	R13 (R10)	;
-	SUB	R14 R14
-	ADI	R14 #5
-	ADD	R13 R14
-	MOV	R10 RFP	;Save Address
-	ADI	R10 #-17	;
-	STR	R13 (R10)	;
-;; row: :	MOV	Tv283 Li110 ;       private bool b = false;
-	LDB	R3 Li110:	;      private bool b = false;
-	MOV	R10 RFP	;Load Address
-	ADI	R10 #-17	;
 	LDR	R13 (R10)	;
 	STB	R3 (R13)	;Save from Register
 ;; row: :	RTN	  ; }
@@ -4467,7 +3871,7 @@ JMR     R15             ; go back "}"
 
 ;; row: :	FUNC	MAIN  ; void main() {
 MAIN:   ADI   R0 #0 ;void main() {
-;; row: :	NEWI	Cl23 Tv326 ;     Message msg = new Message();
+;; row: :	NEWI	Cl23 Tv283 ;     Message msg = new Message();
 ;; Test for heap overflow
 	MOV     R10 R9
 ADI     R10 #12
@@ -4476,9 +3880,9 @@ BGT     R10 HOVRFLW:
 MOV     R11 R9
 ADI     R9 #12
 	MOV	R10 RFP	;
-	ADI	R10 #-24	;
+	ADI	R10 #-28	;
 	STR	R11 (R10)	;
-;; row: :	FRAME	Tv326 Co27 ;     Message msg = new Message();
+;; row: :	FRAME	Tv283 Co27 ;     Message msg = new Message();
 ;; Call function "Co27:        Message msg = new Message();"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -4493,7 +3897,7 @@ STR     R10 (RSP)
 ADI     RSP #-4
 ;; this
 	MOV	R10 RFP	;
-	ADI	R10 #-24	;
+	ADI	R10 #-28	;
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
@@ -4591,19 +3995,19 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Co27:
-;; row: :	PEEK	Tv326  ;     Message msg = new Message();
+;; row: :	PEEK	Tv283  ;     Message msg = new Message();
 	LDR	R11 (RSP)	;    Message msg = new Message();
 	MOV	R10 RFP	;
-	ADI	R10 #-24	;
+	ADI	R10 #-28	;
 	STR	R11 (R10)	;
-;; row: :	MOV	Lv51 Tv326 ;     Message msg = new Message();
+;; row: :	MOV	Lv45 Tv283 ;     Message msg = new Message();
 	MOV	R10 RFP	;    Message msg = new Message();
-	ADI	R10 #-24	;
+	ADI	R10 #-28	;
 	LDR	R3 (R10)	;
 	MOV	R10 RFP	;
 	ADI	R10 #-20	;
 	STR	R3 (R10)	;
-;; row: :	NEWI	Cl1 Tv327 ;     tree = new iTree();
+;; row: :	NEWI	Cl36 Tv287 ;     Butterfly bff = new Butterfly(37, 'g');
 ;; Test for heap overflow
 	MOV     R10 R9
 ADI     R10 #5
@@ -4612,9 +4016,113 @@ BGT     R10 HOVRFLW:
 MOV     R11 R9
 ADI     R9 #5
 	MOV	R10 RFP	;
-	ADI	R10 #-28	;
+	ADI	R10 #-32	;
 	STR	R11 (R10)	;
-;; row: :	FRAME	Tv327 Co4 ;     tree = new iTree();
+;; row: :	FRAME	Tv287 Co41 ;     Butterfly bff = new Butterfly(37, 'g');
+;; Call function "Co41:        Butterfly bff = new Butterfly(37, 'g');"
+;; Test for overflow
+:   MOV     R10 RSP
+ADI     R10 #-17          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+CMP     R10 RSL
+BLT     R10 OVRFLW:
+;; Create Activation Record and invoke Co41
+MOV     R10 RFP
+MOV     R15 RSP
+ADI     RSP #-4
+STR     R10 (RSP)
+ADI     RSP #-4
+;; this
+	MOV	R10 RFP	;
+	ADI	R10 #-32	;
+	LDR	R1 (R10)	;
+STR     R1 (RSP)
+ADI     RSP #-4
+;; row: :	PUSH	Li285  ;     Butterfly bff = new Butterfly(37, 'g');
+;; parameters on the stack (Li285)  ;     Butterfly bff = new Butterfly(37, 'g');
+	LDR	R1 Li285:	;
+STR     R1 (RSP)
+ADI     RSP #-4
+;; row: :	PUSH	Li286  ;     Butterfly bff = new Butterfly(37, 'g');
+;; parameters on the stack (Li286)  ;     Butterfly bff = new Butterfly(37, 'g');
+	LDB	R1 Li286:	;
+STB     R1 (RSP)
+ADI     RSP #-1
+;; row: :	CALL	Co41  ;     Butterfly bff = new Butterfly(37, 'g');
+;; local varibales on the stack    ;     Butterfly bff = new Butterfly(37, 'g');
+;; Temp variables on the stack
+;; set the stack pointer
+	MOV	RSP R15
+	ADI	RSP #-17
+;; set the frame pointer
+MOV     RFP R15
+;; set the return address and jump
+MOV     R10 RPC         ; PC already at next instruction
+ADI     R10 #12
+STR     R10 (RFP)
+JMP     Co41:
+;; row: :	PEEK	Tv287  ;     Butterfly bff = new Butterfly(37, 'g');
+	LDR	R11 (RSP)	;    Butterfly bff = new Butterfly(37, 'g');
+	MOV	R10 RFP	;
+	ADI	R10 #-32	;
+	STR	R11 (R10)	;
+;; row: :	MOV	Lv46 Tv287 ;     Butterfly bff = new Butterfly(37, 'g');
+	MOV	R10 RFP	;    Butterfly bff = new Butterfly(37, 'g');
+	ADI	R10 #-32	;
+	LDR	R3 (R10)	;
+	MOV	R10 RFP	;
+	ADI	R10 #-24	;
+	STR	R3 (R10)	;
+;; row: :	FRAME	Lv46 Me42 ;     bff.nest();
+;; Call function "Me42:        bff.nest();"
+;; Test for overflow
+:   MOV     R10 RSP
+ADI     R10 #-17          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+CMP     R10 RSL
+BLT     R10 OVRFLW:
+;; Create Activation Record and invoke Me42
+MOV     R10 RFP
+MOV     R15 RSP
+ADI     RSP #-4
+STR     R10 (RSP)
+ADI     RSP #-4
+;; this
+	MOV	R10 RFP	;
+	ADI	R10 #-24	;
+	LDR	R1 (R10)	;
+STR     R1 (RSP)
+ADI     RSP #-4
+;; row: :	CALL	Me42  ;     bff.nest();
+;; local varibales on the stack    ;     bff.nest();
+;; Temp variables on the stack
+ADI     RSP #-4
+ADI     RSP #-1
+;; set the stack pointer
+	MOV	RSP R15
+	ADI	RSP #-17
+;; set the frame pointer
+MOV     RFP R15
+;; set the return address and jump
+MOV     R10 RPC         ; PC already at next instruction
+ADI     R10 #12
+STR     R10 (RFP)
+JMP     Me42:
+;; row: :	PEEK	Tv288  ;     bff.nest();
+	LDR	R11 (RSP)	;    bff.nest();
+	MOV	R10 RFP	;
+	ADI	R10 #-36	;
+	STR	R11 (R10)	;
+;; row: :	NEWI	Cl1 Tv289 ;     tree = new iTree();
+;; Test for heap overflow
+	MOV     R10 R9
+ADI     R10 #5
+CMP     R10 RSL
+BGT     R10 HOVRFLW:
+MOV     R11 R9
+ADI     R9 #5
+	MOV	R10 RFP	;
+	ADI	R10 #-40	;
+	STR	R11 (R10)	;
+;; row: :	FRAME	Tv289 Co4 ;     tree = new iTree();
 ;; Call function "Co4:        tree = new iTree();"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -4629,7 +4137,7 @@ STR     R10 (RSP)
 ADI     RSP #-4
 ;; this
 	MOV	R10 RFP	;
-	ADI	R10 #-28	;
+	ADI	R10 #-40	;
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
@@ -4647,19 +4155,19 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Co4:
-;; row: :	PEEK	Tv327  ;     tree = new iTree();
+;; row: :	PEEK	Tv289  ;     tree = new iTree();
 	LDR	R11 (RSP)	;    tree = new iTree();
 	MOV	R10 RFP	;
-	ADI	R10 #-28	;
+	ADI	R10 #-40	;
 	STR	R11 (R10)	;
-;; row: :	MOV	Lv50 Tv327 ;     tree = new iTree();
+;; row: :	MOV	Lv44 Tv289 ;     tree = new iTree();
 	MOV	R10 RFP	;    tree = new iTree();
-	ADI	R10 #-28	;
+	ADI	R10 #-40	;
 	LDR	R3 (R10)	;
 	MOV	R10 RFP	;
 	ADI	R10 #-16	;
 	STR	R3 (R10)	;
-;; row: :	FRAME	Lv51 Me35 ;     msg.msg3();
+;; row: :	FRAME	Lv45 Me35 ;     msg.msg3();
 ;; Call function "Me35:        msg.msg3();"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -4697,43 +4205,43 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me35:
-;; row: :	PEEK	Tv328  ;     msg.msg3();
+;; row: :	PEEK	Tv290  ;     msg.msg3();
 	LDR	R11 (RSP)	;    msg.msg3();
 	MOV	R10 RFP	;
-	ADI	R10 #-32	;
+	ADI	R10 #-44	;
 	STR	R11 (R10)	;
-;; row: :	READ	Lv49  ;     cin >> key;
+;; row: :	READ	Lv43  ;     cin >> key;
 	TRP	#2	;    cin >> key;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	STR	R0 (R10)	;
-;; row: :	WRITE	Li115  ;     cout << '\n';
-	LDB	R0 Li115:	;
+;; row: :	WRITE	Li110  ;     cout << '\n';
+	LDB	R0 Li110:	;
 	TRP	#3	;    cout << '\n';
-;; row: Wh329:	NEQ	Tv330 Lv49 Li60;     while (key != 0) {
-Wh329:	MOV	R10 RFP	;
+;; row: Wh291:	NEQ	Tv292 Lv43 Li55;     while (key != 0) {
+Wh291:	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R3 (R10)	;
-	LDR	R4 Li60:	;
+	LDR	R4 Li55:	;
 	CMP	R3 R4	;    while (key != 0) {
-	BNZ	R3 BT357:	
+	BNZ	R3 BT319:	
 	SUB	R3 R3	; false branch
-	JMP	BF358:	
-BT357:	SUB	R3 R3	;True Branch
+	JMP	BF320:	
+BT319:	SUB	R3 R3	;True Branch
 	ADI	R3 #1	;True Branch
-BF358:	MOV	R10 RFP	;
-	ADI	R10 #-36	;
+BF320:	MOV	R10 RFP	;
+	ADI	R10 #-48	;
 	STB	R3 (R10)	;
-;; row: :	BF	Tv330 En331 ;     while (key != 0) {
+;; row: :	BF	Tv292 En293 ;     while (key != 0) {
 	MOV	R10 RFP	;
-	ADI	R10 #-36	;
+	ADI	R10 #-48	;
 	LDB	R3 (R10)	;
-	BRZ	R3 En331:	;    while (key != 0) {
-;; row: :	FRAME	Lv50 Me8 ; 	if (tree.add(key)) {
+	BRZ	R3 En293:	;    while (key != 0) {
+;; row: :	FRAME	Lv44 Me8 ; 	if (tree.add(key)) {
 ;; Call function "Me8:    	if (tree.add(key)) {"
 ;; Test for overflow
 :   MOV     R10 RSP
-ADI     R10 #-49          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
+ADI     R10 #-46          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
 ;; Create Activation Record and invoke Me8
@@ -4748,8 +4256,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Lv49  ; 	if (tree.add(key)) {
-;; parameters on the stack (Lv49)  ; 	if (tree.add(key)) {
+;; row: :	PUSH	Lv43  ; 	if (tree.add(key)) {
+;; parameters on the stack (Lv43)  ; 	if (tree.add(key)) {
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R1 (R10)	;
@@ -4766,10 +4274,10 @@ ADI     RSP #-1
 ADI     RSP #-4
 ADI     RSP #-4
 ADI     RSP #-4
-ADI     RSP #-4
+ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-49
+	ADI	RSP #-46
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -4777,17 +4285,17 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me8:
-;; row: :	PEEK	Tv332  ; 	if (tree.add(key)) {
-	LDR	R11 (RSP)	;	if (tree.add(key)) {
+;; row: :	PEEK	Tv294  ; 	if (tree.add(key)) {
+	LDB	R11 (RSP)	;	if (tree.add(key)) {
 	MOV	R10 RFP	;
-	ADI	R10 #-37	;
-	STR	R11 (R10)	;
-;; row: :	BF	Tv332 If333 ; 	if (tree.add(key)) {
+	ADI	R10 #-49	;
+	STB	R11 (R10)	;
+;; row: :	BF	Tv294 If295 ; 	if (tree.add(key)) {
 	MOV	R10 RFP	;
-	ADI	R10 #-37	;
-	LDR	R3 (R10)	;
-	BRZ	R3 If333:	;	if (tree.add(key)) {
-;; row: :	FRAME	Lv51 Me32 ; 	    msg.msg1(key);
+	ADI	R10 #-49	;
+	LDB	R3 (R10)	;
+	BRZ	R3 If295:	;	if (tree.add(key)) {
+;; row: :	FRAME	Lv45 Me32 ; 	    msg.msg1(key);
 ;; Call function "Me32:    	    msg.msg1(key);"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -4806,8 +4314,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Lv49  ; 	    msg.msg1(key);
-;; parameters on the stack (Lv49)  ; 	    msg.msg1(key);
+;; row: :	PUSH	Lv43  ; 	    msg.msg1(key);
+;; parameters on the stack (Lv43)  ; 	    msg.msg1(key);
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R1 (R10)	;
@@ -4827,12 +4335,12 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me32:
-;; row: :	PEEK	Tv334  ; 	    msg.msg1(key);
+;; row: :	PEEK	Tv296  ; 	    msg.msg1(key);
 	LDR	R11 (RSP)	;	    msg.msg1(key);
 	MOV	R10 RFP	;
-	ADI	R10 #-41	;
+	ADI	R10 #-50	;
 	STR	R11 (R10)	;
-;; row: :	FRAME	Lv50 Me12 ; 	    tree.print();
+;; row: :	FRAME	Lv44 Me12 ; 	    tree.print();
 ;; Call function "Me12:    	    tree.print();"
 ;; Test for overflow
 :   MOV     R10 RSP
@@ -4867,17 +4375,17 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me12:
-;; row: :	PEEK	Tv335  ; 	    tree.print();
+;; row: :	PEEK	Tv297  ; 	    tree.print();
 	LDR	R11 (RSP)	;	    tree.print();
 	MOV	R10 RFP	;
-	ADI	R10 #-45	;
+	ADI	R10 #-54	;
 	STR	R11 (R10)	;
-;; row: :	JMP	El336  ; 	else 
-	JMP	El336:	;	else 
-;; row: If333:	FRAME	Lv51 Me34 ; 	    msg.msg2(key);
+;; row: :	JMP	El298  ; 	else 
+	JMP	El298:	;	else 
+;; row: If295:	FRAME	Lv45 Me34 ; 	    msg.msg2(key);
 ;; Call function "Me34:    	    msg.msg2(key);"
 ;; Test for overflow
-If333:   MOV     R10 RSP
+If295:   MOV     R10 RSP
 ADI     R10 #-50          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
@@ -4893,8 +4401,8 @@ ADI     RSP #-4
 	LDR	R1 (R10)	;
 STR     R1 (RSP)
 ADI     RSP #-4
-;; row: :	PUSH	Lv49  ; 	    msg.msg2(key);
-;; parameters on the stack (Lv49)  ; 	    msg.msg2(key);
+;; row: :	PUSH	Lv43  ; 	    msg.msg2(key);
+;; parameters on the stack (Lv43)  ; 	    msg.msg2(key);
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R1 (R10)	;
@@ -4923,15 +4431,15 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me34:
-;; row: :	PEEK	Tv337  ; 	    msg.msg2(key);
-	LDR	R11 (RSP)	;	    msg.msg2(key);
+;; row: :	PEEK	Tv299  ; 	    msg.msg2(key);
+	LDB	R11 (RSP)	;	    msg.msg2(key);
 	MOV	R10 RFP	;
-	ADI	R10 #-49	;
-	STR	R11 (R10)	;
-;; row: El336:	FRAME	Lv51 Me35 ; 	msg.msg3();
+	ADI	R10 #-58	;
+	STB	R11 (R10)	;
+;; row: El298:	FRAME	Lv45 Me35 ; 	msg.msg3();
 ;; Call function "Me35:    	msg.msg3();"
 ;; Test for overflow
-El336:   MOV     R10 RSP
+El298:   MOV     R10 RSP
 ADI     R10 #-36          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
@@ -4966,25 +4474,25 @@ MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
 STR     R10 (RFP)
 JMP     Me35:
-;; row: :	PEEK	Tv338  ; 	msg.msg3();
+;; row: :	PEEK	Tv300  ; 	msg.msg3();
 	LDR	R11 (RSP)	;	msg.msg3();
 	MOV	R10 RFP	;
-	ADI	R10 #-53	;
+	ADI	R10 #-59	;
 	STR	R11 (R10)	;
-;; row: :	READ	Lv49  ; 	cin >> key;
+;; row: :	READ	Lv43  ; 	cin >> key;
 	TRP	#2	;	cin >> key;
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	STR	R0 (R10)	;
-;; row: :	WRITE	Li115  ; 	cout << '\n';
-	LDB	R0 Li115:	;
+;; row: :	WRITE	Li110  ; 	cout << '\n';
+	LDB	R0 Li110:	;
 	TRP	#3	;	cout << '\n';
-;; row: :	JMP	Wh329  ; }
-	JMP	Wh329:	;}
-;; row: En331:	RTN	  ; }
+;; row: :	JMP	Wh291  ; }
+	JMP	Wh291:	;}
+;; row: En293:	RTN	  ; }
 ;; return from function
 ;; test for underflow
-En331:	MOV	RSP RFP	; }
+En293:	MOV	RSP RFP	; }
 LDR     R15 (RSP)
 MOV     R10 RSP
 CMP     R10 RSB

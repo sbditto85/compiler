@@ -41,20 +41,21 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `ADI     RSP #-4`)
 	asm = append(asm, `;; parameters on the stack`)
 	asm = append(asm, `;; local varibales on the stack`)
-	//add main's local variables
-	for _, e := range getLocalVars(st, mainElem) {
-		typ, _ := sym.StringFromData(e.Data, "type")
-		isArray, _ := sym.BoolFromData(e.Data, "isArray")
-		asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
-	}
+	// //add main's local variables
+	// for _, e := range getLocalVars(st, mainElem) {
+	// 	typ, _ := sym.StringFromData(e.Data, "type")
+	// 	isArray, _ := sym.BoolFromData(e.Data, "isArray")
+	// 	asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
+	// }
 
-	asm = append(asm, `;; Temp variables on the stack`)
-	//add main's temp variables
-	for _, e := range getTempVars(st, mainElem) {
-		typ, _ := sym.StringFromData(e.Data, "type")
-		isArray, _ := sym.BoolFromData(e.Data, "isArray")
-		asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
-	}
+	// asm = append(asm, `;; Temp variables on the stack`)
+	// //add main's temp variables
+	// for _, e := range getTempVars(st, mainElem) {
+	// 	typ, _ := sym.StringFromData(e.Data, "type")
+	// 	isArray, _ := sym.BoolFromData(e.Data, "isArray")
+	// 	asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
+	// }
+	asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d",-12+(mainSize*-1)))
 
 	asm = append(asm, `;; set the return address and jump`)
 	asm = append(asm, `MOV     R10 RPC         ; PC already at next instruction`)

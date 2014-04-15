@@ -164,6 +164,12 @@ func (s *SemanticManager) RExist(st *sym.SymbolTable) error {
 		data["type"] = var_sar.GetType()
 		data["class_symId"] = class_sar.GetSymId()
 		data["var_symId"] = var_sar.GetSymId()
+
+		//get type of Tvar
+		vElem, _ := st.GetElement(var_sar.GetSymId())
+		typ, _ := sym.StringFromData(vElem.Data, "type")
+		data["type"] = typ
+
 		switch var_sar.(type) {
 		case *Func_Sar:
 		default:

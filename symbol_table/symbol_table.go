@@ -123,10 +123,10 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 		if params, err := StringSliceFromData(elem.Data, "paramSymIds"); err == nil {
 			for _, paramSymId := range params {
 				param, _ := s.GetElement(paramSymId)
-				typ, _ := StringFromData(param.Data, "type")
-				isArr, _ := BoolFromData(param.Data, "isArray")
+				// typ, _ := StringFromData(param.Data, "type")
+				// isArr, _ := BoolFromData(param.Data, "isArray")
 				param.Data["offset"] = offset
-				offset += SizeOfType(typ, isArr)
+				offset += 4 //SizeOfType(typ, isArr)
 			}
 		}
 		data["size"] = offset
@@ -142,20 +142,20 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 
 		data["offset"] = offset
 
-		typ, _ := StringFromData(data, "type")
-		isArr, _ := BoolFromData(data, "isArray")
+		// typ, _ := StringFromData(data, "type")
+		// isArr, _ := BoolFromData(data, "isArray")
 		if methodElem.Data != nil {
-			methodElem.Data["size"] = offset + SizeOfType(typ, isArr)
+			methodElem.Data["size"] = offset + 4//SizeOfType(typ, isArr)
 		}
 	case "Ivar":
 		class_scope, _ := s.ScopeBelow(curScope)
 		elems := s.GetScopeElements(class_scope)
 		for _, elem := range elems {
 			if elem.Kind == "Class" && s.ScopeAbove(class_scope, elem.Value) == curScope {
-				toAdd := 0
-				typ, _ := StringFromData(data, "type")
-				isArr, _ := BoolFromData(data, "isArray")
-				toAdd = SizeOfType(typ, isArr)
+				toAdd := 4
+				// typ, _ := StringFromData(data, "type")
+				// isArr, _ := BoolFromData(data, "isArray")
+				// toAdd = SizeOfType(typ, isArr)
 
 				classSize := 0
 				if s, ok := elem.Data["size"]; ok {

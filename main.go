@@ -12,11 +12,11 @@ import (
 )
 
 func main() {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println(r)
-		}
-	}()
+	// defer func() {
+	// 	if r := recover(); r != nil {
+	// 		fmt.Println(r)
+	// 	}
+	// }()
 	if len(os.Args) <= 1 {
 		fmt.Printf("Usage: compiler file.kxi [file.kxi ...]")
 		return
