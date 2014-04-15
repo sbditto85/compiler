@@ -46,52 +46,52 @@ NL:     .BYT    '\n'
 LTRCU:  .BYT    'U'
 LTRCO:  .BYT    'O'
 LTRCH:  .BYT    'H'
-Li239:	.INT	25
-Li53:	.INT	0
-Li159:	.INT	6
-Li181:	.INT	12
-Li166:	.BYT	'l'
-Li188:	.BYT	':'
-Li236:	.INT	24
-Li123:	.BYT	','
-Li138:	.INT	100
-Li204:	.BYT	'p'
-Li143:	.BYT	'A'
-Li149:	.INT	3
-Li156:	.INT	5
-Li199:	.BYT	'u'
-Li121:	.BYT	32
-Li65:	.INT	2
-Li185:	.INT	13
-Li162:	.BYT	'E'
 Li190:	.INT	14
+Li223:	.BYT	'a'
+Li177:	.INT	11
+Li184:	.BYT	't'
+Li213:	.BYT	'i'
+Li170:	.INT	9
+Li194:	.BYT	'D'
+Li166:	.BYT	'l'
+Li236:	.INT	24
+Li159:	.INT	6
+Li167:	.INT	8
+Li239:	.INT	25
+Li143:	.BYT	'A'
+Li248:	.INT	28
+Li152:	.BYT	'e'
+Li242:	.INT	26
+Li53:	.INT	0
+Li156:	.INT	5
+Li204:	.BYT	'p'
+Li77:	.BYT	1
+Li181:	.INT	12
+Li173:	.BYT	'm'
+Li285:	.INT	37
+Li65:	.INT	2
+Li174:	.INT	10
+Li153:	.INT	4
+Li218:	.BYT	'c'
+Li146:	.BYT	'd'
+Li251:	.BYT	'r'
+Li180:	.BYT	'n'
+Li163:	.INT	7
+Li138:	.INT	100
+Li110:	.BYT	'\n'
+Li121:	.BYT	32
+Li149:	.INT	3
+Li105:	.BYT	0
+Li123:	.BYT	','
+Li162:	.BYT	'E'
+Li59:	.INT	1
+Li185:	.INT	13
 Li245:	.INT	27
 Li277:	.INT	42
-Li173:	.BYT	'm'
-Li180:	.BYT	'n'
-Li105:	.BYT	0
-Li110:	.BYT	'\n'
-Li152:	.BYT	'e'
-Li194:	.BYT	'D'
-Li153:	.INT	4
-Li184:	.BYT	't'
-Li167:	.INT	8
+Li188:	.BYT	':'
 Li55:	.INT	0
-Li242:	.INT	26
+Li199:	.BYT	'u'
 Li286:	.BYT	'g'
-Li251:	.BYT	'r'
-Li223:	.BYT	'a'
-Li77:	.BYT	1
-Li248:	.INT	28
-Li218:	.BYT	'c'
-Li170:	.INT	9
-Li146:	.BYT	'd'
-Li174:	.INT	10
-Li59:	.INT	1
-Li285:	.INT	37
-Li163:	.INT	7
-Li177:	.INT	11
-Li213:	.BYT	'i'
 ;; functions
 ;; row: :	FUNC	Co4  ;     iTree() {
 Co4:   ADI   R0 #0 ;    iTree() {
@@ -116,7 +116,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	St47  ;     iTree() {
 ;; local varibales on the stack    ;     iTree() {
-;; Temp variables on the stack
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-20
@@ -280,14 +279,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me6  ; 	else return (fib(root - 1) + fib(root - 2));
 ;; local varibales on the stack    ; 	else return (fib(root - 1) + fib(root - 2));
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-44
@@ -340,14 +331,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me6  ; 	else return (fib(root - 1) + fib(root - 2));
 ;; local varibales on the stack    ; 	else return (fib(root - 1) + fib(root - 2));
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-44
@@ -448,14 +431,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me6  ;     key = key + fib(key/2);
 ;; local varibales on the stack    ;     key = key + fib(key/2);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-44
@@ -568,10 +543,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Co22  ; 	    root = new iNode(key);
 ;; local varibales on the stack    ; 	    root = new iNode(key);
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-28
@@ -661,23 +632,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me11  ; 	    return insert(key, root);
 ;; local varibales on the stack    ; 	    return insert(key, root);
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-84
@@ -841,10 +795,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Co22  ; 		node.left = new iNode(key);
 ;; local varibales on the stack    ; 		node.left = new iNode(key);
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-28
@@ -934,23 +884,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me11  ; 		return insert(key, node.left);
 ;; local varibales on the stack    ; 		return insert(key, node.left);
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-84
@@ -1099,10 +1032,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Co22  ; 		node.right = new iNode(key);
 ;; local varibales on the stack    ; 		node.right = new iNode(key);
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-28
@@ -1192,23 +1121,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me11  ; 		return insert(key, node.right);
 ;; local varibales on the stack    ; 		return insert(key, node.right);
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-84
@@ -1336,13 +1248,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me14  ; 	inorder(root);
 ;; local varibales on the stack    ; 	inorder(root);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-40
@@ -1451,13 +1356,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me14  ; 	inorder(node.left);
 ;; local varibales on the stack    ; 	inorder(node.left);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-40
@@ -1501,10 +1399,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me16  ; 	visit(node);
 ;; local varibales on the stack    ; 	visit(node);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-28
@@ -1559,13 +1453,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me14  ; 	inorder(node.right);
 ;; local varibales on the stack    ; 	inorder(node.right);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-40
@@ -1729,7 +1616,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	St125  ;     iNode(int key) {
 ;; local varibales on the stack    ;     iNode(int key) {
-;; Temp variables on the stack
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-24
@@ -1880,7 +1766,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	St132  ;     Message() {
 ;; local varibales on the stack    ;     Message() {
-;; Temp variables on the stack
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-24
@@ -3140,11 +3025,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(0, 13);
 ;; local varibales on the stack    ; 	print(0, 13);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36
@@ -3296,11 +3176,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(i, end);
 ;; local varibales on the stack    ; 	print(i, end);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36
@@ -3376,11 +3251,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(6, 13);
 ;; local varibales on the stack    ; 	print(6, 13);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36
@@ -3452,11 +3322,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(24, 28);
 ;; local varibales on the stack    ; 	print(24, 28);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36
@@ -3545,11 +3410,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(i, i);
 ;; local varibales on the stack    ; 	print(i, i);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36
@@ -3596,11 +3456,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me30  ; 	print(6, 13);
 ;; local varibales on the stack    ; 	print(6, 13);
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36
@@ -3701,7 +3556,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	St275  ;       Butterfly(int age, char type) {
 ;; local varibales on the stack    ;       Butterfly(int age, char type) {
-;; Temp variables on the stack
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-20
@@ -3886,88 +3740,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Co27  ;     Message msg = new Message();
 ;; local varibales on the stack    ;     Message msg = new Message();
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-336
@@ -4032,7 +3804,6 @@ STB     R1 (RSP)
 ADI     RSP #-1
 ;; row: :	CALL	Co41  ;     Butterfly bff = new Butterfly(37, 'g');
 ;; local varibales on the stack    ;     Butterfly bff = new Butterfly(37, 'g');
-;; Temp variables on the stack
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-20
@@ -4076,9 +3847,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me42  ;     bff.nest();
 ;; local varibales on the stack    ;     bff.nest();
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-20
@@ -4126,8 +3894,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Co4  ;     tree = new iTree();
 ;; local varibales on the stack    ;     tree = new iTree();
-;; Temp variables on the stack
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-16
@@ -4171,13 +3937,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me35  ;     msg.msg3();
 ;; local varibales on the stack    ;     msg.msg3();
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36
@@ -4248,16 +4007,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me8  ; 	if (tree.add(key)) {
 ;; local varibales on the stack    ; 	if (tree.add(key)) {
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-52
@@ -4306,8 +4055,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me32  ; 	    msg.msg1(key);
 ;; local varibales on the stack    ; 	    msg.msg1(key);
-;; Temp variables on the stack
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-20
@@ -4344,10 +4091,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me12  ; 	    tree.print();
 ;; local varibales on the stack    ; 	    tree.print();
-;; Temp variables on the stack
-ADI     RSP #-1
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-24
@@ -4393,17 +4136,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me34  ; 	    msg.msg2(key);
 ;; local varibales on the stack    ; 	    msg.msg2(key);
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-1
-ADI     RSP #-1
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-56
@@ -4440,13 +4172,6 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; row: :	CALL	Me35  ; 	msg.msg3();
 ;; local varibales on the stack    ; 	msg.msg3();
-;; Temp variables on the stack
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
-ADI     RSP #-4
 ;; set the stack pointer
 	MOV	RSP R15
 	ADI	RSP #-36

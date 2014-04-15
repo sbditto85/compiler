@@ -489,20 +489,21 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			funcSize, _ := sym.IntFromData(funcElem.Data, "size")
 
 			asm = append(asm, fmt.Sprintf(`;; local varibales on the stack    ; %s`, row.GetComment()))
-			//add main's local variables
-			for _, e := range getLocalVars(st, funcElem) {
-				typ, _ := sym.StringFromData(e.Data, "type")
-				isArray, _ := sym.BoolFromData(e.Data, "isArray")
-				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
-			}
+			//asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d",-12+(funcSize*-1)))
+			// //add main's local variables
+			// for _, e := range getLocalVars(st, funcElem) {
+			// 	typ, _ := sym.StringFromData(e.Data, "type")
+			// 	isArray, _ := sym.BoolFromData(e.Data, "isArray")
+			// 	asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
+			// }
 
-			asm = append(asm, `;; Temp variables on the stack`)
-			//add main's temp variables
-			for _, e := range getTempVars(st, funcElem) {
-				typ, _ := sym.StringFromData(e.Data, "type")
-				isArray, _ := sym.BoolFromData(e.Data, "isArray")
-				asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
-			}
+			// asm = append(asm, `;; Temp variables on the stack`)
+			// //add main's temp variables
+			// for _, e := range getTempVars(st, funcElem) {
+			// 	typ, _ := sym.StringFromData(e.Data, "type")
+			// 	isArray, _ := sym.BoolFromData(e.Data, "isArray")
+			// 	asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
+			// }
 			asm = append(asm, `;; set the stack pointer`)
 			asm = append(asm, "\tMOV\tRSP R15")
 			asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d", -12+(funcSize*-1)))
