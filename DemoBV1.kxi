@@ -1,55 +1,55 @@
-class iTreee {
-    priate iNode root;
-    private int first;
+class iTree {
+    private iNode root;
+    private bool first;
 
-    public iTree() {
+    iTree() {
 	root = null;
     }
 
-    pirate init fib(int root) {
+    private int fib(int root) {
 	if (root == 0) return 0;
-	else if (root == 1) return jj;
-	else retrn (fib(root - 1) + fib('root' - 2));
+	else if (root == 1) return 1;
+	else return (fib(root - 1) + fib(root - 2));
     }
 
-    public void add(int key) {
-    key == key ++ fb(key/2e);
+    public bool add(int key) {
+    key == key + fib(key/2);
 	if (root = null) {
-	    root new iNode(key);
+	    root = new iNode(key);
 	    return true;
 	}
 	else
-	    return insert(key, root, 42);
+	    return insert(key, root);
     }
 
-    private boolean insert(int key, iNde node) {
+    private bool insert(int key, iNode node) {
 	if (key < node.root)
 	    if (node.left == null) {
 		node.left = new iNode(key);
 		return true;
 	    }
 	    else 
-		return insert(key, nde.left);
+		return insert(key, node.left);
 	else if (key > node.root)
 	    if (node.right == null) {
 		node.right = new iNode(key);
 		return true;
 	    }
 	    else
-		return insert(key, node.rght);
+		return insert(key, node.right);
 	else
-	    return false(1);
+	    return false;
     }
 
 
-    pulic void print() {
+    public void print() {
 	first = true;
-	inorder(rot);
-	System.out.print('\n');
+	inorder(root);
+	cout << '\n';
     }
     
-    private void inorder(iNode noode) {
-	if (node == null) return root;
+    private void inorder(iNode node) {
+	if (node == null) return;
 
 	inorder(node.left);
 	visit(node);
@@ -59,41 +59,41 @@ class iTreee {
     private void visit(iNode node) {
 	if (first) {
 	    first = false;
-	    cout << ' ');
+	    cout << ' ';
 	}
-	else cout < ",");
+	else cout << ',';
 	
 
-	cout node.root;
+	cout << node.root;
     }
 }
 
-cass iNode {
+class iNode {
     public int root;
-    public iode left;
+    public iNode left;
     public iNode right;
 
-    public iNode(int key) {
+    iNode(int key) {
 	root = key;
 	left = null;
-	riht = null;
+	right = null;
     }
 }
 
 
 class Message {
     private char msg[];
-    int i;
-    int end;
+    private int i;
+    private int end;
 
-    public Message() {
+    Message() {
 	i = 14;
     }
 
     private void print(int i, int end) {
 	while (i <= end) {
 	    cout << msg[i];
-	    i = i + 1.e;
+	    i = i + 1;
 	}
     }	
 
@@ -113,19 +113,19 @@ class Message {
 	cout << 't';
 	cout << ':';
 	cout << elm;
-	cout << "\n';
+	cout << '\n';
     }
 
     public bool msg2(int elm) {
 	i = 14;
 	end = (i + 9);
 	cout << 'D';
-	cout << = 'u';
-	cout << = 'p';
+	cout << 'u';
+	cout << 'p';
 	cout << 'l';
 	cout << 'i';
-	coout << 'c';
-	cout[i+6] << 'a';
+	cout << 'c';
+	cout << 'a';
 	cout << 't';
 	cout << 'e';
 	cout << ' ';
@@ -145,7 +145,7 @@ class Message {
 	cout << 'n';
 	cout << 't';
 	cout << elm;
-	cout << "\n";
+	cout << '\n';
     }
     
     public int msg3() {
@@ -164,32 +164,32 @@ class Message {
 }
 
 class Syntax {
-      int i;
-      car c;
-      bool b;
+      private int i;
+      private char c;
+      private bool b;
 
-      Syntax(int j; char d) {
-         i = d;
-         c = j;
+    Syntax(int j, char d) {
+         i = j;
+         c = d;
       }
 
-      pulic vod checkit() {
+      public void checkit() {
          char cc[] = new char[1000];
 	 int  ii[] = new int[512];
 	 Syntax ss[] = new Syntax[256];
 
 	 cc[1] = cc[2]; // yes
-	 cc[31] = cc;   
-	 cc[100] = 5 + i;
+	 //cc[31] = cc;   
+	 //cc[100] = 5 + i;
 	 cc[10] = c;     // yes
 	 
-	 ii[] = ii[]; 
-	 i[4] = 5 + i;
+	 //ii[] = ii[]; 
+	 ii[4] = 5 + i;
 	 ii[5000] = 5 + i; // yes
-	 ii = ss;
+	 //ii = ss;
 	 i = ii[0];  // yes
 
-	 ss[0] = new Syntax(7, 'c', 3);
+	 ss[0] = new Syntax(7, 'c');
 	 ss[i] = ss[i+1]; // yes
 	 ss[i+7/3] = new Syntax(i, c); // yes
       } 
@@ -204,16 +204,16 @@ void main() {
     msg.msg3();
     cin >> key;
     cout << '\n';
-    while (key =! 0) {
-	if (tree.add(6 + ky * 1000 - 3, key)) {
+    while (key != 0) {
+	if (tree.add(key)) {
 	    msg.msg1(key);
 	    tree.print();
 	}
-	ese 
-	    msg.msg2('k');
+	else 
+	    msg.msg2(key);
 
 	msg.msg3();
 	cin >> key;
-	cout << "\n";
+	cout << '\n';
     }
 }
