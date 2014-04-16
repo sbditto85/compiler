@@ -1142,3 +1142,85 @@ func ExampleTCodeObjectsNull() {
 	//null
 
 }
+
+func ExampleTCodeRefAsIndex() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	file := "tests/refasindex.kxi"
+	l := lex.NewLexer()
+	l.ReadFile(file)
+
+	a := an.NewAnalyzer(l, false)
+	a.GetNext(false)
+	err := a.PerformPass()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err := l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	l = lex.NewLexer()
+	l.ReadFile(file)
+	a.SetLexer(l)
+
+	err = a.PerformNextPass(false)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	curTok, err = l.GetCurrentToken()
+	if curTok.Type != tok.EOT {
+		fmt.Printf("Last token not EOT it is %s\n", curTok.Lexeme)
+	}
+	if err != nil {
+		fmt.Println("Error getting last token!")
+	}
+
+	table, symbolTable := a.GetICodeInfo()
+
+	asm := GenerateASM(table, symbolTable)
+
+	// fmt.Printf("ASM:\n")
+
+	// for i, line := range asm {
+	// 	//fmt.Printf("%d : %s\n", i+1, line)
+	// 	i = i
+	// 	// fmt.Printf("%d: ",i)
+	// 	fmt.Printf("%s\n", line)
+	// }
+
+	assembler := amb.NewAssembler()
+	assembler.ReadStrings(asm)
+
+	fperr := assembler.FirstPass()
+	if fperr == nil {
+		sperr := assembler.SecondPass()
+		if sperr == nil {
+			sperr = sperr
+		} else {
+			fmt.Println(sperr)
+		}
+	} else {
+		fmt.Println(fperr)
+	}
+
+	v := vm.NewVirtualMachine(assembler.GetBytes())
+	verr := v.Run()
+	if verr != nil {
+		fmt.Printf("%s\n", verr.Error())
+	}
+
+	//Output:
+	//Duplicate
+
+}

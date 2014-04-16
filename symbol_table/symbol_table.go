@@ -145,7 +145,7 @@ func (s *SymbolTable) AddElement(value string, kind string, data map[string]inte
 		// typ, _ := StringFromData(data, "type")
 		// isArr, _ := BoolFromData(data, "isArray")
 		if methodElem.Data != nil {
-			methodElem.Data["size"] = offset + 4//SizeOfType(typ, isArr)
+			methodElem.Data["size"] = offset + 4 //SizeOfType(typ, isArr)
 		}
 	case "Ivar":
 		class_scope, _ := s.ScopeBelow(curScope)

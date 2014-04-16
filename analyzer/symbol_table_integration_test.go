@@ -31,7 +31,7 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Elements:
 	//Scope: g, SymId: Cl1, Value: Cat, Kind: Class
 	//Extra Data:
-	//Key: size, Value: 13
+	//Key: size, Value: 16
 	//--------------
 	//Scope: g.Cat, SymId: Iv2, Value: paw, Kind: Ivar
 	//Extra Data:
@@ -47,7 +47,7 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: type, Value: int
 	//Key: isArray, Value: false
 	//Key: this_class, Value: Cat
-	//Key: offset, Value: 1
+	//Key: offset, Value: 4
 	//--------------
 	//Scope: g.Cat, SymId: Iv4, Value: myArr, Kind: Ivar
 	//Extra Data:
@@ -55,7 +55,7 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: type, Value: bool
 	//Key: isArray, Value: true
 	//Key: this_class, Value: Cat
-	//Key: offset, Value: 5
+	//Key: offset, Value: 8
 	//--------------
 	//Scope: g.Cat.Cat, SymId: Pa5, Value: legsNum, Kind: Parameter
 	//Extra Data:
@@ -78,7 +78,7 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: type, Value: char
 	//Key: isArray, Value: true
 	//Key: this_class, Value: Cat
-	//Key: offset, Value: 9
+	//Key: offset, Value: 12
 	//--------------
 	//Scope: g.Cat.Run, SymId: Pa8, Value: i, Kind: Parameter
 	//Extra Data:
@@ -99,13 +99,13 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: parameters, Value: [{int i false} {char c false}]
 	//Key: this_class, Value: Cat
 	//Key: paramSymIds, Value: [Pa8 Pa9]
-	//Key: size, Value: 9
+	//Key: size, Value: 12
 	//--------------
 	//Scope: g.Cat.Run, SymId: Lv11, Value: x, Kind: Lvar
 	//Extra Data:
 	//Key: isArray, Value: false
 	//Key: type, Value: int
-	//Key: offset, Value: 5
+	//Key: offset, Value: 8
 	//--------------
 	//Scope: g, SymId: MAIN, Value: main, Kind: Main
 	//Extra Data:
@@ -118,4 +118,5 @@ func ExampleSymbolTableIntergrationBasicFile() {
 	//Key: type, Value: Cat
 	//Key: offset, Value: 0
 	//--------------
+
 }

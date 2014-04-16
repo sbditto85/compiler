@@ -55,7 +55,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	// 	isArray, _ := sym.BoolFromData(e.Data, "isArray")
 	// 	asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
 	// }
-	asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d",-12+(mainSize*-1)))
+	asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d", -16+(mainSize*-1)))
 
 	asm = append(asm, `;; set the return address and jump`)
 	asm = append(asm, `MOV     R10 RPC         ; PC already at next instruction`)
@@ -107,7 +107,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 	asm = append(asm, `;; functions`)
 
 	for _, row := range table.GetRows() {
-		//fmt.Printf("row: %#v\n", row) //TODO: delete me
+		// fmt.Printf("row: %#v\n", row) //TODO: delete me
 		asm = append(asm, fmt.Sprintf(";; row: %s:\t%s\t%s %s %s; %s", row.GetLabel(), row.GetCommand(), row.GetOp1(), row.GetOp2(), row.GetOp3(), row.GetComment()))
 		switch row.GetCommand() {
 		case "ATOI":
@@ -176,7 +176,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			//load base into R13
 			label := row.GetLabel()
 			//fmt.Printf("AEF OP3: %s\n",row.GetOp3())
-			for i, r := range loadAddressToRegister(st, row.GetOp3(), "R13") {
+			for i, r := range loadAddressToRegister(st, row.GetOp3(), "R16") {
 				beg := ""
 				if label != "" && i == 0 {
 					beg = label + ":"
@@ -194,7 +194,7 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			elem, _ := st.GetElement(row.GetOp3())
 			indirect, _ := sym.BoolFromData(elem.Data, "indirect")
 			if indirect {
-				asm = append(asm, "\tLDR\tR13 (R13)")
+				asm = append(asm, "\tLDR\tR16 (R16)")
 			}
 
 			for _, r := range loadToRegister(st, row.GetOp2(), "R14") {
@@ -226,9 +226,9 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			asm = append(asm, fmt.Sprintf("\tADI\tR12 #%d", baseSize))
 			asm = append(asm, fmt.Sprintf("\tMUL\tR14 R12"))
 
-			asm = append(asm, fmt.Sprintf("\tADD\tR13 R14"))
+			asm = append(asm, fmt.Sprintf("\tADD\tR16 R14"))
 
-			for _, r := range saveAddressFromRegister(st, row.GetOp1(), "R13") {
+			for _, r := range saveAddressFromRegister(st, row.GetOp1(), "R16") {
 				switch {
 				case r.GetOp2() != "":
 					asm = append(asm, fmt.Sprintf("\t%s\t%s %s\t;%s", r.GetCommand(), r.GetOp1(), r.GetOp2(), r.GetComment()))
@@ -489,24 +489,9 @@ func GenerateASM(table *ic.Quad, st *sym.SymbolTable) (asm []string) {
 			funcSize, _ := sym.IntFromData(funcElem.Data, "size")
 
 			asm = append(asm, fmt.Sprintf(`;; local varibales on the stack    ; %s`, row.GetComment()))
-			//asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d",-12+(funcSize*-1)))
-			// //add main's local variables
-			// for _, e := range getLocalVars(st, funcElem) {
-			// 	typ, _ := sym.StringFromData(e.Data, "type")
-			// 	isArray, _ := sym.BoolFromData(e.Data, "isArray")
-			// 	asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
-			// }
-
-			// asm = append(asm, `;; Temp variables on the stack`)
-			// //add main's temp variables
-			// for _, e := range getTempVars(st, funcElem) {
-			// 	typ, _ := sym.StringFromData(e.Data, "type")
-			// 	isArray, _ := sym.BoolFromData(e.Data, "isArray")
-			// 	asm = append(asm, fmt.Sprintf(`ADI     RSP #%d`, (sym.SizeOfType(typ, isArray)*-1)))
-			// }
 			asm = append(asm, `;; set the stack pointer`)
 			asm = append(asm, "\tMOV\tRSP R15")
-			asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d", -12+(funcSize*-1)))
+			asm = append(asm, fmt.Sprintf("\tADI\tRSP #%d", -16+(funcSize*-1)))
 			asm = append(asm, `;; set the frame pointer`)
 			asm = append(asm, `MOV     RFP R15`)
 			asm = append(asm, `;; set the return address and jump`)
@@ -1115,40 +1100,21 @@ func saveFromRegister(st *sym.SymbolTable, symId, reg string) (rows []*ic.QuadRo
 
 		elem, _ := st.GetElement(symId)
 
-		size := 4
-
-		varSymId, err := sym.StringFromData(elem.Data, "var_symId")
-		if err == nil {
-			varElem, _ := st.GetElement(varSymId)
-
-			size, err = sym.IntFromData(varElem.Data, "size")
+		//size := 4
+		size, err := sym.IntFromData(elem.Data, "size")
+		if err != nil {
+			typ, err := sym.StringFromData(elem.Data, "type")
 			if err != nil {
-				typ, err := sym.StringFromData(varElem.Data, "type")
-				if err != nil {
-					panic(fmt.Sprintf("Could not get type for %s", varSymId))
-				}
-
-				//isArray, _ := sym.BoolFromData(varElem.Data, "isArray")
-				isArray := false
-
-				size = sym.SizeOfType(typ, isArray)
+				panic(fmt.Sprintf("Could not get type for %s", symId))
 			}
-		} else {
-			arrSymId, _ := sym.StringFromData(elem.Data, "arr_symId")
-			arrElem, _ := st.GetElement(arrSymId)
 
-			size, err = sym.IntFromData(arrElem.Data, "size")
+			isArray, err := sym.BoolFromData(elem.Data, "isArray")
 			if err != nil {
-				typ, err := sym.StringFromData(arrElem.Data, "type")
-				if err != nil {
-					panic(fmt.Sprintf("Could not get type for %s", varSymId))
-				}
+				isArray = true
+			} //default to 4 bits not 1
+			//isArray := false
 
-				//isArray, _ := sym.BoolFromData(arrElem.Data, "isArray")
-				isArray := false
-
-				size = sym.SizeOfType(typ, isArray)
-			}
+			size = sym.SizeOfType(typ, isArray)
 		}
 		switch size {
 		case 1:

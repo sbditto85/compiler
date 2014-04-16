@@ -17,7 +17,7 @@ STR     R1 (RSP)
 ADI     RSP #-4
 ;; parameters on the stack
 ;; local varibales on the stack
-	ADI	RSP #-72
+	ADI	RSP #-76
 ;; set the return address and jump
 MOV     R10 RPC         ; PC already at next instruction
 ADI     R10 #12
@@ -46,52 +46,52 @@ NL:     .BYT    '\n'
 LTRCU:  .BYT    'U'
 LTRCO:  .BYT    'O'
 LTRCH:  .BYT    'H'
-Li190:	.INT	14
-Li223:	.BYT	'a'
-Li177:	.INT	11
-Li184:	.BYT	't'
-Li213:	.BYT	'i'
-Li170:	.INT	9
-Li194:	.BYT	'D'
-Li166:	.BYT	'l'
+Li105:	.BYT	0
 Li236:	.INT	24
-Li159:	.INT	6
-Li167:	.INT	8
-Li239:	.INT	25
-Li143:	.BYT	'A'
-Li248:	.INT	28
-Li152:	.BYT	'e'
+Li138:	.INT	100
+Li188:	.BYT	':'
+Li146:	.BYT	'd'
+Li181:	.INT	12
+Li245:	.INT	27
+Li285:	.INT	37
+Li218:	.BYT	'c'
+Li177:	.INT	11
+Li65:	.INT	2
+Li286:	.BYT	'g'
+Li213:	.BYT	'i'
 Li242:	.INT	26
 Li53:	.INT	0
-Li156:	.INT	5
-Li204:	.BYT	'p'
-Li77:	.BYT	1
-Li181:	.INT	12
-Li173:	.BYT	'm'
-Li285:	.INT	37
-Li65:	.INT	2
-Li174:	.INT	10
-Li153:	.INT	4
-Li218:	.BYT	'c'
-Li146:	.BYT	'd'
-Li251:	.BYT	'r'
-Li180:	.BYT	'n'
+Li159:	.INT	6
+Li190:	.INT	14
 Li163:	.INT	7
-Li138:	.INT	100
-Li110:	.BYT	'\n'
-Li121:	.BYT	32
-Li149:	.INT	3
-Li105:	.BYT	0
-Li123:	.BYT	','
-Li162:	.BYT	'E'
-Li59:	.INT	1
-Li185:	.INT	13
-Li245:	.INT	27
+Li143:	.BYT	'A'
+Li194:	.BYT	'D'
+Li77:	.BYT	1
 Li277:	.INT	42
-Li188:	.BYT	':'
-Li55:	.INT	0
+Li110:	.BYT	'\n'
+Li59:	.INT	1
+Li156:	.INT	5
+Li174:	.INT	10
+Li173:	.BYT	'm'
+Li167:	.INT	8
+Li185:	.INT	13
+Li123:	.BYT	','
+Li223:	.BYT	'a'
+Li149:	.INT	3
+Li166:	.BYT	'l'
+Li180:	.BYT	'n'
 Li199:	.BYT	'u'
-Li286:	.BYT	'g'
+Li251:	.BYT	'r'
+Li121:	.BYT	32
+Li153:	.INT	4
+Li170:	.INT	9
+Li184:	.BYT	't'
+Li162:	.BYT	'E'
+Li55:	.INT	0
+Li152:	.BYT	'e'
+Li204:	.BYT	'p'
+Li239:	.INT	25
+Li248:	.INT	28
 ;; functions
 ;; row: :	FUNC	Co4  ;     iTree() {
 Co4:   ADI   R0 #0 ;    iTree() {
@@ -118,7 +118,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     iTree() {
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-20
+	ADI	RSP #-24
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -281,7 +281,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	else return (fib(root - 1) + fib(root - 2));
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-44
+	ADI	RSP #-48
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -333,7 +333,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	else return (fib(root - 1) + fib(root - 2));
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-44
+	ADI	RSP #-48
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -433,7 +433,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     key = key + fib(key/2);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-44
+	ADI	RSP #-48
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -545,7 +545,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	    root = new iNode(key);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-28
+	ADI	RSP #-32
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -634,7 +634,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	    return insert(key, root);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-84
+	ADI	RSP #-88
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -797,7 +797,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 		node.left = new iNode(key);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-28
+	ADI	RSP #-32
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -886,7 +886,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 		return insert(key, node.left);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-84
+	ADI	RSP #-88
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1034,7 +1034,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 		node.right = new iNode(key);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-28
+	ADI	RSP #-32
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1123,7 +1123,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 		return insert(key, node.right);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-84
+	ADI	RSP #-88
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1208,7 +1208,7 @@ Me12:   ADI   R0 #0 ;    public void print() {
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
+	STR	R3 (R13)	;Save from Register
 ;; row: :	REF	Tv108 Iv2 this; 	inorder(root);
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
@@ -1250,7 +1250,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	inorder(root);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-40
+	ADI	RSP #-44
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1358,7 +1358,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	inorder(node.left);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-40
+	ADI	RSP #-44
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1401,7 +1401,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	visit(node);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-28
+	ADI	RSP #-32
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1455,7 +1455,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	inorder(node.right);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-40
+	ADI	RSP #-44
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1516,7 +1516,7 @@ Me16:   ADI   R0 #0 ;    private void visit(iNode node) {
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-20	;
 	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
+	STR	R3 (R13)	;Save from Register
 ;; row: :	WRITE	Li121  ; 	    cout << ' ';
 	LDB	R0 Li121:	;
 	TRP	#3	;	    cout << ' ';
@@ -1618,7 +1618,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     iNode(int key) {
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-24
+	ADI	RSP #-28
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1768,7 +1768,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     Message() {
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-24
+	ADI	RSP #-28
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -1815,7 +1815,7 @@ ADD     R9 R3
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-12	;
 	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
+	STR	R3 (R13)	;Save from Register
 ;; row: :	REF	Tv141 Iv24 this; 	msg[0] = 'A';
 	MOV	R10 RFP	;
 	ADI	R10 #-8	;
@@ -1829,16 +1829,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv142 Li55 Tv141; 	msg[0] = 'A';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-24	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li55:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-28	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv142 Li143 ; 	msg[0] = 'A';
 	LDB	R3 Li143:	;	msg[0] = 'A';
 	MOV	R10 RFP	;Load Address
@@ -1858,16 +1858,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv145 Li59 Tv144; 	msg[1] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-32	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li59:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-36	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv145 Li146 ; 	msg[1] = 'd';
 	LDB	R3 Li146:	;	msg[1] = 'd';
 	MOV	R10 RFP	;Load Address
@@ -1887,16 +1887,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv148 Li65 Tv147; 	msg[2] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-40	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li65:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-44	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv148 Li146 ; 	msg[2] = 'd';
 	LDB	R3 Li146:	;	msg[2] = 'd';
 	MOV	R10 RFP	;Load Address
@@ -1916,16 +1916,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv151 Li149 Tv150; 	msg[3] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-48	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li149:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-52	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv151 Li152 ; 	msg[3] = 'e';
 	LDB	R3 Li152:	;	msg[3] = 'e';
 	MOV	R10 RFP	;Load Address
@@ -1945,16 +1945,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv155 Li153 Tv154; 	msg[4] = 'd';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-56	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li153:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-60	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv155 Li146 ; 	msg[4] = 'd';
 	LDB	R3 Li146:	;	msg[4] = 'd';
 	MOV	R10 RFP	;Load Address
@@ -1974,16 +1974,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv158 Li156 Tv157; 	msg[5] = ' ';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-64	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li156:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-68	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv158 Li121 ; 	msg[5] = ' ';
 	LDB	R3 Li121:	;	msg[5] = ' ';
 	MOV	R10 RFP	;Load Address
@@ -2003,16 +2003,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv161 Li159 Tv160; 	msg[6] = 'E';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-72	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li159:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-76	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv161 Li162 ; 	msg[6] = 'E';
 	LDB	R3 Li162:	;	msg[6] = 'E';
 	MOV	R10 RFP	;Load Address
@@ -2032,16 +2032,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv165 Li163 Tv164; 	msg[7] = 'l';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-80	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li163:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-84	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv165 Li166 ; 	msg[7] = 'l';
 	LDB	R3 Li166:	;	msg[7] = 'l';
 	MOV	R10 RFP	;Load Address
@@ -2061,16 +2061,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv169 Li167 Tv168; 	msg[8] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-88	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li167:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-92	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv169 Li152 ; 	msg[8] = 'e';
 	LDB	R3 Li152:	;	msg[8] = 'e';
 	MOV	R10 RFP	;Load Address
@@ -2090,16 +2090,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv172 Li170 Tv171; 	msg[9] = 'm';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-96	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li170:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-100	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv172 Li173 ; 	msg[9] = 'm';
 	LDB	R3 Li173:	;	msg[9] = 'm';
 	MOV	R10 RFP	;Load Address
@@ -2119,16 +2119,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv176 Li174 Tv175; 	msg[10] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-104	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li174:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-108	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv176 Li152 ; 	msg[10] = 'e';
 	LDB	R3 Li152:	;	msg[10] = 'e';
 	MOV	R10 RFP	;Load Address
@@ -2148,16 +2148,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv179 Li177 Tv178; 	msg[11] = 'n';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-112	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li177:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-116	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv179 Li180 ; 	msg[11] = 'n';
 	LDB	R3 Li180:	;	msg[11] = 'n';
 	MOV	R10 RFP	;Load Address
@@ -2177,16 +2177,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv183 Li181 Tv182; 	msg[12] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-120	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li181:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-124	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv183 Li184 ; 	msg[12] = 't';
 	LDB	R3 Li184:	;	msg[12] = 't';
 	MOV	R10 RFP	;Load Address
@@ -2206,16 +2206,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv187 Li185 Tv186; 	msg[13] = ':';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-128	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li185:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-132	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv187 Li188 ; 	msg[13] = ':';
 	LDB	R3 Li188:	;	msg[13] = ':';
 	MOV	R10 RFP	;Load Address
@@ -2261,8 +2261,8 @@ ADD     R9 R3
 ;; row: :	AEF	Tv193 Tv191 Tv192; 	msg[i] = 'D';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-144	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-140	;
 	LDR	R13 (R10)	;
@@ -2270,10 +2270,10 @@ ADD     R9 R3
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-148	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv193 Li194 ; 	msg[i] = 'D';
 	LDB	R3 Li194:	;	msg[i] = 'D';
 	MOV	R10 RFP	;Load Address
@@ -2313,18 +2313,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv198 Tv196 Tv197; 	msg[i+1] = 'u';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-160	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-156	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-164	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv198 Li199 ; 	msg[i+1] = 'u';
 	LDB	R3 Li199:	;	msg[i+1] = 'u';
 	MOV	R10 RFP	;Load Address
@@ -2364,18 +2364,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv203 Tv201 Tv202; 	msg[i+2] = 'p';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-176	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-172	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-180	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv203 Li204 ; 	msg[i+2] = 'p';
 	LDB	R3 Li204:	;	msg[i+2] = 'p';
 	MOV	R10 RFP	;Load Address
@@ -2415,18 +2415,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv208 Tv206 Tv207; 	msg[i+3] = 'l';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-192	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-188	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-196	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv208 Li166 ; 	msg[i+3] = 'l';
 	LDB	R3 Li166:	;	msg[i+3] = 'l';
 	MOV	R10 RFP	;Load Address
@@ -2466,18 +2466,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv212 Tv210 Tv211; 	msg[i+4] = 'i';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-208	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-204	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-212	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv212 Li213 ; 	msg[i+4] = 'i';
 	LDB	R3 Li213:	;	msg[i+4] = 'i';
 	MOV	R10 RFP	;Load Address
@@ -2517,18 +2517,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv217 Tv215 Tv216; 	msg[i+5] = 'c';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-224	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-220	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-228	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv217 Li218 ; 	msg[i+5] = 'c';
 	LDB	R3 Li218:	;	msg[i+5] = 'c';
 	MOV	R10 RFP	;Load Address
@@ -2568,18 +2568,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv222 Tv220 Tv221; 	msg[i+6] = 'a';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-240	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-236	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-244	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv222 Li223 ; 	msg[i+6] = 'a';
 	LDB	R3 Li223:	;	msg[i+6] = 'a';
 	MOV	R10 RFP	;Load Address
@@ -2619,18 +2619,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv227 Tv225 Tv226; 	msg[i+7] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-256	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-252	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-260	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv227 Li184 ; 	msg[i+7] = 't';
 	LDB	R3 Li184:	;	msg[i+7] = 't';
 	MOV	R10 RFP	;Load Address
@@ -2670,18 +2670,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv231 Tv229 Tv230; 	msg[i+8] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-272	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-268	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-276	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv231 Li152 ; 	msg[i+8] = 'e';
 	LDB	R3 Li152:	;	msg[i+8] = 'e';
 	MOV	R10 RFP	;Load Address
@@ -2721,18 +2721,18 @@ ADD     R9 R3
 ;; row: :	AEF	Tv235 Tv233 Tv234; 	msg[i+9] = 'm';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-288	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-284	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-292	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv235 Li173 ; 	msg[i+9] = 'm';
 	LDB	R3 Li173:	;	msg[i+9] = 'm';
 	MOV	R10 RFP	;Load Address
@@ -2752,16 +2752,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv238 Li236 Tv237; 	msg[24] = 'E';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-296	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li236:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-300	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv238 Li162 ; 	msg[24] = 'E';
 	LDB	R3 Li162:	;	msg[24] = 'E';
 	MOV	R10 RFP	;Load Address
@@ -2781,16 +2781,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv241 Li239 Tv240; 	msg[25] = 'n';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-304	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li239:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-308	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv241 Li180 ; 	msg[25] = 'n';
 	LDB	R3 Li180:	;	msg[25] = 'n';
 	MOV	R10 RFP	;Load Address
@@ -2810,16 +2810,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv244 Li242 Tv243; 	msg[26] = 't';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-312	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li242:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-316	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv244 Li184 ; 	msg[26] = 't';
 	LDB	R3 Li184:	;	msg[26] = 't';
 	MOV	R10 RFP	;Load Address
@@ -2839,16 +2839,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv247 Li245 Tv246; 	msg[27] = 'e';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-320	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li245:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-324	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv247 Li152 ; 	msg[27] = 'e';
 	LDB	R3 Li152:	;	msg[27] = 'e';
 	MOV	R10 RFP	;Load Address
@@ -2868,16 +2868,16 @@ ADD     R9 R3
 ;; row: :	AEF	Tv250 Li248 Tv249; 	msg[28] = 'r';
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-328	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li248:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-332	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	MOV	Tv250 Li251 ; 	msg[28] = 'r';
 	LDB	R3 Li251:	;	msg[28] = 'r';
 	MOV	R10 RFP	;Load Address
@@ -2941,18 +2941,18 @@ BF318:	MOV	R10 RFP	;
 ;; row: :	AEF	Tv256 Pa28 Tv255; 	    cout << msg[i];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-24	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	MOV	R10 RFP	;
 	ADI	R10 #-12	;
 	LDR	R14 (R10)	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-28	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	WRITE	Tv256  ; 	    cout << msg[i];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-28	;
@@ -3027,7 +3027,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	print(0, 13);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3178,7 +3178,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	print(i, end);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3204,16 +3204,16 @@ JMP     Me30:
 ;; row: :	AEF	Tv267 Li156 Tv266; 	cout << msg[5];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-44	;
-	LDR	R13 (R10)	;
-	LDR	R13 (R13)
+	LDR	R16 (R10)	;
+	LDR	R16 (R16)
 	LDR	R14 Li156:	;
 	SUB	R12 R12
 	ADI	R12 #1
 	MUL	R14 R12
-	ADD	R13 R14
+	ADD	R16 R14
 	MOV	R10 RFP	;Save Address
 	ADI	R10 #-48	;
-	STR	R13 (R10)	;
+	STR	R16 (R10)	;
 ;; row: :	WRITE	Tv267  ; 	cout << msg[5];
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-48	;
@@ -3253,7 +3253,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	print(6, 13);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3324,7 +3324,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	print(24, 28);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3412,7 +3412,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	print(i, i);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3458,7 +3458,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	print(6, 13);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3558,7 +3558,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;       Butterfly(int age, char type) {
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-20
+	ADI	RSP #-24
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3690,7 +3690,7 @@ St275:   ADI   R0 #0 ;}
 	MOV	R10 RFP	;Load Address
 	ADI	R10 #-16	;
 	LDR	R13 (R10)	;
-	STB	R3 (R13)	;Save from Register
+	STR	R3 (R13)	;Save from Register
 ;; row: :	RTN	  ; }
 ;; return from function
 ;; test for underflow
@@ -3742,7 +3742,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     Message msg = new Message();
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-336
+	ADI	RSP #-340
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3806,7 +3806,7 @@ ADI     RSP #-1
 ;; local varibales on the stack    ;     Butterfly bff = new Butterfly(37, 'g');
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-20
+	ADI	RSP #-24
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3849,7 +3849,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     bff.nest();
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-20
+	ADI	RSP #-24
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3896,7 +3896,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     tree = new iTree();
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-16
+	ADI	RSP #-20
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -3939,7 +3939,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ;     msg.msg3();
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -4009,7 +4009,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	if (tree.add(key)) {
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-52
+	ADI	RSP #-56
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -4057,7 +4057,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	    msg.msg1(key);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-20
+	ADI	RSP #-24
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -4093,7 +4093,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	    tree.print();
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-24
+	ADI	RSP #-28
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -4111,8 +4111,7 @@ JMP     Me12:
 ;; row: If295:	FRAME	Lv45 Me34 ; 	    msg.msg2(key);
 ;; Call function "Me34:    	    msg.msg2(key);"
 ;; Test for overflow
-If295:  TRP     #99
-        MOV     R10 RSP
+If295:   MOV     R10 RSP
 ADI     R10 #-56          ; 4 bytes for Return address & 4 bytes for Previous Frame Pointer 4 bytes for this (+ params) (+ local variables) (+ temp variables)
 CMP     R10 RSL
 BLT     R10 OVRFLW:
@@ -4139,7 +4138,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	    msg.msg2(key);
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-56
+	ADI	RSP #-60
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
@@ -4152,7 +4151,6 @@ JMP     Me34:
 	MOV	R10 RFP	;
 	ADI	R10 #-64	;
 	STB	R11 (R10)	;
-        TRP     #99
 ;; row: El298:	FRAME	Lv45 Me35 ; 	msg.msg3();
 ;; Call function "Me35:    	msg.msg3();"
 ;; Test for overflow
@@ -4176,7 +4174,7 @@ ADI     RSP #-4
 ;; local varibales on the stack    ; 	msg.msg3();
 ;; set the stack pointer
 	MOV	RSP R15
-	ADI	RSP #-36
+	ADI	RSP #-40
 ;; set the frame pointer
 MOV     RFP R15
 ;; set the return address and jump
