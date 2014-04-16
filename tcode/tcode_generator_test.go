@@ -1317,7 +1317,6 @@ func ExampleTCodeBigArray() {
 
 }
 
-
 func ExampleTCodeBigArrayObjects() {
 	defer func() {
 		if r := recover(); r != nil {
