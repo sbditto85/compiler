@@ -1,0 +1,49 @@
+
+class ArrayHandler {
+
+    private int size = 1000;
+    public int i = 0;
+    private char letters[];
+
+    ArrayHandler() {
+	letters = new char[size];
+    }
+    
+    public void fillArray() {
+	int toPrint = 33;
+	while(i < size) {
+	    if(toPrint > 126) {
+		toPrint = 33;
+	    }
+
+	    letters[i] = itoa(toPrint);
+
+	    toPrint = toPrint + 1;
+	    i = i + 1;
+	}
+    }
+
+    public void printArray() {
+	int toPrint = 33;
+	i = 0;
+	while(i < size) {
+	    if(toPrint > 126) {
+		toPrint = 33;
+		cout << '\n';
+	    }
+
+	    cout << letters[i];
+
+	    toPrint = toPrint + 1;
+	    i = i + 1;
+	}
+	cout << '\n';
+    }
+}
+
+
+void main() {
+    ArrayHandler ah = new ArrayHandler();
+    ah.fillArray();
+    ah.printArray();
+}
