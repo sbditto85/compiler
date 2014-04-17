@@ -177,9 +177,9 @@ void main() {
     iTree tree;
     Message msg = new Message();
     Butterfly bff = new Butterfly(37, 'g');
+    
     bff.nest();
     tree = new iTree();
-    
 
     msg.msg3();
     cin >> key;
